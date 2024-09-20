@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'CamHub',
+      title: 'CamHub', //project management>> sde
       theme: ThemeData(
         // This is the theme of your application.
         //
