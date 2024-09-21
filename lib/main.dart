@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // Start with the login screen
+      // jason
       initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),

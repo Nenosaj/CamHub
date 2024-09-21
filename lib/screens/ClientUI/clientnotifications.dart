@@ -68,35 +68,7 @@ class NotificationPage extends StatelessWidget {
           Spacer(), // Pushes content upwards
         ],
       ),
-      // Bottom Navigation Bar
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 3, // Highlight the Notifications tab
-        selectedItemColor: Color(0xFF7B3A3F), // Maroon color for selected icon
-        unselectedItemColor: Colors.grey, // Gray for unselected icons
-        showUnselectedLabels: true,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.inbox),
-            label: 'Bookings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
+      
     );
   }
 }
