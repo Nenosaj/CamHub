@@ -48,13 +48,14 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               borderRadius: BorderRadius.circular(20),
               selectedColor: Colors.white,
               fillColor: Color(0xFF7B3A3F),
-              children: <Widget>[
+              isSelected: const <bool>[],
+              children: const <Widget>[
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text('Received'),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text('Sent'),
                 ),
               ],
