@@ -7,6 +7,8 @@ import 'clienthomepage_searchpage.dart';
 import 'settingspage.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -219,7 +221,7 @@ class _HomePageState extends State<HomePage> {
       body: _getPages()[_currentIndex], // Displaying the selected page
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        selectedItemColor: Color(0xFF662C2B), // Maroon color for selected icon
+        selectedItemColor: Color(0xFF7B3A3F), // Maroon color for selected icon
         unselectedItemColor: Colors.grey, // Gray for unselected icons
         showUnselectedLabels: true,
         onTap: (index) {
@@ -227,7 +229,7 @@ class _HomePageState extends State<HomePage> {
             _currentIndex = index; // Update the index on tap
           });
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',

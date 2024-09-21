@@ -5,6 +5,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,18 +17,15 @@ class MyApp extends StatelessWidget {
 }
 
 class NotificationPage extends StatelessWidget {
+  const NotificationPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white, // Background color
       appBar: AppBar(
-        backgroundColor: Color(0xFF662C2B), // Maroon color from your image
-        title: const Text(
-          'Notifications',
-          style: TextStyle(
-            color: Colors.white, // Set the text color to white
-          ),
-        ),
+        backgroundColor: Color(0xFF7B3A3F), // Maroon color from your image
+        title: Text('Notifications'),
         centerTitle: true,
       ),
       body: Column(
@@ -38,7 +37,7 @@ class NotificationPage extends StatelessWidget {
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30), // Rounded search bar
                   borderSide: BorderSide.none,
@@ -49,10 +48,10 @@ class NotificationPage extends StatelessWidget {
               ),
             ),
           ),
-          Spacer(), // Pushes the empty state to the center
+          const Spacer(), // Pushes the empty state to the center
 
           // Empty state icon and message
-          Column(
+          const Column(
             children: [
               Icon(
                 Icons
@@ -70,7 +69,7 @@ class NotificationPage extends StatelessWidget {
             ],
           ),
 
-          Spacer(), // Pushes content upwards
+          const Spacer(), // Pushes content upwards
         ],
       ),
     );

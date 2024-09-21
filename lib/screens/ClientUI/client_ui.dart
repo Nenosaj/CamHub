@@ -6,6 +6,8 @@ import 'clientnotifications.dart';
 import 'clientProfile.dart';
 
 class ClientUI extends StatelessWidget {
+  const ClientUI({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
