@@ -33,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7B3A3F), // Dark red color
+        backgroundColor: Color(0xFF7B3A3F), // Dark red color
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -46,8 +46,8 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             // Profile image placeholder
             Container(
-              padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
                 color: Color(0xFF7B3A3F), // Matching the dark red color
                 borderRadius: BorderRadius.vertical(bottom: Radius.circular(50)),
               ),
@@ -104,7 +104,10 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Function to build a text field with a hint
-  Widget buildTextField({required TextEditingController controller, required String label, required String hint}) {
+  Widget buildTextField(
+      {required TextEditingController controller,
+      required String label,
+      required String hint}) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(

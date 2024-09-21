@@ -26,8 +26,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
-        backgroundColor: const Color(0xFF7B3A3F), // Dark red color from the image
+        title: Text('Settings'),
+        backgroundColor: Color(0xFF7B3A3F), // Dark red color from the image
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -39,8 +39,8 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           // Profile Section
           Container(
-            color: const Color(0xFF7B3A3F),
-            padding: const EdgeInsets.all(16.0),
+            color: Color(0xFF7B3A3F),
+            padding: EdgeInsets.all(16.0),
             child: Row(
               children: [
                 CircleAvatar(

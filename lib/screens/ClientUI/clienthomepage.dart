@@ -27,13 +27,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Role-Based App'),
-        backgroundColor: const Color(0xFF7B3A3F), // Maroon color for the AppBar
+        title: Text('Role-Based App'),
+        backgroundColor: Color(0xFF7B3A3F), // Maroon color for the AppBar
       ),
       body: _pages[_currentIndex], // Displaying the selected page
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        selectedItemColor: const Color(0xFF7B3A3F), // Maroon color for selected icon
+        selectedItemColor: Color(0xFF7B3A3F), // Maroon color for selected icon
         unselectedItemColor: Colors.grey, // Gray for unselected icons
         showUnselectedLabels: true,
         onTap: (index) {

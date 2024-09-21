@@ -24,8 +24,8 @@ class NotificationPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white, // Background color
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7B3A3F), // Maroon color from your image
-        title: const Text('Notifications'),
+        backgroundColor: Color(0xFF7B3A3F), // Maroon color from your image
+        title: Text('Notifications'),
         centerTitle: true,
       ),
       body: Column(
