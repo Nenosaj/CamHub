@@ -68,7 +68,6 @@ class NotificationPage extends StatelessWidget {
           Spacer(), // Pushes content upwards
         ],
       ),
-      
     );
   }
 }
