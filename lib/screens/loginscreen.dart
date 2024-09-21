@@ -53,11 +53,27 @@ class LoginScreen extends StatelessWidget {
               // Positioned Logo
               Positioned(
                 left: 90,
-                top: 100,
-                child: Image.asset(
-                  'assets/images/camhub_logo.jpg',
+                top: 80,
+                child: Container(
                   width: 250,
                   height: 250,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color.fromARGB(85, 85, 84, 84)
+                            .withOpacity(0.4), // Shadow color with opacity
+                        spreadRadius: 1, // How wide the shadow spreads
+                        blurRadius: 20, // How soft the shadow is
+                        offset: Offset(2,
+                            1), // Horizontal and vertical offset of the shadow
+                      ),
+                    ],
+                  ),
+                  child: Image.asset(
+                    'assets/images/camhub_logo.jpg',
+                    width: 250,
+                    height: 250,
+                  ),
                 ),
               ),
               // Adjust based on the visibility of the keyboard
@@ -106,6 +122,8 @@ class LoginScreen extends StatelessWidget {
                               labelText: 'Username',
                               filled: true,
                               fillColor: Colors.white,
+                              floatingLabelBehavior: FloatingLabelBehavior
+                                  .auto, // Label moves above when focused or filled
                               hintStyle: TextStyle(
                                 color: Color(0xFF959595),
                               ),
@@ -122,6 +140,8 @@ class LoginScreen extends StatelessWidget {
                             decoration: InputDecoration(
                               hintText: '********',
                               labelText: 'Password',
+                              floatingLabelBehavior: FloatingLabelBehavior
+                                  .auto, // Label moves above when focused or filled
                               filled: true,
                               fillColor: Colors.white,
                               hintStyle: TextStyle(
