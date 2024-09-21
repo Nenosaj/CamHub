@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -13,6 +15,8 @@ class MyApp extends StatelessWidget {
 }
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -31,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         backgroundColor: Color(0xFF7B3A3F), // Dark red color
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             // Implement back navigation logic
           },
@@ -55,7 +59,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             // Input fields
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -66,25 +70,25 @@ class _ProfilePageState extends State<ProfilePage> {
                     label: 'Username',
                     hint: 'name123',
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   buildTextField(
                     controller: emailController,
                     label: 'Email',
                     hint: 'name@mail.com',
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   buildTextField(
                     controller: dobController,
                     label: 'Date of Birth',
                     hint: 'MM/DD/YYYY',
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   buildTextField(
                     controller: addressController,
                     label: 'Address',
                     hint: '123 Street, City',
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   buildTextField(
                     controller: phoneController,
                     label: 'Phone Number',
@@ -100,13 +104,16 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Function to build a text field with a hint
-  Widget buildTextField({required TextEditingController controller, required String label, required String hint}) {
+  Widget buildTextField(
+      {required TextEditingController controller,
+      required String label,
+      required String hint}) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint, // Placeholder text inside the field
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
       ),
     );
   }

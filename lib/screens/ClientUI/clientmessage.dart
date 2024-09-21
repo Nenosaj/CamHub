@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -21,8 +22,13 @@ class ChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7B3A3F),
-        title: const Text('Chat'),
+        backgroundColor: const Color(0xFF662C2B),
+        title: const Text(
+          'Chat',
+          style: TextStyle(
+            color: Colors.white, // Set the text color to white
+          ),
+        ),
         centerTitle: true,
       ),
       body: const EmptyChatScreen(),
@@ -34,7 +40,7 @@ class ChatScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const SearchUserScreen()),
           );
         },
-        backgroundColor:const Color(0xFF7B3A3F),
+        backgroundColor: const Color(0xFF662C2B),
         child: const Icon(Icons.add),
       ),
     );
@@ -90,8 +96,6 @@ class EmptyChatScreen extends StatelessWidget {
   }
 }
 
-
-
 // New screen for searching users
 class SearchUserScreen extends StatelessWidget {
   const SearchUserScreen({super.key});
@@ -101,7 +105,7 @@ class SearchUserScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search Users'),
-        backgroundColor:const Color(0xFF7B3A3F),
+        backgroundColor: const Color(0xFF662C2B),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

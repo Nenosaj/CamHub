@@ -6,6 +6,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,6 +32,8 @@ class LoginScreen extends StatelessWidget {
     'password': 'creative123'
   };
 
+   LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
@@ -43,7 +47,7 @@ class LoginScreen extends StatelessWidget {
             children: [
               // Background Image
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: AssetImage('assets/images/camhub_background.jpg'),
@@ -87,8 +91,8 @@ class LoginScreen extends StatelessWidget {
                   children: [
                     // Maroon Container
                     Container(
-                      padding: EdgeInsets.all(25),
-                      decoration: BoxDecoration(
+                      padding: const EdgeInsets.all(25),
+                      decoration: const BoxDecoration(
                         color: Color(0xFF662C2B),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(50),
@@ -97,7 +101,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          Text(
+                          const Text(
                             'Welcome back!',
                             style: TextStyle(
                               fontSize: 25,
@@ -105,15 +109,15 @@ class LoginScreen extends StatelessWidget {
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(height: 10),
-                          Text(
+                          const SizedBox(height: 10),
+                          const Text(
                             'Are you ready for your pose?',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           // Username TextField
                           TextField(
                             controller: emailController,
@@ -122,9 +126,13 @@ class LoginScreen extends StatelessWidget {
                               labelText: 'Username',
                               filled: true,
                               fillColor: Colors.white,
+<<<<<<< HEAD
                               floatingLabelBehavior: FloatingLabelBehavior
                                   .auto, // Label moves above when focused or filled
                               hintStyle: TextStyle(
+=======
+                              hintStyle: const TextStyle(
+>>>>>>> origin/master
                                 color: Color(0xFF959595),
                               ),
                               border: OutlineInputBorder(
@@ -132,7 +140,7 @@ class LoginScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           // Password TextField
                           TextField(
                             controller: passwordController,
@@ -144,7 +152,7 @@ class LoginScreen extends StatelessWidget {
                                   .auto, // Label moves above when focused or filled
                               filled: true,
                               fillColor: Colors.white,
-                              hintStyle: TextStyle(
+                              hintStyle: const TextStyle(
                                 color: Color(0xFF959595),
                               ),
                               border: OutlineInputBorder(
@@ -152,18 +160,18 @@ class LoginScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           // Log in Button
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              foregroundColor: Color(0xFF662C2B),
+                              foregroundColor: const Color(0xFF662C2B),
                               backgroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 100, vertical: 15),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              side: BorderSide(
+                              side: const BorderSide(
                                   color: Color(0xFF662C2B), width: 2),
                             ),
                             onPressed: () {
@@ -186,36 +194,36 @@ class LoginScreen extends StatelessWidget {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                    title: Text('Login Failed'),
-                                    content: Text('Invalid email or password.'),
+                                    title: const Text('Login Failed'),
+                                    content: const Text('Invalid email or password.'),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
-                                        child: Text('OK'),
+                                        child: const Text('OK'),
                                       ),
                                     ],
                                   ),
                                 );
                               }
                             },
-                            child: Text(
+                            child: const Text(
                               'Log in',
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           // Sign-up Link
                           TextButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SignUpScreen()),
+                                    builder: (context) => const SignUpScreen()),
                               );
                             },
                             child: RichText(
-                              text: TextSpan(
+                              text: const TextSpan(
                                 text: "Don't have an account? ",
                                 style: TextStyle(
                                   color: Colors.white,
