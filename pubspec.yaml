@@ -61,6 +61,8 @@ flutter:
   assets:
     - assets/images/camhub_background.jpg
     - assets/images/camhub_logo.jpg
+    - assets/images/photographer1.jpg
+    - assets/images/photographer2.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:
