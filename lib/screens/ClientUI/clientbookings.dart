@@ -5,6 +5,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,6 +17,8 @@ class MyApp extends StatelessWidget {
 }
 
 class BookingPage extends StatefulWidget {
+  const BookingPage({super.key});
+
   @override
   _BookingPageState createState() => _BookingPageState();
 }
@@ -27,11 +31,11 @@ class _BookingPageState extends State<BookingPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xFF7B3A3F), // Maroon color from your image
+        backgroundColor: const Color(0xFF7B3A3F), // Maroon color from your image
         title: Row(
           children: [
             IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 // Handle back action
               },
@@ -40,7 +44,7 @@ class _BookingPageState extends State<BookingPage> {
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search',
-                  prefixIcon: Icon(Icons.search, color: Colors.white),
+                  prefixIcon: const Icon(Icons.search, color: Colors.white),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                     borderSide: BorderSide.none,
@@ -71,7 +75,7 @@ class _BookingPageState extends State<BookingPage> {
           Divider(thickness: 1, color: Colors.grey[300]),
 
           // Content Section
-          Expanded(
+          const Expanded(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -110,7 +114,7 @@ class _BookingPageState extends State<BookingPage> {
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
               ? Colors.red[100]

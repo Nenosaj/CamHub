@@ -5,6 +5,8 @@ import 'clientnotifications.dart';
 import 'clientProfile.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -14,8 +16,8 @@ class _HomePageState extends State<HomePage> {
 
   // Different pages for each bottom navigation item
   final List<Widget> _pages = [
-    Center(child: Text('Home Page', style: TextStyle(fontSize: 24))),
-    ChatScreen(), // Navigate to your Chat Page
+    const Center(child: Text('Home Page', style: TextStyle(fontSize: 24))),
+    const ChatScreen(), // Navigate to your Chat Page
     BookingPage(), // Navigate to your Bookings Page
     NotificationPage(), // Navigate to your Notifications Page
     ProfilePage(), // Navigate to your Profile Page
@@ -25,13 +27,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Role-Based App'),
-        backgroundColor: Color(0xFF7B3A3F), // Maroon color for the AppBar
+        title: const Text('Role-Based App'),
+        backgroundColor: const Color(0xFF7B3A3F), // Maroon color for the AppBar
       ),
       body: _pages[_currentIndex], // Displaying the selected page
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        selectedItemColor: Color(0xFF7B3A3F), // Maroon color for selected icon
+        selectedItemColor: const Color(0xFF7B3A3F), // Maroon color for selected icon
         unselectedItemColor: Colors.grey, // Gray for unselected icons
         showUnselectedLabels: true,
         onTap: (index) {
@@ -39,7 +41,7 @@ class _HomePageState extends State<HomePage> {
             _currentIndex = index; // Update the index on tap
           });
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',

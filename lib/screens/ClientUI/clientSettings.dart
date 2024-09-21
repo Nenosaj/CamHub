@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -13,6 +15,8 @@ class MyApp extends StatelessWidget {
 }
 
 class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
@@ -22,10 +26,10 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
-        backgroundColor: Color(0xFF7B3A3F), // Dark red color from the image
+        title: const Text('Settings'),
+        backgroundColor: const Color(0xFF7B3A3F), // Dark red color from the image
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             // Implement back navigation
           },
@@ -35,8 +39,8 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           // Profile Section
           Container(
-            color: Color(0xFF7B3A3F),
-            padding: EdgeInsets.all(16.0),
+            color: const Color(0xFF7B3A3F),
+            padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
                 CircleAvatar(
@@ -44,8 +48,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   backgroundColor: Colors.grey[300],
                   child: Icon(Icons.person, size: 30, color: Colors.grey[600]),
                 ),
-                SizedBox(width: 16),
-                Column(
+                const SizedBox(width: 16),
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -61,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
-          Divider(),
+          const Divider(),
           // Account Settings Section
           buildSettingsOption(
             context: context,
@@ -87,7 +91,7 @@ class _SettingsPageState extends State<SettingsPage> {
               // Implement Transaction History navigation
             },
           ),
-          Divider(),
+          const Divider(),
           // More Section
           buildSettingsOption(
             context: context,
@@ -134,9 +138,9 @@ class _SettingsPageState extends State<SettingsPage> {
     required Function onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Color(0xFF7B3A3F)),
+      leading: Icon(icon, color: const Color(0xFF7B3A3F)),
       title: Text(text),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: () => onTap(),
     );
   }
