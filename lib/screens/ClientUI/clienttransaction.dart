@@ -19,14 +19,15 @@ class TransactionHistoryPage extends StatefulWidget {
 
 class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   bool isSentSelected = false;
-  bool hasTransactions = false; // To control whether there are ongoing transactions
+  bool hasTransactions =
+      false; // To control whether there are ongoing transactions
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Transaction History'),
-        backgroundColor: Color(0xFF7B3A3F),
+        backgroundColor: Color(0xFF662C2B),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -42,7 +43,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             child: ToggleButtons(
               borderRadius: BorderRadius.circular(20),
               selectedColor: Colors.white,
-              fillColor: Color(0xFF7B3A3F),
+              fillColor: Color(0xFF662C2B),
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -103,4 +104,3 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     );
   }
 }
-

@@ -23,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
-        backgroundColor: Color(0xFF7B3A3F), // Dark red color from the image
+        backgroundColor: Color(0xFF662C2B), // Dark red color from the image
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -35,7 +35,7 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           // Profile Section
           Container(
-            color: Color(0xFF7B3A3F),
+            color: Color(0xFF662C2B),
             padding: EdgeInsets.all(16.0),
             child: Row(
               children: [

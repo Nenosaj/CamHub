@@ -27,7 +27,7 @@ class _BookingPageState extends State<BookingPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xFF7B3A3F), // Maroon color from your image
+        backgroundColor: Color(0xFF662C2B), // Maroon color from your image
         title: Row(
           children: [
             IconButton(
@@ -40,6 +40,9 @@ class _BookingPageState extends State<BookingPage> {
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search',
+                  hintStyle: TextStyle(
+                    color: Colors.white, // Set the hint text color to white
+                  ),
                   prefixIcon: Icon(Icons.search, color: Colors.white),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -95,7 +98,6 @@ class _BookingPageState extends State<BookingPage> {
           ),
         ],
       ),
-    
     );
   }
 
