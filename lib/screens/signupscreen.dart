@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'clienthomepage.dart';
+//import 'package:flutter/services.dart';
+import 'package:example/screens/ClientUI/clienthomepage.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});

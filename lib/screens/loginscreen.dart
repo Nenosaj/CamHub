@@ -126,13 +126,7 @@ class LoginScreen extends StatelessWidget {
                               labelText: 'Username',
                               filled: true,
                               fillColor: Colors.white,
-<<<<<<< HEAD
-                              floatingLabelBehavior: FloatingLabelBehavior
-                                  .auto, // Label moves above when focused or filled
-                              hintStyle: TextStyle(
-=======
                               hintStyle: const TextStyle(
->>>>>>> origin/master
                                 color: Color(0xFF959595),
                               ),
                               border: OutlineInputBorder(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:example/screens/loginscreen.dart';
+//import 'package:example/screens/loginscreen.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
