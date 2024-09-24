@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/loginscreen.dart';
-import 'screens/signupscreen.dart';
+import 'screens/registration/signupscreen.dart';
 import 'screens/AdminUI/admin_ui.dart';
 import 'screens/ClientUI/client_ui.dart';
 import 'screens/CreativeUI/creative_ui.dart';
