@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:example/screens/registration/verification.dart';
+import 'package:intl/intl.dart'; // For formatting the date
 
 class FillUpPageClient extends StatefulWidget {
   @override
@@ -12,6 +13,77 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
   bool isTermsChecked = false; // For second checkbox
   bool showError =
       false; // Flag to show error message if checkboxes are not ticked
+
+  // TextEditingControllers for the text fields
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController middleNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController birthdayController = TextEditingController();
+  TextEditingController unitNumberController = TextEditingController();
+  TextEditingController streetController = TextEditingController();
+  TextEditingController villageController = TextEditingController();
+  TextEditingController barangayController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController provinceController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+
+  // To keep track if all fields are filled
+  bool allFieldsFilled = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Adding listeners to the TextEditingControllers
+    firstNameController.addListener(_checkFieldsFilled);
+    middleNameController.addListener(_checkFieldsFilled);
+    lastNameController.addListener(_checkFieldsFilled);
+    birthdayController.addListener(_checkFieldsFilled);
+    unitNumberController.addListener(_checkFieldsFilled);
+    streetController.addListener(_checkFieldsFilled);
+    villageController.addListener(_checkFieldsFilled);
+    barangayController.addListener(_checkFieldsFilled);
+    cityController.addListener(_checkFieldsFilled);
+    provinceController.addListener(_checkFieldsFilled);
+    emailController.addListener(_checkFieldsFilled);
+    phoneNumberController.addListener(_checkFieldsFilled);
+  }
+
+  void _checkFieldsFilled() {
+    setState(() {
+      allFieldsFilled = firstNameController.text.isNotEmpty &&
+          middleNameController.text.isNotEmpty &&
+          lastNameController.text.isNotEmpty &&
+          birthdayController.text.isNotEmpty &&
+          unitNumberController.text.isNotEmpty &&
+          streetController.text.isNotEmpty &&
+          villageController.text.isNotEmpty &&
+          barangayController.text.isNotEmpty &&
+          cityController.text.isNotEmpty &&
+          provinceController.text.isNotEmpty &&
+          emailController.text.isNotEmpty &&
+          phoneNumberController.text.isNotEmpty;
+    });
+  }
+
+  // Method to show date picker and set selected date to the TextField
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900), // Earliest date the user can pick
+      lastDate: DateTime.now(), // Latest date is today
+    );
+
+    if (selectedDate != null) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+      setState(() {
+        birthdayController.text =
+            formattedDate; // Set selected date to the controller
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,18 +130,20 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                buildTextField('First Name'),
-                buildTextField('Middle Name'),
-                buildTextField('Last Name'),
-                buildTextField('Birthday', isDateField: true),
-                buildTextField('Unit No./House No./Building Number'),
-                buildTextField('Street'),
-                buildTextField('Village/Subdivision'),
-                buildTextField('Barangay'),
-                buildTextField('City'),
-                buildTextField('Province'),
-                buildTextField('Email'),
-                buildTextField('Phone Number'),
+                buildTextField('First Name', firstNameController),
+                buildTextField('Middle Name', middleNameController),
+                buildTextField('Last Name', lastNameController),
+                buildTextField('Birthday', birthdayController,
+                    isDateField: true),
+                buildTextField(
+                    'Unit No./House No./Building Number', unitNumberController),
+                buildTextField('Street', streetController),
+                buildTextField('Village/Subdivision', villageController),
+                buildTextField('Barangay', barangayController),
+                buildTextField('City', cityController),
+                buildTextField('Province', provinceController),
+                buildTextField('Email', emailController),
+                buildTextField('Phone Number', phoneNumberController),
                 SizedBox(height: 20),
                 // Privacy Checkbox
                 buildCheckbox(
@@ -108,22 +182,26 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                 Center(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: (isPrivacyChecked && isTermsChecked)
+                      color: (isPrivacyChecked &&
+                              isTermsChecked &&
+                              allFieldsFilled)
                           ? Color(0xFF662C2B)
-                          : Colors.grey, // Change color based on checkbox state
+                          : Colors
+                              .grey, // Change color based on checkbox and field state
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
                           spreadRadius: 2,
                           blurRadius: 6,
-                          offset: Offset(0,
-                              4), // Shadow position to give a floating effect
+                          offset: Offset(0, 4), // Shadow position
                         ),
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: (isPrivacyChecked && isTermsChecked)
+                      onPressed: (isPrivacyChecked &&
+                              isTermsChecked &&
+                              allFieldsFilled)
                           ? () {
                               // Navigate to the Verification class
                               Navigator.push(
@@ -132,12 +210,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                                     builder: (context) => Verification()),
                               );
                             }
-                          : () {
-                              setState(() {
-                                showError =
-                                    true; // Show error message if not ticked
-                              });
-                            },
+                          : null, // Disable button if conditions are not met
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors
                             .transparent, // Make the button background transparent to show Container color
@@ -165,8 +238,9 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
     );
   }
 
-  // Helper method to create a TextField with the label
-  Widget buildTextField(String label, {bool isDateField = false}) {
+  // Helper method to create a TextField with the label and controller
+  Widget buildTextField(String label, TextEditingController controller,
+      {bool isDateField = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
@@ -178,7 +252,9 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
           ),
           SizedBox(height: 5),
           TextField(
+            controller: controller,
             readOnly: isDateField, // Makes it readonly if it's a date field
+            onTap: isDateField ? () => _selectDate(context) : null,
             decoration: InputDecoration(
               hintText: isDateField ? 'Choose Date' : 'Enter Here',
               suffixIcon: isDateField
