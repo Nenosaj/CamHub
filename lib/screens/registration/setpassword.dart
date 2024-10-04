@@ -221,8 +221,7 @@ class _SetPasswordState extends State<SetPassword> {
                         color: Colors.black.withOpacity(0.2),
                         spreadRadius: 2,
                         blurRadius: 6,
-                        offset:
-                            Offset(0, 4), // Shadow to give a floating effect
+                        offset: Offset(0, 4),
                       ),
                     ],
                   ),

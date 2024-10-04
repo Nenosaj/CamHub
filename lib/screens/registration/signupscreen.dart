@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:example/screens/ClientUI/clienthomepage.dart';
 import 'package:example/screens/registration/fillupcreatives.dart';
 import 'package:example/screens/registration/fillupclient.dart';
 

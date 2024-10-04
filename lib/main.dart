@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Role-Based App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -23,10 +24,10 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),
-        '/admin': (context) => const AdminUI(),
+        '/admin': (context) => AdminUI(),
         '/client': (context) => ClientUI(),
-        '/creative': (context) => const CreativeUI(),
-        '/signup': (context) => const SignUpScreen(),
+        '/creative': (context) => CreativeUI(),
+        '/signup': (context) => SignUpScreen(),
       },
     );
   }
