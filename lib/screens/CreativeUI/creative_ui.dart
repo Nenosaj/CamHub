@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'creativehomepage.dart';
-//import 'creativeprofile.dart';
+import 'creativemessage.dart';
+import 'creativenofication.dart';
+import 'creativeprofile.dart';
 
 class CreativeUI extends StatelessWidget {
   const CreativeUI({super.key});
@@ -12,7 +14,7 @@ class CreativeUI extends StatelessWidget {
       title: 'CamHub',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme( // 'const' added here
           titleTextStyle: TextStyle(
             color: Colors.white, // Sets the title text to white
             fontSize: 20, // You can adjust the size if needed
@@ -23,11 +25,10 @@ class CreativeUI extends StatelessWidget {
       // Start with the HomePage or other routes
       initialRoute: '/',
       routes: {
-        '/': (context) => HomePage(), // HomePage as the default route
-        //'/chat': (context) => ChatScreen(), // Define ChatPage in a separate file
-        //'/bookings': (context) => BookingPage(), // Define BookingsPage in a separate file
-        //'/notifications': (context) => NotificationPage(), // Define NotificationsPage in a separate file
-        //'/profile': (context) => ProfilePage(), // Define ProfilePage in a separate file
+        '/': (context) => const HomePage(), // 'const' added here
+        '/chat': (context) => const ChatScreen(), // Define ChatPage in a separate file
+        '/notifications': (context) => const NotificationPage(), // Define NotificationsPage in a separate file
+        '/profile': (context) => const ProfilePage(), // Define ProfilePage in a separate file
       },
     );
   }

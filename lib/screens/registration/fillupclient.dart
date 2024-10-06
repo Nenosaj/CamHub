@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:example/screens/registration/verification.dart';
 import 'package:intl/intl.dart'; // For formatting the date
 
 class FillUpPageClient extends StatefulWidget {
+  const FillUpPageClient({super.key});
+
   @override
-  _FillUpPageClientState createState() => _FillUpPageClientState();
+  FillUpPageClientState createState() => FillUpPageClientState();
 }
 
-class _FillUpPageClientState extends State<FillUpPageClient> {
+class FillUpPageClientState extends State<FillUpPageClient> {
   bool isPrivacyChecked = false; // For first checkbox
   bool isTermsChecked = false; // For second checkbox
   bool showError =
@@ -89,9 +90,9 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight), // AppBar height
+        preferredSize: const Size.fromHeight(kToolbarHeight), // AppBar height
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Color(0xFF662C2B), // Maroon color as background
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(20), // Bottom left radius
@@ -111,7 +112,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                 Colors.transparent, // Make AppBar background transparent
             elevation: 0, // Remove AppBar shadow
             leading: IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_back,
                 color: Colors.white, // Set the back button color to white
               ),
@@ -144,7 +145,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                 buildTextField('Province', provinceController),
                 buildTextField('Email', emailController),
                 buildTextField('Phone Number', phoneNumberController),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 // Privacy Checkbox
                 buildCheckbox(
                   context,
@@ -157,7 +158,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                     });
                   },
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 // Terms Checkbox
                 buildCheckbox(
                   context,
@@ -171,21 +172,21 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                   },
                 ),
                 if (showError)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       'Please agree to the Privacy Policy and Terms to continue.',
                       style: TextStyle(color: Colors.red, fontSize: 14),
                     ),
                   ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Center(
                   child: Container(
                     decoration: BoxDecoration(
                       color: (isPrivacyChecked &&
                               isTermsChecked &&
                               allFieldsFilled)
-                          ? Color(0xFF662C2B)
+                          ? const Color(0xFF662C2B)
                           : Colors
                               .grey, // Change color based on checkbox and field state
                       borderRadius: BorderRadius.circular(8),
@@ -194,7 +195,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                           color: Colors.black.withOpacity(0.2),
                           spreadRadius: 2,
                           blurRadius: 6,
-                          offset: Offset(0, 4), // Shadow position
+                          offset: const Offset(0, 4), // Shadow position
                         ),
                       ],
                     ),
@@ -207,7 +208,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Verification()),
+                                    builder: (context) => const Verification()),
                               );
                             }
                           : null, // Disable button if conditions are not met
@@ -217,13 +218,13 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                         shadowColor: Colors
                             .transparent, // Remove default shadow of ElevatedButton
                         padding:
-                            EdgeInsets.symmetric(horizontal: 140, vertical: 15),
+                            const EdgeInsets.symmetric(horizontal: 140, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.circular(8), // Rounded edges
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Next',
                         style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
@@ -248,9 +249,9 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
         children: [
           Text(
             label,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           TextField(
             controller: controller,
             readOnly: isDateField, // Makes it readonly if it's a date field
@@ -258,7 +259,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
             decoration: InputDecoration(
               hintText: isDateField ? 'Choose Date' : 'Enter Here',
               suffixIcon: isDateField
-                  ? Icon(Icons.calendar_today, color: Colors.grey)
+                  ? const Icon(Icons.calendar_today, color: Colors.grey)
                   : null,
               filled: true,
               fillColor: Colors.grey.shade200,
@@ -289,11 +290,11 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
             child: RichText(
               text: TextSpan(
                 text: text,
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
                 children: [
                   TextSpan(
                     text: linkText,
-                    style: TextStyle(color: Colors.blue),
+                    style: const TextStyle(color: Colors.blue),
                   ),
                 ],
               ),

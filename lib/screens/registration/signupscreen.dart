@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:example/screens/registration/fillupcreatives.dart';
 import 'package:example/screens/registration/fillupclient.dart';
 
@@ -10,9 +9,9 @@ class SignUpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight), // AppBar height
+        preferredSize: const Size.fromHeight(kToolbarHeight), // AppBar height
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Color(0xFF662C2B), // Maroon color as background
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(20), // Bottom left radius
@@ -32,7 +31,7 @@ class SignUpScreen extends StatelessWidget {
                 Colors.transparent, // Make AppBar background transparent
             elevation: 0, // Remove AppBar shadow
             leading: IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_back,
                 color: Colors.white, // Set the back button color to white
               ),
@@ -47,7 +46,7 @@ class SignUpScreen extends StatelessWidget {
         children: <Widget>[
           // Background Image
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/camhub_background.jpg'),
                 fit: BoxFit.cover, // Cover the whole screen
@@ -79,7 +78,7 @@ class SignUpScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => FillUpPageCreatives()),
+                            builder: (context) => const FillUpPageCreatives()),
                       );
                     },
                     child: Column(
@@ -96,14 +95,14 @@ class SignUpScreen extends StatelessWidget {
                                     .withOpacity(0.2), // Shadow color
                                 spreadRadius: 2, // How much the shadow spreads
                                 blurRadius: 6, // How soft the shadow is
-                                offset: Offset(0, 4), // Shadow position
+                                offset: const Offset(0, 4), // Shadow position
                               ),
                             ],
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.camera_alt_outlined,
                             size: 80,
-                            color: const Color.fromARGB(255, 0, 0, 0),
+                            color:  Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -128,7 +127,7 @@ class SignUpScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => FillUpPageClient()),
+                            builder: (context) => const FillUpPageClient()),
                       );
                     },
                     child: Column(
@@ -151,14 +150,14 @@ class SignUpScreen extends StatelessWidget {
                                     .withOpacity(0.2), // Shadow color
                                 spreadRadius: 2, // How much the shadow spreads
                                 blurRadius: 6, // How soft the shadow is
-                                offset: Offset(0, 4), // Shadow position
+                                offset: const Offset(0, 4), // Shadow position
                               ),
                             ],
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.person_outline,
                             size: 100,
-                            color: const Color.fromARGB(255, 0, 0, 0),
+                            color:  Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                         const SizedBox(height: 10),
