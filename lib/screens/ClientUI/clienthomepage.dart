@@ -4,7 +4,7 @@ import 'clientbookings.dart';
 import 'clientnotifications.dart';
 import 'clientProfile.dart';
 import 'clienthomepage_searchpage.dart';
-import 'settingspage.dart';
+import '../settingspage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -283,7 +283,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// Detail page to navigate to
+// DIFFERENT PAGE DAPAT
 class PhotographerDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

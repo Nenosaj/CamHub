@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:example/screens/loginscreen.dart';
+import '../main.dart';
+
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -106,7 +107,7 @@ class SettingsPage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          LoginScreen()), // Replace LoginScreen with your actual widget
+                          MyApp()), // Replace LoginScreen with your actual widget
                 );
               },
               child: Text('Log Out', style: TextStyle(color: Colors.red)),

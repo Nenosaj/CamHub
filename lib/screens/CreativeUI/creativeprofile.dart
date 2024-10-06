@@ -9,19 +9,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CreativeProfilePage(),
+      home: ProfilePage(),
     );
   }
 }
 
-class CreativeProfilePage extends StatefulWidget {
-  const CreativeProfilePage({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  _CreativeProfilePageState createState() => _CreativeProfilePageState();
+  _ProfilePage createState() => _ProfilePage();
 }
 
-class _CreativeProfilePageState extends State<CreativeProfilePage>
+class _ProfilePage extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 

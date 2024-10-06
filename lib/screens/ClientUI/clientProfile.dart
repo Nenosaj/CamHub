@@ -34,12 +34,6 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF7B3A3F), // Dark red color
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Implement back navigation logic
-          },
-        ),
       ),
       body: SingleChildScrollView(
         child: Column(

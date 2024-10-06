@@ -34,12 +34,6 @@ class _BookingPageState extends State<BookingPage> {
         backgroundColor: Color(0xFF7B3A3F), // Maroon color from your image
         title: Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                // Handle back action
-              },
-            ),
             Container(
               width: 320,
               height: 45,
