@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'signupscreen.dart';
+import 'registration/signupscreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,7 +18,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final Map<String, String> adminCredentials = {
     'email': 'admin',
     'password': 'admin123'
@@ -32,13 +39,15 @@ class LoginScreen extends StatelessWidget {
     'password': 'creative123'
   };
 
-   LoginScreen({super.key});
+  // Controllers for text fields
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // Boolean to track password visibility
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: LayoutBuilder(
@@ -138,7 +147,7 @@ class LoginScreen extends StatelessWidget {
                           // Password TextField
                           TextField(
                             controller: passwordController,
-                            obscureText: true,
+                            obscureText: !_isPasswordVisible,
                             decoration: InputDecoration(
                               hintText: '********',
                               labelText: 'Password',
@@ -151,6 +160,19 @@ class LoginScreen extends StatelessWidget {
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
+                              ),
+                              // Add visibility toggle button (eye icon)
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isPasswordVisible = !_isPasswordVisible;
+                                  });
+                                },
                               ),
                             ),
                           ),
@@ -189,7 +211,8 @@ class LoginScreen extends StatelessWidget {
                                   context: context,
                                   builder: (context) => AlertDialog(
                                     title: const Text('Login Failed'),
-                                    content: const Text('Invalid email or password.'),
+                                    content: const Text(
+                                        'Invalid email or password.'),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),

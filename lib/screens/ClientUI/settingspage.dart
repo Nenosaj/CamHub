@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'package:example/screens/loginscreen.dart';
+import 'package:example/screens/loginscreen.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -102,7 +102,12 @@ class SettingsPage extends StatelessWidget {
           ListTile(
             title: TextButton(
               onPressed: () {
-                // Handle logout
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          LoginScreen()), // Replace LoginScreen with your actual widget
+                );
               },
               child: Text('Log Out', style: TextStyle(color: Colors.red)),
             ),

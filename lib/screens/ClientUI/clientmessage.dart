@@ -40,8 +40,12 @@ class ChatScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const SearchUserScreen()),
           );
         },
-        backgroundColor: const Color(0xFF662C2B),
-        child: const Icon(Icons.add),
+        backgroundColor:
+            const Color(0xFF662C2B), // Background color remains the same
+        child: const Icon(
+          Icons.add,
+          color: Colors.white, // Change the plus icon color to white
+        ),
       ),
     );
   }

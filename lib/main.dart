@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/loginscreen.dart';
-import 'screens/signupscreen.dart';
+import 'screens/registration/signupscreen.dart';
 import 'screens/AdminUI/admin_ui.dart';
 import 'screens/ClientUI/client_ui.dart';
 import 'screens/CreativeUI/creative_ui.dart';
@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Role-Based App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -24,10 +25,10 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),
-        '/admin': (context) => const AdminUI(),
+        '/admin': (context) => AdminUI(),
         '/client': (context) => ClientUI(),
-        '/creative': (context) => const CreativeUI(),
-        '/signup': (context) => const SignUpScreen(),
+        '/creative': (context) => CreativeUI(),
+        '/signup': (context) => SignUpScreen(),
       },
     );
   }

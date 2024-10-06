@@ -40,13 +40,19 @@ class _BookingPageState extends State<BookingPage> {
                 // Handle back action
               },
             ),
-            Expanded(
+            Container(
+              width: 320,
+              height: 45,
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search',
-                  prefixIcon: Icon(Icons.search, color: Colors.white),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
