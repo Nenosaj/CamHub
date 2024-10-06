@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CreativeProfilePage(),
+      home: ProfilePage(),
     );
   }
 }
 
-class CreativeProfilePage extends StatefulWidget {
-  const CreativeProfilePage({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  _CreativeProfilePageState createState() => _CreativeProfilePageState();
+  ProfilePages createState() => ProfilePages();
 }
 
-class _CreativeProfilePageState extends State<CreativeProfilePage>
+class ProfilePages extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -109,10 +109,10 @@ class _CreativeProfilePageState extends State<CreativeProfilePage>
                           Text('Location', style: TextStyle(color: Colors.grey[600])),
                         ],
                       ),
-                      Row(
+                      const Row(
                         children: [
-                          const Text('Rating: '),
-                          const Icon(Icons.star, color: Colors.orange, size: 16),
+                           Text('Rating: '),
+                           Icon(Icons.star, color: Colors.orange, size: 16),
                         ],
                       ),
                     ],
@@ -227,10 +227,10 @@ class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
 
   @override
-  _BookingPageState createState() => _BookingPageState();
+  BookingPageState createState() => BookingPageState();
 }
 
-class _BookingPageState extends State<BookingPage> {
+class BookingPageState extends State<BookingPage> {
   String selectedCategory = "Ongoing";
 
   @override

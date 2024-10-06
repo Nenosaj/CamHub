@@ -3,11 +3,13 @@ import 'package:intl/intl.dart'; // For date formatting
 import 'package:example/screens/registration/credentials_upload.dart';
 
 class FillUpPageCreatives extends StatefulWidget {
+  const FillUpPageCreatives({super.key});
+
   @override
-  _FillUpPageCreativesState createState() => _FillUpPageCreativesState();
+  FillUpPageCreativesState createState() => FillUpPageCreativesState();
 }
 
-class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
+class FillUpPageCreativesState extends State<FillUpPageCreatives> {
   bool isPrivacyChecked = false; // For first checkbox
   bool isTermsChecked = false; // For second checkbox
   bool showError =
@@ -92,9 +94,9 @@ class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight), // AppBar height
+        preferredSize: const Size.fromHeight(kToolbarHeight), // AppBar height
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Color(0xFF662C2B), // Maroon color as background
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(20), // Bottom left radius
@@ -114,7 +116,7 @@ class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
                 Colors.transparent, // Make AppBar background transparent
             elevation: 0, // Remove AppBar shadow
             leading: IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_back,
                 color: Colors.white, // Set the back button color to white
               ),
@@ -149,7 +151,7 @@ class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
                 buildTextField('Email', controller: emailController),
                 buildTextField('Phone Number',
                     controller: phoneNumberController),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 buildCheckbox(
                   context,
                   'I agree to the collection and use of data that I have provided to CamHUB through this application. I understand that the collection and use of this data, which may include personal information and sensitive personal information, shall be in accordance with the ',
@@ -161,7 +163,7 @@ class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
                     });
                   },
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 buildCheckbox(
                   context,
                   'I agree to the ',
@@ -174,21 +176,21 @@ class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
                   },
                 ),
                 if (showError)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       'Please agree to the Privacy Policy and Terms to continue.',
                       style: TextStyle(color: Colors.red, fontSize: 14),
                     ),
                   ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Center(
                   child: Container(
                     decoration: BoxDecoration(
                       color: (isPrivacyChecked &&
                               isTermsChecked &&
                               allFieldsFilled)
-                          ? Color(0xFF662C2B)
+                          ? const Color(0xFF662C2B)
                           : Colors.grey, // Change color based on checkbox state
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
@@ -196,7 +198,7 @@ class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
                           color: Colors.black.withOpacity(0.2),
                           spreadRadius: 2,
                           blurRadius: 6,
-                          offset: Offset(0, 4), // Shadow position
+                          offset: const Offset(0, 4), // Shadow position
                         ),
                       ],
                     ),
@@ -209,7 +211,7 @@ class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => CredentialsUpload()),
+                                    builder: (context) => const CredentialsUpload()),
                               );
                             }
                           : null, // Disable the button if conditions are not met
@@ -217,13 +219,13 @@ class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
                         padding:
-                            EdgeInsets.symmetric(horizontal: 140, vertical: 15),
+                            const EdgeInsets.symmetric(horizontal: 140, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.circular(8), // Rounded edges
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Next',
                         style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
@@ -248,9 +250,9 @@ class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
         children: [
           Text(
             label,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           TextField(
             controller: controller,
             readOnly: isDateField, // Makes it readonly if it's a date field
@@ -258,7 +260,7 @@ class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
             decoration: InputDecoration(
               hintText: isDateField ? 'Choose Date' : 'Enter Here',
               suffixIcon: isDateField
-                  ? Icon(Icons.calendar_today, color: Colors.grey)
+                  ? const Icon(Icons.calendar_today, color: Colors.grey)
                   : null,
               filled: true,
               fillColor: Colors.grey.shade200,
@@ -306,11 +308,11 @@ class _FillUpPageCreativesState extends State<FillUpPageCreatives> {
             child: RichText(
               text: TextSpan(
                 text: text,
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
                 children: [
                   TextSpan(
                     text: linkText,
-                    style: TextStyle(color: Colors.blue),
+                    style: const TextStyle(color: Colors.blue),
                   ),
                 ],
               ),

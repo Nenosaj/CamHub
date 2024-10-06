@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatelessWidget {
+  const SearchPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF662C2B), // Maroon color for the AppBar
+        backgroundColor: const Color(0xFF662C2B), // Maroon color for the AppBar
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // White back arrow
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back arrow
           onPressed: () {
             Navigator.pop(context); // Go back when pressed
           },
         ),
-        title: Container(
+        title: SizedBox(
           height: 40,
           child: TextField(
             decoration: InputDecoration(
-              prefixIcon: Icon(Icons.search, color: Colors.grey),
+              prefixIcon: const Icon(Icons.search, color: Colors.grey),
               hintText: 'Search',
-              hintStyle: TextStyle(color: Colors.grey),
-              contentPadding: EdgeInsets.symmetric(
+              hintStyle: const TextStyle(color: Colors.grey),
+              contentPadding: const EdgeInsets.symmetric(
                   vertical: 10.0), // Aligns the search text
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30.0),
@@ -34,7 +36,7 @@ class SearchPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text(
+            const Text(
               'Select Categories',
               style: TextStyle(
                 fontSize: 18,
@@ -42,7 +44,7 @@ class SearchPage extends StatelessWidget {
                 color: Color(0xFF662C2B), // Maroon color
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Expanded(
               child: ListView(
                 children: [
@@ -60,7 +62,7 @@ class SearchPage extends StatelessWidget {
               onPressed: () {
                 // Add functionality for 'See More'
               },
-              child: Text(
+              child: const Text(
                 'See More',
                 style: TextStyle(
                   color: Colors.blue,
@@ -77,7 +79,7 @@ class SearchPage extends StatelessWidget {
   // Helper function to build each category item
   Widget _buildCategoryItem(IconData icon, String label) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
         leading: Icon(icon, color: Colors.black),
         title: Text(label),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'registration/signupscreen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -10,7 +10,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const 
+    MaterialApp(
       title: 'CamHub App',
       debugShowCheckedModeBanner: false, // This removes the debug ribbon
       home: LoginScreen(),
@@ -77,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             .withOpacity(0.4), // Shadow color with opacity
                         spreadRadius: 1, // How wide the shadow spreads
                         blurRadius: 20, // How soft the shadow is
-                        offset: Offset(2,
+                        offset: const Offset(2,
                             1), // Horizontal and vertical offset of the shadow
                       ),
                     ],
