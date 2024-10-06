@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'creativecharts.dart';
@@ -10,7 +12,8 @@ class CreativeAnalytics extends StatefulWidget {
   final int totalCustomers;
   final int totalImpressions;
 
-  CreativeAnalytics({
+  const CreativeAnalytics({
+    super.key, // 'const' added here
     required this.creativeName,
     required this.rating,
     required this.monthlyRevenue,
@@ -20,10 +23,10 @@ class CreativeAnalytics extends StatefulWidget {
   });
 
   @override
-  _CreativeAnalyticsState createState() => _CreativeAnalyticsState();
+  CreativeAnalyticsState createState() => CreativeAnalyticsState();
 }
 
-class _CreativeAnalyticsState extends State<CreativeAnalytics> {
+class CreativeAnalyticsState extends State<CreativeAnalytics> {
   bool showFullData = false; // This will toggle between current and recent months
 
   @override
@@ -38,51 +41,62 @@ class _CreativeAnalyticsState extends State<CreativeAnalytics> {
           children: [
             Text(
               'Hello, ${widget.creativeName}!',
-              style: TextStyle(
+              style: const TextStyle( // 'const' added here
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8), // 'const' added here
             Row(
               children: [
-                Text(
+                const Text( // 'const' added here
                   'Rating: ',
                   style: TextStyle(fontSize: 16),
                 ),
-                Icon(Icons.star, color: Colors.red),
+                const Icon(Icons.star, color: Colors.red), // 'const' added here
                 Text(
-                  '${widget.rating.toStringAsFixed(1)}',
-                  style: TextStyle(fontSize: 16),
+                  widget.rating.toStringAsFixed(1),
+                  style: const TextStyle(fontSize: 16), // 'const' added here
                 ),
               ],
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20), // 'const' added here
+            const Text(
               'Overview',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10), // 'const' added here
             GridView.count(
               crossAxisCount: 2,
               childAspectRatio: 2.0,
               mainAxisSpacing: 20,
               crossAxisSpacing: 10,
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(), // 'const' added here
               children: [
-                _buildOverviewTile('Monthly Revenue', '₱${numberFormat.format(widget.monthlyRevenue)}'),
-                _buildOverviewTile('Total Orders', numberFormat.format(widget.totalOrders)),
-                _buildOverviewTile('Total Customers', numberFormat.format(widget.totalCustomers)),
-                _buildOverviewTile('Total Impressions', numberFormat.format(widget.totalImpressions)),
+                _buildOverviewTile(
+                  'Monthly Revenue',
+                  '₱${numberFormat.format(widget.monthlyRevenue)}',
+                ),
+                _buildOverviewTile(
+                  'Total Orders',
+                  numberFormat.format(widget.totalOrders),
+                ),
+                _buildOverviewTile(
+                  'Total Customers',
+                  numberFormat.format(widget.totalCustomers),
+                ),
+                _buildOverviewTile(
+                  'Total Impressions',
+                  numberFormat.format(widget.totalImpressions),
+                ),
               ],
             ),
-            SizedBox(height: 20),
-            // Adding Sales vs Returns Chart
-            Text(
+            const SizedBox(height: 20), // 'const' added here
+            const Text(
               'Sales vs. Returns',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
@@ -94,8 +108,7 @@ class _CreativeAnalyticsState extends State<CreativeAnalytics> {
                     : SalesReturnsChart.createCurrentMonthData(), // Show only current month
               ),
             ),
-            SizedBox(height: 10),
-            // Button to toggle between showing more months or the current month
+            const SizedBox(height: 10), // 'const' added here
             TextButton(
               onPressed: () {
                 setState(() {
@@ -104,11 +117,10 @@ class _CreativeAnalyticsState extends State<CreativeAnalytics> {
               },
               child: Text(
                 showFullData ? 'Show Current Month' : 'See Recent Months',
-                style: TextStyle(fontSize: 16, color: Colors.blue),
+                style: const TextStyle(fontSize: 16, color: Colors.blue), // 'const' added here
               ),
             ),
-            // You can add more content below
-            SizedBox(height: 20),
+            const SizedBox(height: 20), // 'const' added here
           ],
         ),
       ),
@@ -117,7 +129,7 @@ class _CreativeAnalyticsState extends State<CreativeAnalytics> {
 
   Widget _buildOverviewTile(String title, String value) {
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0), // 'const' added here
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -126,7 +138,7 @@ class _CreativeAnalyticsState extends State<CreativeAnalytics> {
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 3,
             blurRadius: 5,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3), // 'const' added here
           ),
         ],
       ),
@@ -135,12 +147,12 @@ class _CreativeAnalyticsState extends State<CreativeAnalytics> {
         children: [
           Text(
             title,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), // 'const' added here
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8), // 'const' added here
           Text(
             value,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // 'const' added here
           ),
         ],
       ),

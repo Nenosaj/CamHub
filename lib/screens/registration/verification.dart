@@ -1,13 +1,16 @@
+// ignore_for_file: avoid_function_literals_in_foreach_calls, prefer_const_constructors
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:example/screens/registration/setpassword.dart';
 
 class Verification extends StatefulWidget {
+  const Verification({super.key});
+
   @override
-  _VerificationState createState() => _VerificationState();
+  VerificationState createState() => VerificationState();
 }
 
-class _VerificationState extends State<Verification> {
+class VerificationState extends State<Verification> {
   final _digitControllers =
       List.generate(4, (index) => TextEditingController());
   final _focusNodes = List.generate(4, (index) => FocusNode());
@@ -141,7 +144,7 @@ class _VerificationState extends State<Verification> {
                   style: TextStyle(
                     color: Colors.black,
                   ),
-                  children: [
+                  children: const [
                     TextSpan(
                       text: "Resend Code",
                       style: TextStyle(

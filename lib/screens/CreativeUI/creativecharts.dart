@@ -15,13 +15,12 @@ class SalesReturnsChart extends StatelessWidget {
   final List<charts.Series<SalesData, String>> seriesList;
   final bool animate;
 
-  SalesReturnsChart(this.seriesList, {this.animate = true});
+  const SalesReturnsChart(this.seriesList, {super.key, this.animate = true});
 
-  @override
   @override
 Widget build(BuildContext context) {
   return AnimatedSwitcher( // Wrap the chart in AnimatedSwitcher
-    duration: Duration(milliseconds: 500),
+    duration: const Duration(milliseconds: 500),
     transitionBuilder: (Widget child, Animation<double> animation) {
       return FadeTransition(opacity: animation, child: child);
     },
@@ -37,13 +36,13 @@ Widget build(BuildContext context) {
           type: charts.SelectionModelType.info,
           changedListener: (charts.SelectionModel model) {
             if (model.hasDatumSelection) {
-              final selectedDatum = model.selectedDatum[0].datum as SalesData;
-              print('Sales: ${selectedDatum.sales}, Returns: ${selectedDatum.returns}');
+              //final selectedDatum = model.selectedDatum[0].datum as SalesData;
+              //print('Sales: ${selectedDatum.sales}, Returns: ${selectedDatum.returns}');
             }
           },
         ),
       ],
-      domainAxis: charts.OrdinalAxisSpec(
+      domainAxis: const charts.OrdinalAxisSpec(
         renderSpec: charts.SmallTickRendererSpec(
           labelRotation: 45,
           labelStyle: charts.TextStyleSpec(
@@ -53,10 +52,10 @@ Widget build(BuildContext context) {
         ),
       ),
       primaryMeasureAxis: charts.NumericAxisSpec(
-        tickProviderSpec: charts.BasicNumericTickProviderSpec(
+        tickProviderSpec: const charts.BasicNumericTickProviderSpec(
           desiredMaxTickCount: 5,
         ),
-        viewport: charts.NumericExtents(0, 15),
+        viewport: const charts.NumericExtents(0, 15),
         renderSpec: charts.GridlineRendererSpec(
           lineStyle: charts.LineStyleSpec(
             thickness: 1,

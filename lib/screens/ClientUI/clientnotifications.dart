@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false, // Disable the debug banner
       home: NotificationPage(),
     );
@@ -61,7 +61,7 @@ class NotificationPage extends StatelessWidget {
               },
             ),
             // Payment Successful Card
-            NotificationCard(
+            const NotificationCard(
               title: 'Payment',
               subtitle: 'Payment Successful',
               message:
@@ -82,13 +82,13 @@ class NotificationCard extends StatelessWidget {
   final VoidCallback? onPressed;
 
   const NotificationCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.message,
     this.buttonText,
     this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

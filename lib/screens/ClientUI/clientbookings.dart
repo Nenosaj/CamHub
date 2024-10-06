@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: BookingPage(),
     );
@@ -20,10 +20,10 @@ class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
 
   @override
-  _BookingPageState createState() => _BookingPageState();
+  BookingPageState createState() => BookingPageState();
 }
 
-class _BookingPageState extends State<BookingPage> {
+class BookingPageState extends State<BookingPage> {
   String selectedCategory = "Ongoing";
 
   @override
@@ -31,16 +31,16 @@ class _BookingPageState extends State<BookingPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xFF7B3A3F), // Maroon color from your image
+        backgroundColor: const Color(0xFF7B3A3F), // Maroon color from your image
         title: Row(
           children: [
-            Container(
+            SizedBox(
               width: 320,
               height: 45,
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search',
-                  prefixIcon: Icon(
+                  prefixIcon: const Icon(
                     Icons.search,
                     color: Colors.white,
                     size: 20,
