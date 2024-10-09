@@ -18,54 +18,56 @@ class SalesReturnsChart extends StatelessWidget {
   const SalesReturnsChart(this.seriesList, {super.key, this.animate = true});
 
   @override
-Widget build(BuildContext context) {
-  return AnimatedSwitcher( // Wrap the chart in AnimatedSwitcher
-    duration: const Duration(milliseconds: 500),
-    transitionBuilder: (Widget child, Animation<double> animation) {
-      return FadeTransition(opacity: animation, child: child);
-    },
-    child: charts.BarChart( // Your existing BarChart widget
-      seriesList,
-      animate: animate,
-      barGroupingType: charts.BarGroupingType.grouped,
-      behaviors: [
-        charts.SeriesLegend(),
-      ],
-      selectionModels: [
-        charts.SelectionModelConfig(
-          type: charts.SelectionModelType.info,
-          changedListener: (charts.SelectionModel model) {
-            if (model.hasDatumSelection) {
-              //final selectedDatum = model.selectedDatum[0].datum as SalesData;
-              //print('Sales: ${selectedDatum.sales}, Returns: ${selectedDatum.returns}');
-            }
-          },
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      // Wrap the chart in AnimatedSwitcher
+      duration: const Duration(milliseconds: 500),
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+      child: charts.BarChart(
+        // Your existing BarChart widget
+        seriesList,
+        animate: animate,
+        barGroupingType: charts.BarGroupingType.grouped,
+        behaviors: [
+          charts.SeriesLegend(),
+        ],
+        selectionModels: [
+          charts.SelectionModelConfig(
+            type: charts.SelectionModelType.info,
+            changedListener: (charts.SelectionModel model) {
+              if (model.hasDatumSelection) {
+                //final selectedDatum = model.selectedDatum[0].datum as SalesData;
+                //print('Sales: ${selectedDatum.sales}, Returns: ${selectedDatum.returns}');
+              }
+            },
+          ),
+        ],
+        domainAxis: const charts.OrdinalAxisSpec(
+          renderSpec: charts.SmallTickRendererSpec(
+            labelRotation: 45,
+            labelStyle: charts.TextStyleSpec(
+              fontSize: 12,
+              color: charts.MaterialPalette.black,
+            ),
+          ),
         ),
-      ],
-      domainAxis: const charts.OrdinalAxisSpec(
-        renderSpec: charts.SmallTickRendererSpec(
-          labelRotation: 45,
-          labelStyle: charts.TextStyleSpec(
-            fontSize: 12,
-            color: charts.MaterialPalette.black,
+        primaryMeasureAxis: charts.NumericAxisSpec(
+          tickProviderSpec: const charts.BasicNumericTickProviderSpec(
+            desiredMaxTickCount: 5,
+          ),
+          viewport: const charts.NumericExtents(0, 15),
+          renderSpec: charts.GridlineRendererSpec(
+            lineStyle: charts.LineStyleSpec(
+              thickness: 1,
+              color: charts.MaterialPalette.gray.shadeDefault,
+            ),
           ),
         ),
       ),
-      primaryMeasureAxis: charts.NumericAxisSpec(
-        tickProviderSpec: const charts.BasicNumericTickProviderSpec(
-          desiredMaxTickCount: 5,
-        ),
-        viewport: const charts.NumericExtents(0, 15),
-        renderSpec: charts.GridlineRendererSpec(
-          lineStyle: charts.LineStyleSpec(
-            thickness: 1,
-            color: charts.MaterialPalette.gray.shadeDefault,
-          ),
-        ),
-      ),
-    ),
-  );
-}
+    );
+  }
 
   // Static method to create data for current month
   static List<charts.Series<SalesData, String>> createCurrentMonthData() {
@@ -118,4 +120,3 @@ Widget build(BuildContext context) {
     ];
   }
 }
-

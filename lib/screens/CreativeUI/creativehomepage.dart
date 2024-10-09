@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const HomeAppBar({super.key}); 
+  const HomeAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +21,13 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: const Color(0xFF662C2B), // Maroon color for the AppBar
       toolbarHeight: 80.0, // Increased height for the AppBar
       leading: IconButton(
-        icon: const Icon(Icons.menu, color: Colors.white, size: 35.0), // Increased menu icon size
+        icon: const Icon(Icons.menu,
+            color: Colors.white, size: 35.0), // Increased menu icon size
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const SettingsPage() ), // New route
+                builder: (context) => const SettingsPage()), // New route
           );
         },
       ),
@@ -42,7 +43,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(80.0); // Define the height of the AppBar
+  Size get preferredSize =>
+      const Size.fromHeight(80.0); // Define the height of the AppBar
 }
 
 class HomePageState extends State<HomePage> {
@@ -51,7 +53,8 @@ class HomePageState extends State<HomePage> {
   // Add the CreativeAnalytics as a part of the pages
   List<Widget> _getPages() {
     return [
-      const CreativeAnalytics( // Add Creative Analytics here as the first page
+      const CreativeAnalytics(
+        // Add Creative Analytics here as the first page
         creativeName: 'Higala Films',
         rating: 4.3,
         monthlyRevenue: 48500,
@@ -68,11 +71,16 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _currentIndex == 0 ? const HomeAppBar() : null, // Conditionally show the AppBar only on the Home page
+      appBar: _currentIndex == 0
+          ? const HomeAppBar()
+          : null, // Conditionally show the AppBar only on the Home page
       body: _getPages()[_currentIndex], // Displaying the selected page
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex >= 2 ? _currentIndex + 1 : _currentIndex, // Adjust to skip index 2 (FAB)
-        selectedItemColor: const Color(0xFF7B3A3F), // Maroon color for selected icon
+        currentIndex: _currentIndex >= 2
+            ? _currentIndex + 1
+            : _currentIndex, // Adjust to skip index 2 (FAB)
+        selectedItemColor:
+            const Color(0xFF7B3A3F), // Maroon color for selected icon
         unselectedItemColor: Colors.grey, // Gray for unselected icons
         showUnselectedLabels: true,
         onTap: (index) {

@@ -1,8 +1,7 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'creativecharts.dart';
+import 'creativeservicestable.dart';
 
 class CreativeAnalytics extends StatefulWidget {
   final String creativeName;
@@ -13,7 +12,7 @@ class CreativeAnalytics extends StatefulWidget {
   final int totalImpressions;
 
   const CreativeAnalytics({
-    super.key, // 'const' added here
+    super.key,
     required this.creativeName,
     required this.rating,
     required this.monthlyRevenue,
@@ -23,11 +22,12 @@ class CreativeAnalytics extends StatefulWidget {
   });
 
   @override
-  CreativeAnalyticsState createState() => CreativeAnalyticsState();
+  _CreativeAnalyticsState createState() => _CreativeAnalyticsState();
 }
 
-class CreativeAnalyticsState extends State<CreativeAnalytics> {
-  bool showFullData = false; // This will toggle between current and recent months
+class _CreativeAnalyticsState extends State<CreativeAnalytics> {
+  bool showFullData =
+      false; // This will toggle between current and recent months
 
   @override
   Widget build(BuildContext context) {
@@ -41,26 +41,26 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
           children: [
             Text(
               'Hello, ${widget.creativeName}!',
-              style: const TextStyle( // 'const' added here
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8), // 'const' added here
+            const SizedBox(height: 8),
             Row(
               children: [
-                const Text( // 'const' added here
+                const Text(
                   'Rating: ',
                   style: TextStyle(fontSize: 16),
                 ),
-                const Icon(Icons.star, color: Colors.red), // 'const' added here
+                const Icon(Icons.star, color: Colors.red),
                 Text(
                   widget.rating.toStringAsFixed(1),
-                  style: const TextStyle(fontSize: 16), // 'const' added here
+                  style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),
-            const SizedBox(height: 20), // 'const' added here
+            const SizedBox(height: 20),
             const Text(
               'Overview',
               style: TextStyle(
@@ -68,34 +68,27 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 10), // 'const' added here
+            const SizedBox(height: 10),
             GridView.count(
               crossAxisCount: 2,
               childAspectRatio: 2.0,
               mainAxisSpacing: 20,
               crossAxisSpacing: 10,
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(), // 'const' added here
+              physics: const NeverScrollableScrollPhysics(),
               children: [
+                _buildOverviewTile('Monthly Revenue',
+                    '₱${numberFormat.format(widget.monthlyRevenue)}'),
                 _buildOverviewTile(
-                  'Monthly Revenue',
-                  '₱${numberFormat.format(widget.monthlyRevenue)}',
-                ),
-                _buildOverviewTile(
-                  'Total Orders',
-                  numberFormat.format(widget.totalOrders),
-                ),
-                _buildOverviewTile(
-                  'Total Customers',
-                  numberFormat.format(widget.totalCustomers),
-                ),
-                _buildOverviewTile(
-                  'Total Impressions',
-                  numberFormat.format(widget.totalImpressions),
-                ),
+                    'Total Orders', numberFormat.format(widget.totalOrders)),
+                _buildOverviewTile('Total Customers',
+                    numberFormat.format(widget.totalCustomers)),
+                _buildOverviewTile('Total Impressions',
+                    numberFormat.format(widget.totalImpressions)),
               ],
             ),
-            const SizedBox(height: 20), // 'const' added here
+            const SizedBox(height: 20),
+            // Adding Sales vs Returns Chart
             const Text(
               'Sales vs. Returns',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -104,11 +97,14 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
               height: 300, // Set height for the chart
               child: SalesReturnsChart(
                 showFullData
-                    ? SalesReturnsChart.createRecentMonthsData() // Show more data
-                    : SalesReturnsChart.createCurrentMonthData(), // Show only current month
+                    ? SalesReturnsChart
+                        .createRecentMonthsData() // Show more data
+                    : SalesReturnsChart
+                        .createCurrentMonthData(), // Show only current month
               ),
             ),
-            const SizedBox(height: 10), // 'const' added here
+            const SizedBox(height: 10),
+            // Button to toggle between showing more months or the current month
             TextButton(
               onPressed: () {
                 setState(() {
@@ -117,10 +113,18 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
               },
               child: Text(
                 showFullData ? 'Show Current Month' : 'See Recent Months',
-                style: const TextStyle(fontSize: 16, color: Colors.blue), // 'const' added here
+                style: const TextStyle(fontSize: 16, color: Colors.blue),
               ),
             ),
-            const SizedBox(height: 20), // 'const' added here
+            const SizedBox(height: 20),
+            // Adding the Service Percentage Table
+            const Text(
+              'Services Breakdown for Selected Month',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            const ServicePercentageTable(),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -129,7 +133,7 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
 
   Widget _buildOverviewTile(String title, String value) {
     return Container(
-      padding: const EdgeInsets.all(16.0), // 'const' added here
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -138,7 +142,7 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 3,
             blurRadius: 5,
-            offset: const Offset(0, 3), // 'const' added here
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -147,12 +151,12 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), // 'const' added here
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8), // 'const' added here
+          const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // 'const' added here
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ],
       ),
