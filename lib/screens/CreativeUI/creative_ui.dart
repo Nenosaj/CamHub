@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'creativehomepage.dart';
+import 'creativemessage.dart';
+import 'creativenofication.dart';
+import 'creativeprofile.dart';
 
 class CreativeUI extends StatelessWidget {
   const CreativeUI({super.key});
@@ -23,9 +26,9 @@ class CreativeUI extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(), // 'const' added here
-        //'/chat': (context) => ChatScreen(), // Define ChatPage in a separate file
-        //'/notifications': (context) => NotificationPage(), // Define NotificationsPage in a separate file
-        //'/profile': (context) => ProfilePage(), // Define ProfilePage in a separate file
+        '/chat': (context) => const ChatScreen(), // Define ChatPage in a separate file
+        '/notifications': (context) => const NotificationPage(), // Define NotificationsPage in a separate file
+        '/profile': (context) => const ProfilePage(), // Define ProfilePage in a separate file
       },
     );
   }
