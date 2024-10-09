@@ -15,6 +15,20 @@ class FillUpPageClientState extends State<FillUpPageClient> {
   bool showError =
       false; // Flag to show error message if checkboxes are not ticked
 
+  // Variables to store form values
+  String firstName = '';
+  String middleName = '';
+  String lastName = '';
+  String birthday = '';
+  String unitNumber = '';
+  String street = '';
+  String village = '';
+  String barangay = '';
+  String city = '';
+  String province = '';
+  String email = '';
+  String phoneNumber = '';
+
   // TextEditingControllers for the text fields
   TextEditingController firstNameController = TextEditingController();
   TextEditingController middleNameController = TextEditingController();
@@ -37,34 +51,90 @@ class FillUpPageClientState extends State<FillUpPageClient> {
     super.initState();
 
     // Adding listeners to the TextEditingControllers
-    firstNameController.addListener(_checkFieldsFilled);
-    middleNameController.addListener(_checkFieldsFilled);
-    lastNameController.addListener(_checkFieldsFilled);
-    birthdayController.addListener(_checkFieldsFilled);
-    unitNumberController.addListener(_checkFieldsFilled);
-    streetController.addListener(_checkFieldsFilled);
-    villageController.addListener(_checkFieldsFilled);
-    barangayController.addListener(_checkFieldsFilled);
-    cityController.addListener(_checkFieldsFilled);
-    provinceController.addListener(_checkFieldsFilled);
-    emailController.addListener(_checkFieldsFilled);
-    phoneNumberController.addListener(_checkFieldsFilled);
+    firstNameController
+        .addListener(() => _updateField('firstName', firstNameController.text));
+    middleNameController.addListener(
+        () => _updateField('middleName', middleNameController.text));
+    lastNameController
+        .addListener(() => _updateField('lastName', lastNameController.text));
+    birthdayController
+        .addListener(() => _updateField('birthday', birthdayController.text));
+    unitNumberController.addListener(
+        () => _updateField('unitNumber', unitNumberController.text));
+    streetController
+        .addListener(() => _updateField('street', streetController.text));
+    villageController
+        .addListener(() => _updateField('village', villageController.text));
+    barangayController
+        .addListener(() => _updateField('barangay', barangayController.text));
+    cityController.addListener(() => _updateField('city', cityController.text));
+    provinceController
+        .addListener(() => _updateField('province', provinceController.text));
+    emailController
+        .addListener(() => _updateField('email', emailController.text));
+    phoneNumberController.addListener(
+        () => _updateField('phoneNumber', phoneNumberController.text));
+  }
+
+  // Method to update the corresponding variable when text changes
+  void _updateField(String field, String value) {
+    setState(() {
+      switch (field) {
+        case 'firstName':
+          firstName = value;
+          break;
+        case 'middleName':
+          middleName = value;
+          break;
+        case 'lastName':
+          lastName = value;
+          break;
+        case 'birthday':
+          birthday = value;
+          break;
+        case 'unitNumber':
+          unitNumber = value;
+          break;
+        case 'street':
+          street = value;
+          break;
+        case 'village':
+          village = value;
+          break;
+        case 'barangay':
+          barangay = value;
+          break;
+        case 'city':
+          city = value;
+          break;
+        case 'province':
+          province = value;
+          break;
+        case 'email':
+          email = value;
+          break;
+        case 'phoneNumber':
+          phoneNumber = value;
+          break;
+      }
+      _checkFieldsFilled();
+    });
   }
 
   void _checkFieldsFilled() {
     setState(() {
-      allFieldsFilled = firstNameController.text.isNotEmpty &&
-          middleNameController.text.isNotEmpty &&
-          lastNameController.text.isNotEmpty &&
-          birthdayController.text.isNotEmpty &&
-          unitNumberController.text.isNotEmpty &&
-          streetController.text.isNotEmpty &&
-          villageController.text.isNotEmpty &&
-          barangayController.text.isNotEmpty &&
-          cityController.text.isNotEmpty &&
-          provinceController.text.isNotEmpty &&
-          emailController.text.isNotEmpty &&
-          phoneNumberController.text.isNotEmpty;
+      allFieldsFilled = firstName.isNotEmpty &&
+          middleName.isNotEmpty &&
+          lastName.isNotEmpty &&
+          birthday.isNotEmpty &&
+          unitNumber.isNotEmpty &&
+          street.isNotEmpty &&
+          village.isNotEmpty &&
+          barangay.isNotEmpty &&
+          city.isNotEmpty &&
+          province.isNotEmpty &&
+          email.isNotEmpty &&
+          phoneNumber.isNotEmpty;
     });
   }
 
@@ -82,6 +152,7 @@ class FillUpPageClientState extends State<FillUpPageClient> {
       setState(() {
         birthdayController.text =
             formattedDate; // Set selected date to the controller
+        birthday = formattedDate; // Update the birthday variable
       });
     }
   }
@@ -187,8 +258,7 @@ class FillUpPageClientState extends State<FillUpPageClient> {
                               isTermsChecked &&
                               allFieldsFilled)
                           ? const Color(0xFF662C2B)
-                          : Colors
-                              .grey, // Change color based on checkbox and field state
+                          : Colors.grey,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
@@ -214,11 +284,11 @@ class FillUpPageClientState extends State<FillUpPageClient> {
                           : null, // Disable button if conditions are not met
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors
-                            .transparent, // Make the button background transparent to show Container color
+                            .transparent, // Make the button background transparent
                         shadowColor: Colors
                             .transparent, // Remove default shadow of ElevatedButton
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 140, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 140, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.circular(8), // Rounded edges
@@ -279,8 +349,7 @@ class FillUpPageClientState extends State<FillUpPageClient> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment
-            .center, // Align checkbox with the text vertically centered
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Checkbox(
             value: isChecked,

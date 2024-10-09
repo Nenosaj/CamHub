@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:example/screens/ClientUI/clienthomepage.dart';
+import 'package:example/screens/loginscreen.dart';
 
 class SetPassword extends StatefulWidget {
   const SetPassword({super.key});
@@ -18,11 +18,15 @@ class SetPasswordState extends State<SetPassword> {
   bool isPasswordValid = false;
   bool doPasswordsMatch = false;
 
+  // Variables to store password values
+  String password = '';
+  String confirmPassword = '';
+
   @override
   void initState() {
     super.initState();
-    _passwordController.addListener(_validatePassword);
-    _confirmPasswordController.addListener(_validatePassword);
+    _passwordController.addListener(_updatePassword);
+    _confirmPasswordController.addListener(_updatePassword);
   }
 
   @override
@@ -32,16 +36,18 @@ class SetPasswordState extends State<SetPassword> {
     super.dispose();
   }
 
-  void _validatePassword() {
+  // Method to update password and confirmPassword variables
+  void _updatePassword() {
     setState(() {
-      final password = _passwordController.text;
-      final confirmPassword = _confirmPasswordController.text;
+      password = _passwordController.text;
+      confirmPassword = _confirmPasswordController.text;
 
       isPasswordValid = _isValidPassword(password);
       doPasswordsMatch = password == confirmPassword && password.isNotEmpty;
     });
   }
 
+  // Method to validate password complexity
   bool _isValidPassword(String password) {
     final containsLetter = password.contains(RegExp(r'[A-Za-z]'));
     final containsNumber = password.contains(RegExp(r'[0-9]'));
@@ -229,20 +235,19 @@ class SetPasswordState extends State<SetPassword> {
                   child: ElevatedButton(
                     onPressed: isPasswordValid && doPasswordsMatch
                         ? () {
-                            // Navigate to HomePage
+                            // Navigate to LoginScreen
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const HomePage()), // Replace HomePage with the actual homepage class
+                                  builder: (context) => const LoginScreen()),
                             );
                           }
                         : null, // Disable button if password is invalid
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 140, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 140, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),

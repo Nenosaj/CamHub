@@ -11,11 +11,109 @@ class CredentialsUpload extends StatefulWidget {
 class CredentialsUploadState extends State<CredentialsUpload> {
   bool isSmallBusinessChecked = false; // Checkbox for Small Business
   bool isLargeBusinessChecked = false; // Checkbox for Large Business
+
+  // Variables for form fields
+  String businessName = '';
+  String unitNumber = '';
+  String street = '';
+  String village = '';
+  String barangay = '';
+  String city = '';
+  String province = '';
+  String businessEmail = '';
+  String businessPhoneNumber = '';
+
+  // TextEditingControllers for text fields
+  TextEditingController businessNameController = TextEditingController();
+  TextEditingController unitNumberController = TextEditingController();
+  TextEditingController streetController = TextEditingController();
+  TextEditingController villageController = TextEditingController();
+  TextEditingController barangayController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController provinceController = TextEditingController();
+  TextEditingController businessEmailController = TextEditingController();
+  TextEditingController businessPhoneNumberController = TextEditingController();
+
+  // List to store uploaded files
   List<Map<String, String>> files = [
     {'name': 'file.pdf', 'type': 'PDF'},
     {'name': 'bir.pdf', 'type': 'PDF'},
     {'name': 'ITR.png', 'type': 'PNG'}
   ]; // Example files for upload
+
+  @override
+  void initState() {
+    super.initState();
+    _addValidationListeners();
+  }
+
+  void _addValidationListeners() {
+    businessNameController.addListener(
+        () => _updateField('businessName', businessNameController.text));
+    unitNumberController.addListener(
+        () => _updateField('unitNumber', unitNumberController.text));
+    streetController
+        .addListener(() => _updateField('street', streetController.text));
+    villageController
+        .addListener(() => _updateField('village', villageController.text));
+    barangayController
+        .addListener(() => _updateField('barangay', barangayController.text));
+    cityController.addListener(() => _updateField('city', cityController.text));
+    provinceController
+        .addListener(() => _updateField('province', provinceController.text));
+    businessEmailController.addListener(
+        () => _updateField('businessEmail', businessEmailController.text));
+    businessPhoneNumberController.addListener(() => _updateField(
+        'businessPhoneNumber', businessPhoneNumberController.text));
+  }
+
+  void _updateField(String field, String value) {
+    setState(() {
+      switch (field) {
+        case 'businessName':
+          businessName = value;
+          break;
+        case 'unitNumber':
+          unitNumber = value;
+          break;
+        case 'street':
+          street = value;
+          break;
+        case 'village':
+          village = value;
+          break;
+        case 'barangay':
+          barangay = value;
+          break;
+        case 'city':
+          city = value;
+          break;
+        case 'province':
+          province = value;
+          break;
+        case 'businessEmail':
+          businessEmail = value;
+          break;
+        case 'businessPhoneNumber':
+          businessPhoneNumber = value;
+          break;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    businessNameController.dispose();
+    unitNumberController.dispose();
+    streetController.dispose();
+    villageController.dispose();
+    barangayController.dispose();
+    cityController.dispose();
+    provinceController.dispose();
+    businessEmailController.dispose();
+    businessPhoneNumberController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,15 +160,20 @@ class CredentialsUploadState extends State<CredentialsUpload> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Business Name and Address Fields
-              buildTextField('Business Name'),
-              buildTextField('Unit No./House No./Building Number'),
-              buildTextField('Street'),
-              buildTextField('Village/Subdivision'),
-              buildTextField('Barangay'),
-              buildTextField('City'),
-              buildTextField('Province'),
-              buildTextField('Business Email'),
-              buildTextField('Business Phone Number'),
+              buildTextField('Business Name',
+                  controller: businessNameController),
+              buildTextField('Unit No./House No./Building Number',
+                  controller: unitNumberController),
+              buildTextField('Street', controller: streetController),
+              buildTextField('Village/Subdivision',
+                  controller: villageController),
+              buildTextField('Barangay', controller: barangayController),
+              buildTextField('City', controller: cityController),
+              buildTextField('Province', controller: provinceController),
+              buildTextField('Business Email',
+                  controller: businessEmailController),
+              buildTextField('Business Phone Number',
+                  controller: businessPhoneNumberController),
               const SizedBox(height: 20),
 
               // Business Type: Only one checkbox can be selected at a time
@@ -117,7 +220,6 @@ class CredentialsUploadState extends State<CredentialsUpload> {
                 children: [
                   const Text('Choose file:', style: TextStyle(fontSize: 16)),
                   const SizedBox(width: 10),
-                  // Upload Button with Shadow
                   Container(
                     decoration: BoxDecoration(
                       boxShadow: [
@@ -134,17 +236,17 @@ class CredentialsUploadState extends State<CredentialsUpload> {
                         // Logic to upload files can be added here
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // Background color
-                        side: const BorderSide(color: Colors.black), // Black border
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.black),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
                       ),
                       child: const Text(
                         'Upload',
-                        style: TextStyle(color: Colors.black), // Black text
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
@@ -164,7 +266,7 @@ class CredentialsUploadState extends State<CredentialsUpload> {
                       color: Colors.black.withOpacity(0.2),
                       blurRadius: 4,
                       spreadRadius: 1,
-                      offset: const Offset(0, 2), // Shadow for inner box
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -181,17 +283,18 @@ class CredentialsUploadState extends State<CredentialsUpload> {
                             color: Colors.black.withOpacity(0.1),
                             blurRadius: 5,
                             spreadRadius: 1,
-                            offset: const Offset(0, 3), // Inner shadow
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
                       child: Row(
                         children: [
                           Icon(
-                              file['type'] == 'PDF'
-                                  ? Icons.picture_as_pdf
-                                  : Icons.image,
-                              color: Colors.red),
+                            file['type'] == 'PDF'
+                                ? Icons.picture_as_pdf
+                                : Icons.image,
+                            color: Colors.red,
+                          ),
                           const SizedBox(width: 10),
                           Expanded(child: Text(file['name']!)),
                           ElevatedButton(
@@ -201,8 +304,7 @@ class CredentialsUploadState extends State<CredentialsUpload> {
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Colors.red, // Delete button color
+                              backgroundColor: Colors.red,
                             ),
                             child: const Row(
                               children: [
@@ -241,8 +343,7 @@ class CredentialsUploadState extends State<CredentialsUpload> {
                         color: Colors.black.withOpacity(0.2),
                         spreadRadius: 2,
                         blurRadius: 6,
-                        offset: const Offset(
-                            0, 4), // Shadow position to give a floating effect
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
@@ -251,18 +352,17 @@ class CredentialsUploadState extends State<CredentialsUpload> {
                       // Navigate to the Verification class
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const Verification()),
+                        MaterialPageRoute(
+                            builder: (context) => const Verification()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors
-                          .transparent, // Make the button background transparent to show Container color
-                      shadowColor: Colors
-                          .transparent, // Remove default shadow of ElevatedButton
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 140, vertical: 15),
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 140, vertical: 15),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // Rounded edges
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: const Text(
@@ -280,7 +380,7 @@ class CredentialsUploadState extends State<CredentialsUpload> {
   }
 
   // Helper method to create a TextField with the label
-  Widget buildTextField(String label) {
+  Widget buildTextField(String label, {TextEditingController? controller}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
@@ -292,6 +392,7 @@ class CredentialsUploadState extends State<CredentialsUpload> {
           ),
           const SizedBox(height: 5),
           TextField(
+            controller: controller,
             decoration: InputDecoration(
               hintText: 'Enter Here',
               filled: true,

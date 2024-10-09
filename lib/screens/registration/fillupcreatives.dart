@@ -15,6 +15,20 @@ class FillUpPageCreativesState extends State<FillUpPageCreatives> {
   bool showError =
       false; // Flag to show error message if checkboxes are not ticked
 
+  // Variables to store the form values
+  String firstName = '';
+  String middleName = '';
+  String lastName = '';
+  String birthday = '';
+  String unitNumber = '';
+  String street = '';
+  String village = '';
+  String barangay = '';
+  String city = '';
+  String province = '';
+  String email = '';
+  String phoneNumber = '';
+
   // TextEditingControllers for all input fields
   TextEditingController firstNameController = TextEditingController();
   TextEditingController middleNameController = TextEditingController();
@@ -34,41 +48,96 @@ class FillUpPageCreativesState extends State<FillUpPageCreatives> {
   @override
   void initState() {
     super.initState();
-    // Add listeners to controllers to validate fields
     _addValidationListeners();
   }
 
-  // Add listeners to check if all fields are filled
+  // Add listeners to controllers to validate fields and update variables
   void _addValidationListeners() {
-    firstNameController.addListener(_validateFields);
-    middleNameController.addListener(_validateFields);
-    lastNameController.addListener(_validateFields);
-    birthdayController.addListener(_validateFields);
-    unitNumberController.addListener(_validateFields);
-    streetController.addListener(_validateFields);
-    villageController.addListener(_validateFields);
-    barangayController.addListener(_validateFields);
-    cityController.addListener(_validateFields);
-    provinceController.addListener(_validateFields);
-    emailController.addListener(_validateFields);
-    phoneNumberController.addListener(_validateFields);
+    firstNameController
+        .addListener(() => _updateField('firstName', firstNameController.text));
+    middleNameController.addListener(
+        () => _updateField('middleName', middleNameController.text));
+    lastNameController
+        .addListener(() => _updateField('lastName', lastNameController.text));
+    birthdayController
+        .addListener(() => _updateField('birthday', birthdayController.text));
+    unitNumberController.addListener(
+        () => _updateField('unitNumber', unitNumberController.text));
+    streetController
+        .addListener(() => _updateField('street', streetController.text));
+    villageController
+        .addListener(() => _updateField('village', villageController.text));
+    barangayController
+        .addListener(() => _updateField('barangay', barangayController.text));
+    cityController.addListener(() => _updateField('city', cityController.text));
+    provinceController
+        .addListener(() => _updateField('province', provinceController.text));
+    emailController
+        .addListener(() => _updateField('email', emailController.text));
+    phoneNumberController.addListener(
+        () => _updateField('phoneNumber', phoneNumberController.text));
+  }
+
+  // Method to update the corresponding variable when text changes
+  void _updateField(String field, String value) {
+    setState(() {
+      switch (field) {
+        case 'firstName':
+          firstName = value;
+          break;
+        case 'middleName':
+          middleName = value;
+          break;
+        case 'lastName':
+          lastName = value;
+          break;
+        case 'birthday':
+          birthday = value;
+          break;
+        case 'unitNumber':
+          unitNumber = value;
+          break;
+        case 'street':
+          street = value;
+          break;
+        case 'village':
+          village = value;
+          break;
+        case 'barangay':
+          barangay = value;
+          break;
+        case 'city':
+          city = value;
+          break;
+        case 'province':
+          province = value;
+          break;
+        case 'email':
+          email = value;
+          break;
+        case 'phoneNumber':
+          phoneNumber = value;
+          break;
+      }
+      _validateFields();
+    });
   }
 
   // Validate if all fields are filled
   void _validateFields() {
     setState(() {
-      allFieldsFilled = firstNameController.text.isNotEmpty &&
-          middleNameController.text.isNotEmpty &&
-          lastNameController.text.isNotEmpty &&
-          birthdayController.text.isNotEmpty &&
-          unitNumberController.text.isNotEmpty &&
-          streetController.text.isNotEmpty &&
-          villageController.text.isNotEmpty &&
-          barangayController.text.isNotEmpty &&
-          cityController.text.isNotEmpty &&
-          provinceController.text.isNotEmpty &&
-          emailController.text.isNotEmpty &&
-          phoneNumberController.text.isNotEmpty;
+      allFieldsFilled = firstName.isNotEmpty &&
+          middleName.isNotEmpty &&
+          lastName.isNotEmpty &&
+          birthday.isNotEmpty &&
+          unitNumber.isNotEmpty &&
+          street.isNotEmpty &&
+          village.isNotEmpty &&
+          barangay.isNotEmpty &&
+          city.isNotEmpty &&
+          province.isNotEmpty &&
+          email.isNotEmpty &&
+          phoneNumber.isNotEmpty;
     });
   }
 
@@ -191,7 +260,7 @@ class FillUpPageCreativesState extends State<FillUpPageCreatives> {
                               isTermsChecked &&
                               allFieldsFilled)
                           ? const Color(0xFF662C2B)
-                          : Colors.grey, // Change color based on checkbox state
+                          : Colors.grey,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
@@ -207,22 +276,21 @@ class FillUpPageCreativesState extends State<FillUpPageCreatives> {
                               isTermsChecked &&
                               allFieldsFilled)
                           ? () {
-                              // Navigate to the CredentialsUpload class
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const CredentialsUpload()),
+                                    builder: (context) =>
+                                        const CredentialsUpload()),
                               );
                             }
                           : null, // Disable the button if conditions are not met
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 140, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 140, vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(8), // Rounded edges
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       child: const Text(
@@ -255,7 +323,7 @@ class FillUpPageCreativesState extends State<FillUpPageCreatives> {
           const SizedBox(height: 5),
           TextField(
             controller: controller,
-            readOnly: isDateField, // Makes it readonly if it's a date field
+            readOnly: isDateField,
             onTap: isDateField ? () => _selectDate(context, controller!) : null,
             decoration: InputDecoration(
               hintText: isDateField ? 'Choose Date' : 'Enter Here',
@@ -287,7 +355,8 @@ class FillUpPageCreativesState extends State<FillUpPageCreatives> {
     if (selectedDate != null) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
       setState(() {
-        controller.text = formattedDate; // Set selected date to the controller
+        controller.text = formattedDate;
+        birthday = formattedDate;
       });
     }
   }
