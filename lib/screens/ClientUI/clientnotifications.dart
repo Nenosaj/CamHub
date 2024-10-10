@@ -16,56 +16,86 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class NotificationPage extends StatelessWidget {
+class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
+
+  @override
+  _NotificationPageState createState() => _NotificationPageState();
+}
+
+class _NotificationPageState extends State<NotificationPage> {
+  bool _isCardVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Delay the animation slightly to give a sliding effect when the page is loaded
+    Future.delayed(const Duration(milliseconds: 300), () {
+      setState(() {
+        _isCardVisible = true;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white, // Background color
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF7B3A3F), // Maroon color
-        title: const Text('Notifications'),
-        centerTitle: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(220),
+        child: AppBar(
+          backgroundColor: const Color(0xFF662C2B), // Maroon color
+          title: const Padding(
+            padding: EdgeInsets.only(top: 30.0), // Adjust for better centering of the title
+            child: Text(
+              'Notifications',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 25,
+              ),
+            ),
+          ),
+          centerTitle: true,
+          elevation: 0,
+          flexibleSpace: Padding(
+            padding: const EdgeInsets.fromLTRB(50, 100, 50, 50),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: const TextStyle(fontSize: 18),
+                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Search Bar
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(30), // Rounded search bar
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor:
-                      Colors.grey[200], // Light gray background for search bar
-                ),
+            // Animated Booking Confirmation Card
+            AnimatedSlide(
+              offset: _isCardVisible ? Offset(0, 0) : Offset(0, 1),
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOut,
+              child: NotificationCard(
+                title: 'Booking',
+                subtitle: 'Appointment Confirmation',
+                message:
+                    'Hello Client,\nYour appointment has been confirmed. Please pay for the initial payment to proceed with the booking.',
+                buttonText: 'Proceed to Payment',
+                onPressed: () {
+                  // Action for button press
+                },
               ),
-            ),
-            // Booking Confirmation Card
-            NotificationCard(
-              title: 'Booking',
-              subtitle: 'Appointment Confirmation',
-              message:
-                  'Hello Client,\nYour appointment has been confirmed. Please pay for the initial payment to proceed with the booking.',
-              buttonText: 'Proceed to Payment',
-              onPressed: () {
-                // Action for button press
-              },
-            ),
-            // Payment Successful Card
-            NotificationCard(
-              title: 'Payment',
-              subtitle: 'Payment Successful',
-              message:
-                  'Hello Client,\nYour initial payment was successfully sent. Thank you for your patronage.',
             ),
           ],
         ),
@@ -95,7 +125,7 @@ class NotificationCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Card(
-        color: const Color(0xFF7B3A3F), // Maroon color
+        color: const Color(0xFF662C2B), // Maroon color
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0),
         ),
