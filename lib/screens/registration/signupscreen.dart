@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:example/screens/registration/fillupcreatives.dart';
 import 'package:example/screens/registration/fillupclient.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+
+  @override
+  SignUpScreenState createState() => SignUpScreenState();
+}
+
+class SignUpScreenState extends State<SignUpScreen> {
+  // Variable to store selected role
+  String selectedRole = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight), // AppBar height
+        preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Color(0xFF662C2B), // Maroon color as background
             borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(20), // Bottom left radius
-              bottomRight: Radius.circular(20), // Bottom right radius
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
             ),
           ),
           child: AppBar(
@@ -24,20 +31,19 @@ class SignUpScreen extends StatelessWidget {
               'Create New Account',
               style: TextStyle(
                 fontSize: 20,
-                color: Colors.white, // Set the text color to white
+                color: Colors.white,
               ),
             ),
             centerTitle: true,
-            backgroundColor:
-                Colors.transparent, // Make AppBar background transparent
-            elevation: 0, // Remove AppBar shadow
+            backgroundColor: Colors.transparent,
+            elevation: 0,
             leading: IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_back,
-                color: Colors.white, // Set the back button color to white
+                color: Colors.white,
               ),
               onPressed: () {
-                Navigator.pop(context); // Back navigation functionality
+                Navigator.pop(context);
               },
             ),
           ),
@@ -47,7 +53,7 @@ class SignUpScreen extends StatelessWidget {
         children: <Widget>[
           // Background Image
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/camhub_background.jpg'),
                 fit: BoxFit.cover, // Cover the whole screen
@@ -58,8 +64,7 @@ class SignUpScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start, // No vertical centering
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const SizedBox(height: 30),
                 const Text(
@@ -67,7 +72,7 @@ class SignUpScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF5A2E2E), // Same maroon text color
+                    color: Color(0xFF5A2E2E),
                   ),
                 ),
                 const SizedBox(height: 50),
@@ -76,10 +81,14 @@ class SignUpScreen extends StatelessWidget {
                 Center(
                   child: GestureDetector(
                     onTap: () {
+                      setState(() {
+                        selectedRole = 'Creatives'; // Set selected role
+                      });
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => FillUpPageCreatives()),
+                          builder: (context) => const FillUpPageCreatives(),
+                        ),
                       );
                     },
                     child: Column(
@@ -88,22 +97,23 @@ class SignUpScreen extends StatelessWidget {
                           width: 150,
                           height: 150,
                           decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 255, 255, 255),
+                            color: selectedRole == 'Creatives'
+                                ? const Color.fromARGB(255, 230, 230, 230)
+                                : const Color.fromARGB(255, 255, 255, 255),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black
-                                    .withOpacity(0.2), // Shadow color
-                                spreadRadius: 2, // How much the shadow spreads
-                                blurRadius: 6, // How soft the shadow is
-                                offset: Offset(0, 4), // Shadow position
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 6,
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.camera_alt_outlined,
                             size: 80,
-                            color: const Color.fromARGB(255, 0, 0, 0),
+                            color: Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -112,7 +122,7 @@ class SignUpScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF5A2E2E), // Matching maroon color
+                            color: Color(0xFF5A2E2E),
                           ),
                         ),
                       ],
@@ -125,10 +135,14 @@ class SignUpScreen extends StatelessWidget {
                 Center(
                   child: GestureDetector(
                     onTap: () {
+                      setState(() {
+                        selectedRole = 'Client'; // Set selected role
+                      });
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => FillUpPageClient()),
+                          builder: (context) => const FillUpPageClient(),
+                        ),
                       );
                     },
                     child: Column(
@@ -137,28 +151,27 @@ class SignUpScreen extends StatelessWidget {
                           width: 150,
                           height: 150,
                           decoration: BoxDecoration(
-                            color: Colors.white, // Plain white background
+                            color: selectedRole == 'Client'
+                                ? const Color.fromARGB(255, 230, 230, 230)
+                                : Colors.white,
                             border: Border.all(
-                              color: const Color.fromARGB(255, 255, 255,
-                                  255), // Border color remains white
+                              color: const Color.fromARGB(255, 255, 255, 255),
                               width: 20,
                             ),
-                            borderRadius: BorderRadius.circular(
-                                20), // Border radius as per original code
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black
-                                    .withOpacity(0.2), // Shadow color
-                                spreadRadius: 2, // How much the shadow spreads
-                                blurRadius: 6, // How soft the shadow is
-                                offset: Offset(0, 4), // Shadow position
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 6,
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.person_outline,
                             size: 100,
-                            color: const Color.fromARGB(255, 0, 0, 0),
+                            color: Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -167,7 +180,7 @@ class SignUpScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF5A2E2E), // Matching maroon color
+                            color: Color(0xFF5A2E2E),
                           ),
                         ),
                       ],

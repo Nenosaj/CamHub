@@ -15,19 +15,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Role-Based App',
       debugShowCheckedModeBanner: false,
+      title: 'Role-Based App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       // jason
       initialRoute: '/',
       routes: {
-        '/': (context) => LoginScreen(),
-        '/admin': (context) => AdminUI(),
-        '/client': (context) => ClientUI(),
-        '/creative': (context) => CreativeUI(),
-        '/signup': (context) => SignUpScreen(),
+        '/': (context) =>const LoginScreen(),
+        '/admin': (context) =>const  AdminUI(),
+        '/client': (context) =>const ClientUI(),
+        '/creative': (context) =>const  CreativeUI(),
+        '/signup': (context) =>const  SignUpScreen(),
       },
     );
   }

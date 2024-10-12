@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false, // This removes the debug banner
       home: TransactionHistoryPage(),
     );
@@ -18,10 +18,10 @@ class TransactionHistoryPage extends StatefulWidget {
   const TransactionHistoryPage({super.key});
 
   @override
-  _TransactionHistoryPageState createState() => _TransactionHistoryPageState();
+  TransactionHistoryPageState createState() => TransactionHistoryPageState();
 }
 
-class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
+class TransactionHistoryPageState extends State<TransactionHistoryPage> {
   bool isSentSelected = false;
   bool hasTransactions =
       false; // To control whether there are ongoing transactions
@@ -30,8 +30,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Transaction History'),
-        backgroundColor: Color(0xFF7B3A3F),
+        title: const Text('Transaction History'),
+        backgroundColor: const Color(0xFF7B3A3F),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -47,7 +47,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             child: ToggleButtons(
               borderRadius: BorderRadius.circular(20),
               selectedColor: Colors.white,
-              fillColor: Color(0xFF7B3A3F),
+              fillColor: const Color(0xFF7B3A3F),
               isSelected: const <bool>[],
               children: const <Widget>[
                 Padding(

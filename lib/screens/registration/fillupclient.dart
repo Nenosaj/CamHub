@@ -1,18 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:example/screens/registration/verification.dart';
 import 'package:intl/intl.dart'; // For formatting the date
 
 class FillUpPageClient extends StatefulWidget {
+  const FillUpPageClient({super.key});
+
   @override
-  _FillUpPageClientState createState() => _FillUpPageClientState();
+  FillUpPageClientState createState() => FillUpPageClientState();
 }
 
-class _FillUpPageClientState extends State<FillUpPageClient> {
+class FillUpPageClientState extends State<FillUpPageClient> {
   bool isPrivacyChecked = false; // For first checkbox
   bool isTermsChecked = false; // For second checkbox
   bool showError =
       false; // Flag to show error message if checkboxes are not ticked
+
+  // Variables to store form values
+  String firstName = '';
+  String middleName = '';
+  String lastName = '';
+  String birthday = '';
+  String unitNumber = '';
+  String street = '';
+  String village = '';
+  String barangay = '';
+  String city = '';
+  String province = '';
+  String email = '';
+  String phoneNumber = '';
 
   // TextEditingControllers for the text fields
   TextEditingController firstNameController = TextEditingController();
@@ -36,34 +51,90 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
     super.initState();
 
     // Adding listeners to the TextEditingControllers
-    firstNameController.addListener(_checkFieldsFilled);
-    middleNameController.addListener(_checkFieldsFilled);
-    lastNameController.addListener(_checkFieldsFilled);
-    birthdayController.addListener(_checkFieldsFilled);
-    unitNumberController.addListener(_checkFieldsFilled);
-    streetController.addListener(_checkFieldsFilled);
-    villageController.addListener(_checkFieldsFilled);
-    barangayController.addListener(_checkFieldsFilled);
-    cityController.addListener(_checkFieldsFilled);
-    provinceController.addListener(_checkFieldsFilled);
-    emailController.addListener(_checkFieldsFilled);
-    phoneNumberController.addListener(_checkFieldsFilled);
+    firstNameController
+        .addListener(() => _updateField('firstName', firstNameController.text));
+    middleNameController.addListener(
+        () => _updateField('middleName', middleNameController.text));
+    lastNameController
+        .addListener(() => _updateField('lastName', lastNameController.text));
+    birthdayController
+        .addListener(() => _updateField('birthday', birthdayController.text));
+    unitNumberController.addListener(
+        () => _updateField('unitNumber', unitNumberController.text));
+    streetController
+        .addListener(() => _updateField('street', streetController.text));
+    villageController
+        .addListener(() => _updateField('village', villageController.text));
+    barangayController
+        .addListener(() => _updateField('barangay', barangayController.text));
+    cityController.addListener(() => _updateField('city', cityController.text));
+    provinceController
+        .addListener(() => _updateField('province', provinceController.text));
+    emailController
+        .addListener(() => _updateField('email', emailController.text));
+    phoneNumberController.addListener(
+        () => _updateField('phoneNumber', phoneNumberController.text));
+  }
+
+  // Method to update the corresponding variable when text changes
+  void _updateField(String field, String value) {
+    setState(() {
+      switch (field) {
+        case 'firstName':
+          firstName = value;
+          break;
+        case 'middleName':
+          middleName = value;
+          break;
+        case 'lastName':
+          lastName = value;
+          break;
+        case 'birthday':
+          birthday = value;
+          break;
+        case 'unitNumber':
+          unitNumber = value;
+          break;
+        case 'street':
+          street = value;
+          break;
+        case 'village':
+          village = value;
+          break;
+        case 'barangay':
+          barangay = value;
+          break;
+        case 'city':
+          city = value;
+          break;
+        case 'province':
+          province = value;
+          break;
+        case 'email':
+          email = value;
+          break;
+        case 'phoneNumber':
+          phoneNumber = value;
+          break;
+      }
+      _checkFieldsFilled();
+    });
   }
 
   void _checkFieldsFilled() {
     setState(() {
-      allFieldsFilled = firstNameController.text.isNotEmpty &&
-          middleNameController.text.isNotEmpty &&
-          lastNameController.text.isNotEmpty &&
-          birthdayController.text.isNotEmpty &&
-          unitNumberController.text.isNotEmpty &&
-          streetController.text.isNotEmpty &&
-          villageController.text.isNotEmpty &&
-          barangayController.text.isNotEmpty &&
-          cityController.text.isNotEmpty &&
-          provinceController.text.isNotEmpty &&
-          emailController.text.isNotEmpty &&
-          phoneNumberController.text.isNotEmpty;
+      allFieldsFilled = firstName.isNotEmpty &&
+          middleName.isNotEmpty &&
+          lastName.isNotEmpty &&
+          birthday.isNotEmpty &&
+          unitNumber.isNotEmpty &&
+          street.isNotEmpty &&
+          village.isNotEmpty &&
+          barangay.isNotEmpty &&
+          city.isNotEmpty &&
+          province.isNotEmpty &&
+          email.isNotEmpty &&
+          phoneNumber.isNotEmpty;
     });
   }
 
@@ -81,6 +152,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
       setState(() {
         birthdayController.text =
             formattedDate; // Set selected date to the controller
+        birthday = formattedDate; // Update the birthday variable
       });
     }
   }
@@ -89,9 +161,9 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight), // AppBar height
+        preferredSize: const Size.fromHeight(kToolbarHeight), // AppBar height
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Color(0xFF662C2B), // Maroon color as background
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(20), // Bottom left radius
@@ -111,7 +183,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                 Colors.transparent, // Make AppBar background transparent
             elevation: 0, // Remove AppBar shadow
             leading: IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_back,
                 color: Colors.white, // Set the back button color to white
               ),
@@ -144,7 +216,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                 buildTextField('Province', provinceController),
                 buildTextField('Email', emailController),
                 buildTextField('Phone Number', phoneNumberController),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 // Privacy Checkbox
                 buildCheckbox(
                   context,
@@ -157,7 +229,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                     });
                   },
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 // Terms Checkbox
                 buildCheckbox(
                   context,
@@ -171,30 +243,29 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                   },
                 ),
                 if (showError)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       'Please agree to the Privacy Policy and Terms to continue.',
                       style: TextStyle(color: Colors.red, fontSize: 14),
                     ),
                   ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Center(
                   child: Container(
                     decoration: BoxDecoration(
                       color: (isPrivacyChecked &&
                               isTermsChecked &&
                               allFieldsFilled)
-                          ? Color(0xFF662C2B)
-                          : Colors
-                              .grey, // Change color based on checkbox and field state
+                          ? const Color(0xFF662C2B)
+                          : Colors.grey,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
                           spreadRadius: 2,
                           blurRadius: 6,
-                          offset: Offset(0, 4), // Shadow position
+                          offset: const Offset(0, 4), // Shadow position
                         ),
                       ],
                     ),
@@ -207,23 +278,23 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Verification()),
+                                    builder: (context) => const Verification()),
                               );
                             }
                           : null, // Disable button if conditions are not met
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors
-                            .transparent, // Make the button background transparent to show Container color
+                            .transparent, // Make the button background transparent
                         shadowColor: Colors
                             .transparent, // Remove default shadow of ElevatedButton
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 140, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 140, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.circular(8), // Rounded edges
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Next',
                         style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
@@ -248,9 +319,9 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
         children: [
           Text(
             label,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           TextField(
             controller: controller,
             readOnly: isDateField, // Makes it readonly if it's a date field
@@ -258,7 +329,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
             decoration: InputDecoration(
               hintText: isDateField ? 'Choose Date' : 'Enter Here',
               suffixIcon: isDateField
-                  ? Icon(Icons.calendar_today, color: Colors.grey)
+                  ? const Icon(Icons.calendar_today, color: Colors.grey)
                   : null,
               filled: true,
               fillColor: Colors.grey.shade200,
@@ -278,8 +349,7 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment
-            .center, // Align checkbox with the text vertically centered
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Checkbox(
             value: isChecked,
@@ -289,11 +359,11 @@ class _FillUpPageClientState extends State<FillUpPageClient> {
             child: RichText(
               text: TextSpan(
                 text: text,
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
                 children: [
                   TextSpan(
                     text: linkText,
-                    style: TextStyle(color: Colors.blue),
+                    style: const TextStyle(color: Colors.blue),
                   ),
                 ],
               ),

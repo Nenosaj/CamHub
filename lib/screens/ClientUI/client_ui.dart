@@ -15,7 +15,7 @@ class ClientUI extends StatelessWidget {
       title: 'CamHub',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           titleTextStyle: TextStyle(
             color: Colors.white, // Sets the title text to white
             fontSize: 20, // You can adjust the size if needed
@@ -26,15 +26,15 @@ class ClientUI extends StatelessWidget {
       // Start with the HomePage or other routes
       initialRoute: '/',
       routes: {
-        '/': (context) => HomePage(), // HomePage as the default route
+        '/': (context) => const HomePage(), 
         '/chat': (context) =>
-            ChatScreen(), // Define ChatPage in a separate file
+            const ChatScreen(), 
         '/bookings': (context) =>
-            BookingPage(), // Define BookingsPage in a separate file
+            const BookingPage(), 
         '/notifications': (context) =>
-            NotificationPage(), // Define NotificationsPage in a separate file
+            const NotificationPage(),
         '/profile': (context) =>
-            ProfilePage(), // Define ProfilePage in a separate file
+            const ProfilePage(),
       },
     );
   }

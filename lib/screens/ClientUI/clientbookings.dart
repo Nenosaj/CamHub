@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: BookingPage(),
     );
@@ -20,54 +20,52 @@ class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
 
   @override
-  _BookingPageState createState() => _BookingPageState();
+  BookingPageState createState() => BookingPageState();
 }
 
-class _BookingPageState extends State<BookingPage> {
+class BookingPageState extends State<BookingPage> {
   String selectedCategory = "Ongoing";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          // Search Bar at the top
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 16.0),
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color(0xFF7B3A3F), // Maroon color for search box background
-                borderRadius: BorderRadius.circular(30.0), // Rounded corners
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: TextField(
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
-                          hintText: 'Search',
-                          border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF7B3A3F), // Maroon color from your image
+        title: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                // Handle back action
+              },
+            ),
+            Container(
+              width: 320,
+              height: 45,
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                    size: 20,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: const Icon(
-                      Icons.search,
-                      color: Colors.white,
-                      size: 24,
-                    ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide.none,
                   ),
-                ],
+                  filled: true,
+                  fillColor:
+                      Colors.white24, // Slight transparent white background
+                ),
               ),
             ),
-          ),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
           // Tabs for Ongoing, Completed, Cancelled
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),

@@ -18,7 +18,8 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # Added intl package for date formatting
-  intl: ^0.18.0
+  intl: ^0.17.0
+  charts_flutter: ^0.12.0
 
 dev_dependencies:
   flutter_test:

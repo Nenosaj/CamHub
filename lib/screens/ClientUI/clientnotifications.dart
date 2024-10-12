@@ -42,35 +42,33 @@ class _NotificationPageState extends State<NotificationPage> {
     return Scaffold(
       backgroundColor: Colors.white, // Background color
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(220),
+        preferredSize: const Size.fromHeight(150),
         child: AppBar(
-          backgroundColor: const Color(0xFF662C2B), // Maroon color
-          title: const Padding(
-            padding: EdgeInsets.only(top: 30.0), // Adjust for better centering of the title
-            child: Text(
-              'Notifications',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 25,
-              ),
+          backgroundColor: const Color(0xFF7B3A3F), // Maroon color
+          elevation: 0,
+          title: const Text(
+            'Notifications',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
           ),
           centerTitle: true,
-          elevation: 0,
           flexibleSpace: Padding(
-            padding: const EdgeInsets.fromLTRB(50, 100, 50, 50),
+            padding: const EdgeInsets.fromLTRB(16, 80, 16, 16),
             child: Container(
-              height: 50,
+              height: 45,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(30.0),
               ),
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search',
-                  hintStyle: const TextStyle(fontSize: 18),
+                  hintStyle: const TextStyle(fontSize: 16),
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
                   border: InputBorder.none,
                 ),
               ),
@@ -125,7 +123,7 @@ class NotificationCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Card(
-        color: const Color(0xFF662C2B), // Maroon color
+        color: const Color(0xFF7B3A3F), // Maroon color
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0),
         ),
@@ -200,3 +198,4 @@ class NotificationCard extends StatelessWidget {
     );
   }
 }
+
