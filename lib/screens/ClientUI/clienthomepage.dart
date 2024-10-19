@@ -12,7 +12,8 @@ class Photographer {
   final String imagePath;
   final double rating;
 
-  Photographer({required this.name, required this.imagePath, required this.rating});
+  Photographer(
+      {required this.name, required this.imagePath, required this.rating});
 }
 
 List<Photographer> photographers = [
@@ -136,8 +137,7 @@ class HomePageState extends State<HomePage> {
             const SizedBox(height: 20.0),
 
             // Photographers/Cinematographers you may like
-            _buildPhotographerSection(
-                "Photographers/Cinematographers you may like"),
+            _buildPhotographerSection("Creatives you may like"),
 
             // Spacing between sections
             const SizedBox(height: 20.0),
@@ -155,100 +155,99 @@ class HomePageState extends State<HomePage> {
   }
 
   // Photographer/Cinematographer section builder
- // Photographer/Cinematographer section builder
-Widget _buildPhotographerSection(String title) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
+  // Photographer/Cinematographer section builder
+  Widget _buildPhotographerSection(String title) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10.0),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: photographers.map((photographer) {
+              return _buildPhotographerCard(photographer);
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+// Photographer/Cinematographer card builder
+  Widget _buildPhotographerCard(Photographer photographer) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  CreativesDetailPage()), // Navigate to detail page
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Container(
+          width: 160.0,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                blurRadius: 5.0,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: double.infinity,
+                height: 120.0,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(photographer.imagePath), // Dynamic image
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(10.0)),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Text(
+                      photographer.name, // Dynamic name
+                      style: const TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 5.0),
+                    const Text(
+                      '★★★★★', // Static stars for now
+                      style: TextStyle(fontSize: 14.0, color: Colors.amber),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
-      const SizedBox(height: 10.0),
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: photographers.map((photographer) {
-            return _buildPhotographerCard(photographer);
-          }).toList(),
-        ),
-      ),
-    ],
-  );
-}
-
-// Photographer/Cinematographer card builder
-Widget _buildPhotographerCard(Photographer photographer) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                 PhotographerDetailPage()), // Navigate to detail page
-      );
-    },
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Container(
-        width: 160.0,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              blurRadius: 5.0,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 120.0,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(photographer.imagePath), // Dynamic image
-                  fit: BoxFit.cover,
-                ),
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(10.0)),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    photographer.name, // Dynamic name
-                    style: const TextStyle(
-                        fontSize: 16.0, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 5.0),
-                  const Text(
-                    '★★★★★', // Static stars for now
-                    style: TextStyle(fontSize: 14.0, color: Colors.amber),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -259,7 +258,8 @@ Widget _buildPhotographerCard(Photographer photographer) {
       body: _getPages()[_currentIndex], // Displaying the selected page
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        selectedItemColor: const Color(0xFF7B3A3F), // Maroon color for selected icon
+        selectedItemColor:
+            const Color(0xFF7B3A3F), // Maroon color for selected icon
         unselectedItemColor: Colors.grey, // Gray for unselected icons
         showUnselectedLabels: true,
         onTap: (index) {

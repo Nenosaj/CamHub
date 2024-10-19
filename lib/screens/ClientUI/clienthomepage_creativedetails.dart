@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:example/screens/ClientUI/client_packagedetails.dart';
 import 'package:example/screens/CreativeUI/creative_reviews.dart'; // Import the package details page
 
-class PhotographerDetailPage extends StatelessWidget {
-  const PhotographerDetailPage({super.key});
+class CreativesDetailPage extends StatelessWidget {
+  const CreativesDetailPage({super.key});
 
   @override
   Widget build(BuildContext context) {
