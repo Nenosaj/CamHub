@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: BookingPage(),
     );
@@ -20,52 +20,54 @@ class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
 
   @override
-  BookingPageState createState() => BookingPageState();
+  _BookingPageState createState() => _BookingPageState();
 }
 
-class BookingPageState extends State<BookingPage> {
+class _BookingPageState extends State<BookingPage> {
   String selectedCategory = "Ongoing";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Color(0xFF7B3A3F), // Maroon color from your image
-        title: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                // Handle back action
-              },
-            ),
-            Container(
-              width: 320,
-              height: 45,
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor:
-                      Colors.white24, // Slight transparent white background
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
       body: Column(
         children: [
+          // Search Bar at the top
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 16.0),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: const Color(0xFF7B3A3F), // Maroon color for search box background
+                borderRadius: BorderRadius.circular(30.0), // Rounded corners
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: TextField(
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
+                          hintText: 'Search',
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: const Icon(
+                      Icons.search,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           // Tabs for Ongoing, Completed, Cancelled
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
@@ -160,7 +162,7 @@ class BookingPageState extends State<BookingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'MM-DD-YYYY',
+                  '18-05-2024',
                   style: TextStyle(
                     color: const Color(0xFF7B3A3F),
                     fontSize: 18,
@@ -169,7 +171,7 @@ class BookingPageState extends State<BookingPage> {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'Order #0000',
+                  'Order #4566',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
@@ -177,7 +179,7 @@ class BookingPageState extends State<BookingPage> {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  '• Package',
+                  '• Portrait Session',
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -189,7 +191,7 @@ class BookingPageState extends State<BookingPage> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 const Text(
-                  '0:00 PM',
+                  '1:00 PM',
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -199,7 +201,7 @@ class BookingPageState extends State<BookingPage> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 26, 131, 70),
+                    color: const Color(0xFF7B3A3F),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Text(
@@ -236,7 +238,7 @@ class BookingPageState extends State<BookingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'MM-DD-YYYY',
+                  '22-06-2024',
                   style: TextStyle(
                     color: const Color(0xFF7B3A3F),
                     fontSize: 18,
@@ -245,7 +247,7 @@ class BookingPageState extends State<BookingPage> {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'Order #0000',
+                  'Order #7890',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
@@ -253,7 +255,7 @@ class BookingPageState extends State<BookingPage> {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  '• Package',
+                  '• Wedding Session',
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -265,7 +267,7 @@ class BookingPageState extends State<BookingPage> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 const Text(
-                  '0:00 PM',
+                  '3:00 PM',
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -275,7 +277,7 @@ class BookingPageState extends State<BookingPage> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 83, 11, 6), 
+                    color: Colors.red, // Red color to indicate cancellation
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Text(
