@@ -1,139 +1,74 @@
 import 'package:flutter/material.dart';
+import 'creativechatbox.dart'; // Import the chat box widget for Creative
+import 'creativeMessagingPlusButton.dart'; // Import the plus button widget for Creative
+import 'package:intl/intl.dart'; // For formatting time
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class CreativeMessagingScreen extends StatefulWidget {
+  const CreativeMessagingScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ChatScreen(),
-    );
-  }
+  _CreativeMessagingScreenState createState() => _CreativeMessagingScreenState();
 }
 
-class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key});
+class _CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
+  List<Map<String, String>> messages = []; // List to hold the chat messages and time
+
+  void _addMessage(String message) {
+    final String currentTime = DateFormat('hh:mm a').format(DateTime.now());
+    setState(() {
+      messages.add({'message': message, 'time': currentTime});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF662C2B),
-        title: const Text(
-          'Chat',
-          style: TextStyle(
-            color: Colors.white, // Set the text color to white
-          ),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        toolbarHeight: 80, // Increase the height of the AppBar for better visibility
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: const Color(0xFF662C2B), size: 28), // Bigger back button
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        centerTitle: true,
-      ),
-      body: const EmptyChatScreen(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigating to the search screen when the plus button is pressed
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SearchUserScreen()),
-          );
-        },
-        backgroundColor:
-            const Color(0xFF662C2B), // Background color remains the same
-        child: const Icon(
-          Icons.add,
-          color: Colors.white, // Change the plus icon color to white
-        ),
-      ),
-    );
-  }
-}
-
-class EmptyChatScreen extends StatelessWidget {
-  const EmptyChatScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Search Bar
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Search',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-          ),
-        ),
-
-        // No messages section
-        const Expanded(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.chat_bubble_outline,
-                  size: 80,
-                  color: Colors.grey,
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'No Messages',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// New screen for searching users
-class SearchUserScreen extends StatelessWidget {
-  const SearchUserScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Users'),
-        backgroundColor: const Color(0xFF662C2B),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
+        title: Row(
           children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Search for someone to message...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
+            CircleAvatar(
+              radius: 24, // Make the avatar slightly larger
+              backgroundImage: AssetImage('assets/profile_image.png'), // Replace with actual image
             ),
-            const Expanded(
-              child: Center(
-                child: Text(
-                  'No results found',
-                  style: TextStyle(fontSize: 18, color: Colors.grey),
-                ),
-              ),
+            SizedBox(width: 12),
+            Text(
+              'Client', // Change this label based on your need
+              style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold), // Larger text
             ),
           ],
         ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                return CreativeChatBox(
+                  message: messages[index]['message']!,
+                  time: messages[index]['time']!,
+                );
+              },
+            ),
+          ),
+          Divider(thickness: 1),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            child: CreativeMessagingPlusButton(
+              onSendMessage: _addMessage,
+            ),
+          ),
+        ],
       ),
     );
   }
