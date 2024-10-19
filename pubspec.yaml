@@ -34,6 +34,11 @@ flutter:
     - assets/images/camhub_logo.jpg
     - assets/images/photographer1.jpg
     - assets/images/photographer2.jpg
+    - assets/images/higala_logo.png
+    - assets/images/package1.png
+    - assets/images/package2.png
+    - assets/images/package3.png
+    - assets/images/package4.png
 
   # To add custom fonts to your application, add a fonts section here.
   # Example:
