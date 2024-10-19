@@ -16,15 +16,15 @@ class CreativesDetailPage extends StatelessWidget {
               style: TextStyle(color: Color(0xFF662C2B))),
           actions: [
             IconButton(
-              icon: const Icon(Icons.favorite_border),
+              icon: const Icon(Icons.favorite_border, color: Color(0xFF662C2B)),
               onPressed: () {},
             ),
             IconButton(
-              icon: const Icon(Icons.share),
+              icon: const Icon(Icons.share, color: Color(0xFF662C2B)),
               onPressed: () {},
             ),
             IconButton(
-              icon: const Icon(Icons.search),
+              icon: const Icon(Icons.search, color: Color(0xFF662C2B)),
               onPressed: () async {
                 await Navigator.push(
                   context,

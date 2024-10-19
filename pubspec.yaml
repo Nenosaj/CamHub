@@ -16,6 +16,7 @@ dependencies:
     sdk: flutter
   flutter_svg: ^2.0.4
   cupertino_icons: ^1.0.8
+  table_calendar: ^3.0.0
 
   # Added intl package for date formatting
   intl: ^0.17.0

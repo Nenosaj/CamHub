@@ -1,4 +1,6 @@
+import 'package:example/screens/ClientUI/package_bookingdetails.dart';
 import 'package:flutter/material.dart';
+import 'package:example/screens/CreativeUI/creative_reviews.dart';
 
 class PackageDetailsPage extends StatefulWidget {
   const PackageDetailsPage({super.key});
@@ -24,6 +26,17 @@ class _PackageDetailsPageState extends State<PackageDetailsPage> {
     '3-minutes video': '₱3,000',
   };
 
+  // Function to calculate total add-ons cost
+  int _calculateAddOnCost() {
+    int total = 0;
+    addOns.forEach((key, value) {
+      if (value) {
+        total += int.parse(addOnPrices[key]!.replaceAll(RegExp(r'[^\d]'), ''));
+      }
+    });
+    return total;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +48,7 @@ class _PackageDetailsPageState extends State<PackageDetailsPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
-          'Higala Films',
+          'Package',
           style: TextStyle(color: Color(0xFF662C2B)),
         ),
         actions: [
@@ -119,8 +132,17 @@ class _PackageDetailsPageState extends State<PackageDetailsPage> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Add continue button functionality
+                  onPressed: () async {
+                    int addOnCost = _calculateAddOnCost();
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PackageBookingdetails(
+                          addOns: addOns,
+                          addOnCost: addOnCost,
+                        ),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF662C2B),
@@ -129,6 +151,7 @@ class _PackageDetailsPageState extends State<PackageDetailsPage> {
                   child: const Text(
                     'Continue',
                     style: TextStyle(
+                        fontSize: 18,
                         color: Colors.white), // Set the text color to white
                   ),
                 ),
@@ -159,6 +182,7 @@ class _PackageDetailsPageState extends State<PackageDetailsPage> {
               'Higala Films',
               style: TextStyle(
                 fontSize: 18,
+                fontFamily: 'Inter',
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -171,8 +195,13 @@ class _PackageDetailsPageState extends State<PackageDetailsPage> {
               style: TextStyle(fontSize: 12),
             ),
             GestureDetector(
-              onTap: () {
-                // Add See Reviews navigation
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CreativeReviews(),
+                  ),
+                );
               },
               child: const Text(
                 'See Reviews',
@@ -235,6 +264,7 @@ class _PackageDetailsPageState extends State<PackageDetailsPage> {
               style: TextStyle(
                 fontSize: 14,
                 color: Color(0xFF662C2B),
+                fontFamily: 'Inter',
                 decoration: TextDecoration.underline,
               ),
             ),
