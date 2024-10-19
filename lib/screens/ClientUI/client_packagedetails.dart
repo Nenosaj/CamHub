@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
 
-class PackageDetailsPage extends StatelessWidget {
+class PackageDetailsPage extends StatefulWidget {
   const PackageDetailsPage({super.key});
+
+  @override
+  _PackageDetailsPageState createState() => _PackageDetailsPageState();
+}
+
+class _PackageDetailsPageState extends State<PackageDetailsPage> {
+  Map<String, bool> addOns = {
+    'Drone shot': false,
+    '5 more pictures': false,
+    '1-minute video': false,
+    '2-minutes video': false,
+    '3-minutes video': false,
+  };
+
+  Map<String, String> addOnPrices = {
+    'Drone shot': '₱3,000',
+    '5 more pictures': '₱500',
+    '1-minute video': '₱1,000',
+    '2-minutes video': '₱2,000',
+    '3-minutes video': '₱3,000',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -37,59 +58,16 @@ class PackageDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildHigalaFilmsHeader(),
+            const Divider(height: 20, thickness: 2), // Line separator
             Row(
               children: [
-                // Placeholder for the logo
-                Container(
-                  width: 50,
-                  height: 50,
-                  color: Colors.grey[300],
-                  child: Center(child: Text('Logo')),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Higala Films',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Text(
-                      '4.3 ★ 1000+ ratings',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    const Text(
-                      '4.4km away',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // Add See Reviews navigation
-                      },
-                      child: const Text(
-                        'See Reviews',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                // Placeholder for package image
-                Container(
+                // Package image
+                Image.asset(
+                  'assets/images/package1.png',
                   width: 100,
                   height: 100,
-                  color: Colors.grey[300],
-                  child: Center(child: Text('Image')),
+                  fit: BoxFit.cover,
                 ),
                 const SizedBox(width: 10),
                 Column(
@@ -126,7 +104,7 @@ class PackageDetailsPage extends StatelessWidget {
               'Description about the package',
               style: TextStyle(fontSize: 12),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 120),
             const Text(
               'Add ons:',
               style: TextStyle(
@@ -135,7 +113,7 @@ class PackageDetailsPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            AddOnsWidget(),
+            _buildAddOnsWidget(), // This will include "See more" button inside
             const Spacer(),
             Center(
               child: SizedBox(
@@ -145,10 +123,14 @@ class PackageDetailsPage extends StatelessWidget {
                     // Add continue button functionality
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF662C2B),
+                    backgroundColor: const Color(0xFF662C2B),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: const Text('Continue'),
+                  child: const Text(
+                    'Continue',
+                    style: TextStyle(
+                        color: Colors.white), // Set the text color to white
+                  ),
                 ),
               ),
             ),
@@ -157,39 +139,108 @@ class PackageDetailsPage extends StatelessWidget {
       ),
     );
   }
-}
 
-class AddOnsWidget extends StatefulWidget {
-  const AddOnsWidget({super.key});
+  // Function to build the Higala Films header
+  Widget _buildHigalaFilmsHeader() {
+    return Row(
+      children: [
+        // Higala Films logo
+        Image.asset(
+          'assets/images/higala_logo.png',
+          width: 50,
+          height: 50,
+          fit: BoxFit.cover,
+        ),
+        const SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Higala Films',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Text(
+              '4.3 ★ 1000+ ratings',
+              style: TextStyle(fontSize: 12),
+            ),
+            const Text(
+              '4.4km away',
+              style: TextStyle(fontSize: 12),
+            ),
+            GestureDetector(
+              onTap: () {
+                // Add See Reviews navigation
+              },
+              child: const Text(
+                'See Reviews',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF662C2B),
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
-  @override
-  _AddOnsWidgetState createState() => _AddOnsWidgetState();
-}
-
-class _AddOnsWidgetState extends State<AddOnsWidget> {
-  Map<String, bool> addOns = {
-    'Drone shot (+₱3,000)': false,
-    '5 more pictures (+₱500)': false,
-    '1-minute video (+₱1,000)': false,
-    '2-minutes video (+₱2,000)': false,
-    '3-minutes video (+₱3,000)': false,
-  };
-
-  @override
-  Widget build(BuildContext context) {
+  // Function to build the Add-ons section
+  Widget _buildAddOnsWidget() {
     return Column(
-      children: addOns.keys.map((String key) {
-        return CheckboxListTile(
-          activeColor: const Color(0xFF662C2B),
-          title: Text(key),
-          value: addOns[key],
-          onChanged: (bool? value) {
-            setState(() {
-              addOns[key] = value ?? false;
-            });
-          },
-        );
-      }).toList(),
+      children: [
+        ...addOns.keys.map((String key) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: Checkbox(
+                        value: addOns[key] ?? false, // Ensures null-safety
+                        onChanged: (bool? value) {
+                          setState(() {
+                            addOns[key] = value ?? false;
+                          });
+                        },
+                        activeColor: const Color(0xFF662C2B),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(key),
+                  ],
+                ),
+                Text(addOnPrices[key] ?? ''), // Ensures null-safety
+              ],
+            ),
+          );
+        }).toList(),
+        const SizedBox(height: 10),
+        Align(
+          alignment: Alignment.centerLeft, // Align to the right
+          child: GestureDetector(
+            onTap: () {
+              // Handle 'See More' functionality
+            },
+            child: const Text(
+              'See more',
+              style: TextStyle(
+                fontSize: 14,
+                color: Color(0xFF662C2B),
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
