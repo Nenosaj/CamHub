@@ -1,3 +1,4 @@
+import 'package:example/screens/ClientUI/clientmessaging.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -21,30 +22,62 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF662C2B),
-        title: const Text(
-          'Chat',
-          style: TextStyle(
-            color: Colors.white, // Set the text color to white
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(220), // Adjusted height to match the screenshot
+        child: AppBar(
+          backgroundColor: const Color(0xFF662C2B),
+          title: const Padding(
+            padding: EdgeInsets.only(top: 30.0), // Adjust for better centering of the title
+            child: Text(
+              'Chat',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 25,
+              ),
+            ),
+          ),
+          centerTitle: true,
+          elevation: 0,
+          flexibleSpace: Padding(
+            padding: const EdgeInsets.fromLTRB(50, 100.0, 50, 50), // Adjust positioning of the search bar
+            child: Container(
+              height: 50, // Adjusted height for the search bar
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 5,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: const TextStyle(fontSize: 18),
+                  prefixIcon: const Icon(Icons.search, size: 18),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
           ),
         ),
-        centerTitle: true,
       ),
       body: const EmptyChatScreen(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigating to the search screen when the plus button is pressed
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const SearchUserScreen()),
           );
         },
-        backgroundColor:
-            const Color(0xFF662C2B), // Background color remains the same
+        backgroundColor: const Color(0xFF662C2B),
         child: const Icon(
           Icons.add,
-          color: Colors.white, // Change the plus icon color to white
+          color: Colors.white,
         ),
       ),
     );
@@ -58,21 +91,7 @@ class EmptyChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Search Bar
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Search',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-          ),
-        ),
-
-        // No messages section
+        // No additional search bar here since it's moved into the AppBar section.
         const Expanded(
           child: Center(
             child: Column(
@@ -101,8 +120,15 @@ class EmptyChatScreen extends StatelessWidget {
 }
 
 // New screen for searching users
-class SearchUserScreen extends StatelessWidget {
+class SearchUserScreen extends StatefulWidget {
   const SearchUserScreen({super.key});
+
+  @override
+  _SearchUserScreenState createState() => _SearchUserScreenState();
+}
+
+class _SearchUserScreenState extends State<SearchUserScreen> {
+  String searchText = "";
 
   @override
   Widget build(BuildContext context) {
@@ -123,15 +149,45 @@ class SearchUserScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
+              onChanged: (value) {
+                setState(() {
+                  searchText = value.trim().toLowerCase();
+                });
+              },
             ),
-            const Expanded(
-              child: Center(
-                child: Text(
-                  'No results found',
-                  style: TextStyle(fontSize: 18, color: Colors.grey),
+            const SizedBox(height: 20),
+            if (searchText == "creative")
+              GestureDetector(
+                onTap: () {
+                  print('Creative pressed');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MessagingScreen(),
+                    ),
+                  );
+                },
+                child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 24,
+                    backgroundColor: Colors.grey[300],
+                    child: const Icon(Icons.person, color: Colors.white),
+                  ),
+                  title: const Text(
+                    'Creative',
+                    style: TextStyle(fontSize: 18, color: Colors.black),
+                  ),
                 ),
               ),
-            ),
+            if (searchText != "creative" && searchText.isNotEmpty)
+              Expanded(
+                child: Center(
+                  child: const Text(
+                    'No results found',
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                ),
+              )
           ],
         ),
       ),

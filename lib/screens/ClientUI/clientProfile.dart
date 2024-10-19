@@ -1,15 +1,13 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: ProfilePage(),
     );
@@ -20,11 +18,10 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  ProfilePageState createState() => ProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class ProfilePageState extends State<ProfilePage> {
-  // Controllers to capture input data from the user
+class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
@@ -35,31 +32,49 @@ class ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7B3A3F), // Dark red color
+        backgroundColor: const Color(0xFF662C2B),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            // Implement back navigation logic
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Profile image placeholder
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                color: Color(0xFF7B3A3F), // Matching the dark red color
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(50)),
-              ),
-              child: Center(
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.grey[300],
-                  child: Icon(Icons.person, size: 60, color: Colors.grey[600]),
+            // Profile image placeholder with curved background
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF662C2B),
+                    borderRadius: const BorderRadius.vertical(
+                      bottom: Radius.circular(160),
+                    ),
+                  ),
                 ),
-              ),
+                GestureDetector(
+                  onTap: () {
+                    _showProfileImage(context);
+                  },
+                  child: CircleAvatar(
+                    radius: 80,
+                    backgroundColor: Colors.grey[300],
+                    child: Icon(Icons.person, size: 80, color: Colors.grey[600]),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             // Input fields
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildTextField(
                     controller: usernameController,
@@ -88,7 +103,7 @@ class ProfilePageState extends State<ProfilePage> {
                   buildTextField(
                     controller: phoneController,
                     label: 'Phone Number',
-                    hint: '09123456789',
+                    hint: '09##-###-####',
                   ),
                 ],
               ),
@@ -99,18 +114,59 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Function to build a text field with a hint
-  Widget buildTextField(
-      {required TextEditingController controller,
-      required String label,
-      required String hint}) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint, // Placeholder text inside the field
-        border: const OutlineInputBorder(),
-      ),
+  // Function to display the profile image in a larger view
+  void _showProfileImage(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Center(
+              child: CircleAvatar(
+                radius: 150,
+                backgroundColor: Colors.grey[300],
+                child: Icon(Icons.person, size: 150, color: Colors.grey[600]),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold, // Make the label bold
+            color: Colors.black54,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: const TextStyle(color: Colors.black87),
+            contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
