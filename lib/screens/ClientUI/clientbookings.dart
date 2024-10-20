@@ -45,54 +45,9 @@ class _BookingPageState extends State<BookingPage> {
       ),
       body: Column(
         children: [
-<<<<<<< HEAD
           // Tabs for Ongoing, Completed, Cancelled
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-=======
-          // Search Bar at the top
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 30.0, vertical: 16.0),
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color(
-                    0xFF7B3A3F), // Maroon color for search box background
-                borderRadius: BorderRadius.circular(30.0), // Rounded corners
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: TextField(
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
-                          hintText: 'Search',
-                          border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: const Icon(
-                      Icons.search,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Tabs for Ongoing, Completed, Cancelled
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
->>>>>>> 8cf812a313107714673d40dcac5e593187a3511d
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -129,13 +84,7 @@ class _BookingPageState extends State<BookingPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
         decoration: BoxDecoration(
-<<<<<<< HEAD
           color: isSelected ? const Color(0xFF662C2B).withOpacity(0.1) : Colors.grey[200],
-=======
-          color: isSelected
-              ? const Color(0xFF7B3A3F).withOpacity(0.1)
-              : Colors.grey[200],
->>>>>>> 8cf812a313107714673d40dcac5e593187a3511d
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
