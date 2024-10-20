@@ -1,4 +1,4 @@
-import 'package:example/screens/ClientUI/package_bookingdetails.dart';
+import 'package:example/screens/ClientUI/client_bookingdetails.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/CreativeUI/creative_reviews.dart';
 
