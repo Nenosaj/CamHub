@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'clientchatbox.dart';
-import 'clientvidpicsmessage.dart';
+//import 'clientvidpicsmessage.dart';
 
 class MessagingScreen extends StatefulWidget {
   final String photographerName;

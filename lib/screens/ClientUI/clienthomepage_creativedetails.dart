@@ -1,6 +1,5 @@
 import 'package:example/screens/ClientUI/clienthomepage_searchpage.dart';
 import 'package:flutter/material.dart';
-import 'package:example/screens/ClientUI/client_packagedetails.dart';
 import 'package:example/screens/CreativeUI/creative_reviews.dart'; // Import the package details page
 
 class CreativesDetailPage extends StatelessWidget {
@@ -371,13 +370,14 @@ class CreativesDetailPage extends StatelessWidget {
   Widget _buildPackageCard(BuildContext context, String packageName,
       String price, String imagePath) {
     return GestureDetector(
-      onTap: () {
+      onTap: () {/*
         // Navigate to the package details page when tapped
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const PackageDetailsPage()),
+          MaterialPageRoute(builder: (context) => const PackageDetailsPage()
+          ),
         );
-      },
+      */},
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'clientmessage.dart';
 import 'clientbookings.dart';
 import 'clientnotifications.dart';
 import 'clientProfile.dart';
@@ -147,7 +146,7 @@ class HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      const ChatScreen(), // Navigate to your Chat Page
+      //const ChatScreen(), // Navigate to your Chat Page
       const BookingPage(), // Navigate to your Bookings Page
       const NotificationPage(), // Navigate to your Notifications Page
       const ProfilePage(), // Navigate to your Profile Page
@@ -191,7 +190,7 @@ class HomePageState extends State<HomePage> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  CreativesDetailPage()), // Navigate to detail page
+                  const CreativesDetailPage()), // Navigate to detail page
         );
       },
       child: Padding(
@@ -323,13 +322,15 @@ class HomePageState extends State<HomePage> {
 
 // Detail page to navigate to
 class PhotographerDetailPage extends StatelessWidget {
+  const PhotographerDetailPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Photographer Details'),
+        title: const Text('Photographer Details'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Details about the selected photographer go here.'),
       ),
     );

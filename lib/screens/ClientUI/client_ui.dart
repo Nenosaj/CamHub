@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'clienthomepage.dart';
 import 'clientbookings.dart';
-import 'clientmessage.dart';
 import 'clientnotifications.dart';
 import 'clientProfile.dart';
 
@@ -27,8 +26,8 @@ class ClientUI extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(), 
-        '/chat': (context) =>
-            const ChatScreen(), 
+        //'/chat': (context) =>
+          //  , 
         '/bookings': (context) =>
             const BookingPage(), 
         '/notifications': (context) =>
