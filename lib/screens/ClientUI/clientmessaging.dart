@@ -44,7 +44,8 @@ class _MessagingScreenState extends State<MessagingScreen> {
         elevation: 1,
         toolbarHeight: 80,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF662C2B), size: 28),
+          icon:
+              const Icon(Icons.arrow_back, color: Color(0xFF662C2B), size: 28),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -58,7 +59,10 @@ class _MessagingScreenState extends State<MessagingScreen> {
             const SizedBox(width: 12),
             Text(
               widget.photographerName,
-              style: const TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -72,7 +76,8 @@ class _MessagingScreenState extends State<MessagingScreen> {
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {
                     final message = _messages[index];
-                    return ClientChatBox(message: message['message']!, time: message['time']!);
+                    return ClientChatBox(
+                        message: message['message']!, time: message['time']!);
                   },
                 ),
               ),
@@ -81,7 +86,8 @@ class _MessagingScreenState extends State<MessagingScreen> {
                 Container(
                   height: 150, // Adjust the height based on the grid size
                   child: GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2, // 2 items per row
                       crossAxisSpacing: 4,
                       mainAxisSpacing: 4,
@@ -106,7 +112,9 @@ class _MessagingScreenState extends State<MessagingScreen> {
             ],
           ),
           Positioned(
-            bottom: _showMediaGrid ? 150 : 0, // Adjust based on media grid visibility
+            bottom: _showMediaGrid
+                ? 150
+                : 0, // Adjust based on media grid visibility
             left: 0,
             right: 0,
             child: Padding(
@@ -115,7 +123,8 @@ class _MessagingScreenState extends State<MessagingScreen> {
                 children: [
                   // Plus icon to toggle the media grid, slightly bigger
                   IconButton(
-                    icon: const Icon(Icons.add_circle, color: Color(0xFF662C2B), size: 36),
+                    icon: const Icon(Icons.add_circle,
+                        color: Color(0xFF662C2B), size: 36),
                     onPressed: _toggleMediaGrid,
                   ),
                   Expanded(
@@ -123,7 +132,8 @@ class _MessagingScreenState extends State<MessagingScreen> {
                       controller: _controller,
                       decoration: InputDecoration(
                         hintText: 'Type your message...',
-                        contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16), // Adjusted padding
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 18, horizontal: 16), // Adjusted padding
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),
@@ -132,7 +142,9 @@ class _MessagingScreenState extends State<MessagingScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.send, color: Color(0xFF662C2B), size: 30), // Larger send button
+                    icon: const Icon(Icons.send,
+                        color: Color(0xFF662C2B),
+                        size: 30), // Larger send button
                     onPressed: _sendMessage,
                   ),
                 ],
