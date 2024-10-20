@@ -8,10 +8,10 @@ class MessagingScreen extends StatefulWidget {
   const MessagingScreen({super.key, required this.photographerName});
 
   @override
-  _MessagingScreenState createState() => _MessagingScreenState();
+  MessagingScreenState createState() => MessagingScreenState();
 }
 
-class _MessagingScreenState extends State<MessagingScreen> {
+class MessagingScreenState extends State<MessagingScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _messages = [];
   bool _showMediaGrid = false; // Controls the visibility of the media grid
@@ -52,7 +52,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
         ),
         title: Row(
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               radius: 24,
               backgroundImage: AssetImage('assets/profile_image.png'),
             ),
@@ -83,7 +83,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
               ),
               // Media grid that appears/disappears when the plus button is pressed
               if (_showMediaGrid)
-                Container(
+                SizedBox(
                   height: 150, // Adjust the height based on the grid size
                   child: GridView.builder(
                     gridDelegate:

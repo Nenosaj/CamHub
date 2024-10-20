@@ -137,12 +137,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 // Username TextField
                                 Stack(
                                   children: [
-                                    Positioned(
+                                    const Positioned(
                                       left: 10,
                                       top: 0,
                                       child: Text(
                                         'Username',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
                                         ),
@@ -172,12 +172,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 // Password TextField
                                 Stack(
                                   children: [
-                                    Positioned(
+                                    const Positioned(
                                       left: 10,
                                       top: 0,
                                       child: Text(
                                         'Password',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
                                         ),

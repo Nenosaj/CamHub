@@ -1,6 +1,7 @@
 import 'package:example/screens/ClientUI/clienthomepage_searchpage.dart';
 import 'package:flutter/material.dart';
-import 'package:example/screens/CreativeUI/creative_reviews.dart'; // Import the package details page
+import 'package:example/screens/CreativeUI/creative_reviews.dart';
+import 'package:example/screens/ClientUI/client_packagedetails.dart'; // Import the package details page
 
 class CreativesDetailPage extends StatelessWidget {
   const CreativesDetailPage({super.key});
@@ -67,10 +68,10 @@ class CreativesDetailPage extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Expanded(
+                                const Expanded(
                                   child: Text(
                                     'Higala Films',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 24, // Larger font size
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -102,8 +103,8 @@ class CreativesDetailPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             // Distance
-                            Row(
-                              children: const [
+                            const Row(
+                              children: [
                                 Icon(Icons.location_on,
                                     color: Color(0xFF662C2B), size: 24.0),
                                 SizedBox(width: 4),
@@ -116,8 +117,8 @@ class CreativesDetailPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             // Rating row
-                            Row(
-                              children: const [
+                            const Row(
+                              children: [
                                 Icon(Icons.star,
                                     color: Color(0xFF662C2B), size: 20),
                                 SizedBox(width: 4),
@@ -132,8 +133,8 @@ class CreativesDetailPage extends StatelessWidget {
                                 height:
                                     4), // Space between rating and price range
                             // Price Range row
-                            Row(
-                              children: const [
+                            const Row(
+                              children: [
                                 Icon(Icons.attach_money,
                                     color: Color(0xFF662C2B), size: 20),
                                 SizedBox(width: 4),
@@ -192,11 +193,11 @@ class CreativesDetailPage extends StatelessWidget {
               child: Column(
                 children: [
                   FloatingActionButton(
-                    backgroundColor: Color.fromARGB(255, 250, 250, 250),
+                    backgroundColor: const Color.fromARGB(255, 250, 250, 250),
                     onPressed: () {
                       // Handle chat button press
                     },
-                    child: Icon(Icons.message),
+                    child: const Icon(Icons.message),
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -311,15 +312,15 @@ class CreativesDetailPage extends StatelessWidget {
 
   // Helper method to create the Photos Tab content
   Widget _buildPhotosTab(BuildContext context) {
-    return Center(
-      child: const Text('Photos will be displayed here'),
+    return const Center(
+      child: Text('Photos will be displayed here'),
     );
   }
 
   // Helper method to create the Videos Tab content
   Widget _buildVideosTab(BuildContext context) {
-    return Center(
-      child: const Text('Videos will be displayed here'),
+    return const Center(
+      child: Text('Videos will be displayed here'),
     );
   }
 
@@ -370,14 +371,13 @@ class CreativesDetailPage extends StatelessWidget {
   Widget _buildPackageCard(BuildContext context, String packageName,
       String price, String imagePath) {
     return GestureDetector(
-      onTap: () {/*
+      onTap: () {
         // Navigate to the package details page when tapped
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const PackageDetailsPage()
-          ),
+          MaterialPageRoute(builder: (context) => const PackageDetailsPage()),
         );
-      */},
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

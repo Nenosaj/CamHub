@@ -19,10 +19,10 @@ class CreativeChatScreen extends StatefulWidget {
   const CreativeChatScreen({super.key});
 
   @override
-  _CreativeChatScreenState createState() => _CreativeChatScreenState();
+  CreativeChatScreenState createState() => CreativeChatScreenState();
 }
 
-class _CreativeChatScreenState extends State<CreativeChatScreen> {
+class CreativeChatScreenState extends State<CreativeChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,9 +85,9 @@ class EmptyChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
-        const Expanded(
+        Expanded(
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

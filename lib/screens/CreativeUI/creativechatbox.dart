@@ -4,7 +4,7 @@ class CreativeChatBox extends StatelessWidget {
   final String message;
   final String time;
 
-  const CreativeChatBox({Key? key, required this.message, required this.time}) : super(key: key);
+  const CreativeChatBox({super.key, required this.message, required this.time});
 
   @override
   Widget build(BuildContext context) {

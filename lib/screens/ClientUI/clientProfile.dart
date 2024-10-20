@@ -1,13 +1,15 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: ProfilePage(),
     );
@@ -18,10 +20,10 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  ProfilePageState createState() => ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class ProfilePageState extends State<ProfilePage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
@@ -50,9 +52,9 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Container(
                   height: 200,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF662C2B),
-                    borderRadius: const BorderRadius.vertical(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF662C2B),
+                    borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(160),
                     ),
                   ),

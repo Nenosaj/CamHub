@@ -6,13 +6,13 @@ class CreativeMessagingScreen extends StatefulWidget {
   const CreativeMessagingScreen({super.key});
 
   @override
-  _CreativeMessagingScreenState createState() => _CreativeMessagingScreenState();
+  CreativeMessagingScreenState createState() => CreativeMessagingScreenState();
 }
 
-class _CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
+class CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
   List<Map<String, String>> messages = []; // List to hold the chat messages and time
 
-  void _addMessage(String message) {
+  void addMessage(String message) {
     final String currentTime = DateFormat('hh:mm a').format(DateTime.now());
     setState(() {
       messages.add({'message': message, 'time': currentTime});
@@ -28,12 +28,12 @@ class _CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
         elevation: 1,
         toolbarHeight: 80, // Increase the height of the AppBar for better visibility
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: const Color(0xFF662C2B), size: 28), // Bigger back button
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF662C2B), size: 28), // Bigger back button
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Row(
+        title: const Row(
           children: [
             CircleAvatar(
               radius: 24, // Make the avatar slightly larger
@@ -60,7 +60,7 @@ class _CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
               },
             ),
           ),
-          Divider(thickness: 1),
+          const Divider(thickness: 1),
         
         ],
       ),

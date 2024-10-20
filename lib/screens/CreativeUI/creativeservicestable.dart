@@ -18,10 +18,10 @@ class ServicePercentageTable extends StatefulWidget {
   const ServicePercentageTable({super.key});
 
   @override
-  _ServicePercentageTableState createState() => _ServicePercentageTableState();
+  ServicePercentageTableState createState() => ServicePercentageTableState();
 }
 
-class _ServicePercentageTableState extends State<ServicePercentageTable> {
+class ServicePercentageTableState extends State<ServicePercentageTable> {
   String selectedMonth = 'October';
 
   // List of service data for each month

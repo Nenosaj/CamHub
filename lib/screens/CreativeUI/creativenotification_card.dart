@@ -7,12 +7,12 @@ class CreativeNotificationCard extends StatelessWidget {
   final bool isNew; // Added flag to mark new notifications
 
   const CreativeNotificationCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     required this.time,
     this.isNew = false, // Default is not new
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -22,10 +22,10 @@ class CreativeAnalytics extends StatefulWidget {
   });
 
   @override
-  _CreativeAnalyticsState createState() => _CreativeAnalyticsState();
+  CreativeAnalyticsState createState() => CreativeAnalyticsState();
 }
 
-class _CreativeAnalyticsState extends State<CreativeAnalytics> {
+class CreativeAnalyticsState extends State<CreativeAnalytics> {
   bool showFullData =
       false; // This will toggle between current and recent months
 

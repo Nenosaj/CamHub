@@ -4,7 +4,7 @@ class ClientChatBox extends StatelessWidget {
   final String message;
   final String time;
 
-  const ClientChatBox({Key? key, required this.message, required this.time}) : super(key: key);
+  const ClientChatBox({super.key, required this.message, required this.time});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class ClientChatBox extends StatelessWidget {
           constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8), // Makes the chat box wider
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Color.fromARGB(255, 233, 153, 152), // Lighter maroon shade
+            color: const Color.fromARGB(255, 233, 153, 152), // Lighter maroon shade
             borderRadius: BorderRadius.circular(24),
           ),
           child: Column(
