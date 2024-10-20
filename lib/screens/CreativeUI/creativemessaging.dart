@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'creativechatbox.dart'; // Import the creative chat box widget
-import 'creativeMessagingPlusButton.dart'; // Import the creative plus button widget
+import 'creativechatbox.dart'; // Import the chat box widget for Creative
 import 'package:intl/intl.dart'; // For formatting time
 
 class CreativeMessagingScreen extends StatefulWidget {
@@ -29,7 +28,7 @@ class _CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
         elevation: 1,
         toolbarHeight: 80, // Increase the height of the AppBar for better visibility
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: const Color(0xFF662C2B), size: 28), // Bigger back button for easier tapping
+          icon: Icon(Icons.arrow_back, color: const Color(0xFF662C2B), size: 28), // Bigger back button
           onPressed: () {
             Navigator.pop(context);
           },
@@ -62,12 +61,7 @@ class _CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
             ),
           ),
           Divider(thickness: 1),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-            child: CreativeMessagingPlusButton(
-              onSendMessage: _addMessage,
-            ),
-          ),
+        
         ],
       ),
     );

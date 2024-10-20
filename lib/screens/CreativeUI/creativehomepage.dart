@@ -1,8 +1,7 @@
-import 'package:example/screens/ClientUI/clientmessage.dart';
-import 'package:example/screens/ClientUI/clientnotifications.dart';
+import 'creativemessage.dart';
+import 'creativenofication.dart';
 import 'package:flutter/material.dart';
 import '../settingspage.dart';
-import 'creativenofication.dart';
 import 'creativeprofile.dart';
 import 'creativeanalytics.dart'; // Import Creative Analytics
 
@@ -63,8 +62,8 @@ class HomePageState extends State<HomePage> {
         totalCustomers: 850,
         totalImpressions: 26000,
       ),
-      const ChatScreen(), // Navigate to your Chat Page
-      const NotificationPage(), // Navigate to your Notifications Page
+      const CreativeChatScreen(), // Navigate to your Chat Page
+      const CreativeNotificationPage(), // Navigate to your Notifications Page
       const ProfilePage(), // Navigate to your Profile Page
     ];
   }
