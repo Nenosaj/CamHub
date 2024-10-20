@@ -11,20 +11,21 @@ class CreativesDetailPage extends StatelessWidget {
     return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text('Higala Films',
               style: TextStyle(color: Color(0xFF662C2B))),
           actions: [
             IconButton(
-              icon: const Icon(Icons.favorite_border),
+              icon: const Icon(Icons.favorite_border, color: Color(0xFF662C2B)),
               onPressed: () {},
             ),
             IconButton(
-              icon: const Icon(Icons.share),
+              icon: const Icon(Icons.share, color: Color(0xFF662C2B)),
               onPressed: () {},
             ),
             IconButton(
-              icon: const Icon(Icons.search),
+              icon: const Icon(Icons.search, color: Color(0xFF662C2B)),
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -36,145 +37,177 @@ class CreativesDetailPage extends StatelessWidget {
             ),
           ],
         ),
-        body: Column(
+        body: Stack(
           children: [
-            // Header with details
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Left side: Image of the logo
-                  ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(8.0), // Rounded corners for image
-                    child: Image.asset(
-                      'assets/images/higala_logo.png', // Replace with your actual image path
-                      width: 80, // Adjusted size for larger image
-                      height: 80,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(width: 10), // Space between image and text
-                  // Middle section: Details (Name, distance, rating, price range)
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Business Name and See Reviews in a row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              children: [
+                // Header with details
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Left side: Image of the logo
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            8.0), // Rounded corners for image
+                        child: Image.asset(
+                          'assets/images/higala_logo.png', // Replace with your actual image path
+                          width: 80, // Adjusted size for larger image
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      const SizedBox(width: 10), // Space between image and text
+                      // Middle section: Details (Name, distance, rating, price range)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Text(
-                                'Higala Films',
-                                style: const TextStyle(
-                                  fontSize: 24, // Larger font size
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow
-                                    .ellipsis, // Prevent text overflow
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CreativeReviews(),
+                            // Business Name and See Reviews in a row
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Higala Films',
+                                    style: const TextStyle(
+                                      fontSize: 24, // Larger font size
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow
+                                        .ellipsis, // Prevent text overflow
                                   ),
-                                );
-                              },
-                              child: const Text(
-                                'See Reviews',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFF662C2B),
-                                  decoration: TextDecoration
-                                      .underline, // Keeps the underline to mimic a link
                                 ),
-                              ),
+                                TextButton(
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const CreativeReviews(),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'See Reviews',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFF662C2B),
+                                      decoration: TextDecoration
+                                          .underline, // Keeps the underline to mimic a link
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Distance
+                            Row(
+                              children: const [
+                                Icon(Icons.location_on,
+                                    color: Color(0xFF662C2B), size: 24.0),
+                                SizedBox(width: 4),
+                                Text(
+                                  '4.4km away',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            // Rating row
+                            Row(
+                              children: const [
+                                Icon(Icons.star,
+                                    color: Color(0xFF662C2B), size: 20),
+                                SizedBox(width: 4),
+                                Text(
+                                  '4.3 1000+ ratings',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                                height:
+                                    4), // Space between rating and price range
+                            // Price Range row
+                            Row(
+                              children: const [
+                                Icon(Icons.attach_money,
+                                    color: Color(0xFF662C2B), size: 20),
+                                SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    'Price Range: ₱5,000 - ₱30,000',
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.black),
+                                    overflow: TextOverflow
+                                        .ellipsis, // Prevent overflow
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        // Distance
-                        Row(
-                          children: const [
-                            Icon(Icons.location_on,
-                                color: Color(0xFF662C2B), size: 24.0),
-                            SizedBox(width: 4),
-                            Text(
-                              '4.4km away',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        // Rating row
-                        Row(
-                          children: const [
-                            Icon(Icons.star,
-                                color: Color(0xFF662C2B), size: 20),
-                            SizedBox(width: 4),
-                            Text(
-                              '4.3 1000+ ratings',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                            height: 4), // Space between rating and price range
-                        // Price Range row
-                        Row(
-                          children: const [
-                            Icon(Icons.attach_money,
-                                color: Color(0xFF662C2B), size: 20),
-                            SizedBox(width: 4),
-                            Flexible(
-                              child: Text(
-                                'Price Range: ₱5,000 - ₱30,000',
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.black),
-                                overflow:
-                                    TextOverflow.ellipsis, // Prevent overflow
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            // Tab bar here
-            const TabBar(
-              indicatorColor: Color(0xFF662C2B), // Color of the underline
-              indicatorWeight: 1.0, // Thickness of the underline
-              labelColor: Color(0xFF662C2B), // Color of the selected tab label
-              unselectedLabelColor:
-                  Colors.black, // Color of unselected tab labels
-              isScrollable: true, // Allows the tabs to scroll if there are many
-              tabs: [
-                Tab(text: 'Packages'),
-                Tab(text: 'Photos'),
-                Tab(text: 'Videos'),
+                ),
+                // Tab bar here
+                const TabBar(
+                  indicatorColor: Color(0xFF662C2B), // Color of the underline
+                  indicatorWeight: 1.0, // Thickness of the underline
+                  labelColor:
+                      Color(0xFF662C2B), // Color of the selected tab label
+                  unselectedLabelColor:
+                      Colors.black, // Color of unselected tab labels
+                  isScrollable:
+                      true, // Allows the tabs to scroll if there are many
+                  tabs: [
+                    Tab(text: 'Packages'),
+                    Tab(text: 'Photos'),
+                    Tab(text: 'Videos'),
+                  ],
+                ),
+                // TabBarView content
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      // First Tab: Packages
+                      _buildPackagesTab(context),
+                      // Second Tab: Photos
+                      _buildPhotosTab(context),
+                      // Third Tab: Videos
+                      _buildVideosTab(context),
+                    ],
+                  ),
+                ),
               ],
             ),
-            // TabBarView content
-            Expanded(
-              child: TabBarView(
+            // Positioned Chat button at the bottom-right corner
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: Column(
                 children: [
-                  // First Tab: Packages
-                  _buildPackagesTab(context),
-                  // Second Tab: Photos
-                  _buildPhotosTab(context),
-                  // Third Tab: Videos
-                  _buildVideosTab(context),
+                  FloatingActionButton(
+                    backgroundColor: Color.fromARGB(255, 250, 250, 250),
+                    onPressed: () {
+                      // Handle chat button press
+                    },
+                    child: Icon(Icons.message),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Chat with us',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ),
                 ],
               ),
             ),
