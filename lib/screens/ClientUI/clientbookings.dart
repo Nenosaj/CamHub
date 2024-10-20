@@ -35,7 +35,7 @@ class _BookingPageState extends State<BookingPage> {
         backgroundColor: const Color(0xFF662C2B), // Maroon background color
         title: const Text(
           'Booking Log',
-           style: TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -124,7 +124,7 @@ class _BookingPageState extends State<BookingPage> {
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFF7B3A3F).withOpacity(0.1)
+              ? const Color(0xFF662C2B).withOpacity(0.1)
               : Colors.grey[200],
           borderRadius: BorderRadius.circular(30),
         ),
