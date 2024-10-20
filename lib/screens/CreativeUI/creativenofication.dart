@@ -64,40 +64,19 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(150),
-        child: AppBar(
-          backgroundColor: const Color(0xFF662C2B), // Maroon color for the AppBar
-          elevation: 0,
-          title: const Text(
-            'Creative Notifications',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          centerTitle: true,
-          flexibleSpace: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 80, 16, 16),
-            child: Container(
-              height: 45,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              child: const TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  hintStyle: TextStyle(fontSize: 16),
-                  prefixIcon: Icon(Icons.search, color: Colors.grey),
-                  contentPadding: EdgeInsets.symmetric(vertical: 10.0),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
+       appBar: AppBar(
+        backgroundColor: const Color(0xFF662C2B),
+        toolbarHeight: 80.0,
+        elevation: 0,
+        title: const Text(
+          'Notifications',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
         ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(

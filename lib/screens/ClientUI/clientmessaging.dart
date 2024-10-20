@@ -1,35 +1,50 @@
 import 'package:flutter/material.dart';
-import 'clientchatbox.dart'; // Import the chat box widget
-import 'clientMessagingPlusButton.dart'; // Import the plus button widget
-import 'package:intl/intl.dart'; // For formatting time
+import 'clientchatbox.dart';
+import 'clientvidpicsmessage.dart';
 
 class MessagingScreen extends StatefulWidget {
-  const MessagingScreen({super.key});
+  final String photographerName;
+
+  const MessagingScreen({super.key, required this.photographerName});
 
   @override
   _MessagingScreenState createState() => _MessagingScreenState();
 }
 
 class _MessagingScreenState extends State<MessagingScreen> {
-  List<Map<String, String>> messages = []; // List to hold the chat messages and time
+  final TextEditingController _controller = TextEditingController();
+  final List<Map<String, String>> _messages = [];
+  bool _showMediaGrid = false; // Controls the visibility of the media grid
 
-  void _addMessage(String message) {
-    final String currentTime = DateFormat('hh:mm a').format(DateTime.now());
+  void _sendMessage() {
+    if (_controller.text.isEmpty) return;
+
+    final messageText = _controller.text;
+    final currentTime = TimeOfDay.now().format(context);
+
     setState(() {
-      messages.add({'message': message, 'time': currentTime});
+      _messages.add({'message': messageText, 'time': currentTime});
+    });
+
+    _controller.clear();
+  }
+
+  // Toggle media grid visibility
+  void _toggleMediaGrid() {
+    setState(() {
+      _showMediaGrid = !_showMediaGrid;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
-        toolbarHeight: 80, // Increase the height of the AppBar for better visibility
+        toolbarHeight: 80,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 253, 253, 253), size: 28), // Bigger back button for easier tapping
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF662C2B), size: 28),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -37,35 +52,91 @@ class _MessagingScreenState extends State<MessagingScreen> {
         title: Row(
           children: [
             CircleAvatar(
-              radius: 24, // Make the avatar slightly larger
-              backgroundImage: AssetImage('assets/profile_image.png'), // Replace with actual image
+              radius: 24,
+              backgroundImage: AssetImage('assets/profile_image.png'),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Text(
-              'Creative',
-              style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold), // Larger text
+              widget.photographerName,
+              style: const TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
             ),
           ],
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                return ClientChatBox(
-                  message: messages[index]['message']!,
-                  time: messages[index]['time']!,
-                );
-              },
-            ),
+          Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _messages.length,
+                  itemBuilder: (context, index) {
+                    final message = _messages[index];
+                    return ClientChatBox(message: message['message']!, time: message['time']!);
+                  },
+                ),
+              ),
+              // Media grid that appears/disappears when the plus button is pressed
+              if (_showMediaGrid)
+                Container(
+                  height: 150, // Adjust the height based on the grid size
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // 2 items per row
+                      crossAxisSpacing: 4,
+                      mainAxisSpacing: 4,
+                    ),
+                    itemCount: 4, // Placeholder for 4 pictures
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.image,
+                          color: Colors.grey,
+                          size: 50,
+                        ), // Placeholder for images
+                      );
+                    },
+                  ),
+                ),
+            ],
           ),
-          Divider(thickness: 1),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-            child: ClientMessagingPlusButton(
-              onSendMessage: _addMessage,
+          Positioned(
+            bottom: _showMediaGrid ? 150 : 0, // Adjust based on media grid visibility
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                children: [
+                  // Plus icon to toggle the media grid, slightly bigger
+                  IconButton(
+                    icon: const Icon(Icons.add_circle, color: Color(0xFF662C2B), size: 36),
+                    onPressed: _toggleMediaGrid,
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: 'Type your message...',
+                        contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16), // Adjusted padding
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                      style: const TextStyle(fontSize: 18), // Larger text size
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.send, color: Color(0xFF662C2B), size: 30), // Larger send button
+                    onPressed: _sendMessage,
+                  ),
+                ],
+              ),
             ),
           ),
         ],

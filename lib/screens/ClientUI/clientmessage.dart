@@ -1,5 +1,5 @@
-import 'package:example/screens/ClientUI/clientmessaging.dart';
 import 'package:flutter/material.dart';
+import 'clientmessagesearchbar.dart'; // Import the search bar logic
 
 void main() {
   runApp(const MyApp());
@@ -16,18 +16,25 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
+
+  @override
+  _ChatScreenState createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  String searchText = ""; // Track the search input
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(220), // Adjusted height to match the screenshot
+        preferredSize: const Size.fromHeight(220), // Keep the original height
         child: AppBar(
-          backgroundColor: const Color(0xFF662C2B),
+          backgroundColor: const Color(0xFF662C2B), // Keep the AppBar design
           title: const Padding(
-            padding: EdgeInsets.only(top: 30.0), // Adjust for better centering of the title
+            padding: EdgeInsets.only(top: 30.0),
             child: Text(
               'Chat',
               style: TextStyle(
@@ -39,48 +46,74 @@ class ChatScreen extends StatelessWidget {
           centerTitle: true,
           elevation: 0,
           flexibleSpace: Padding(
-            padding: const EdgeInsets.fromLTRB(50, 100.0, 50, 50), // Adjust positioning of the search bar
-            child: Container(
-              height: 50, // Adjusted height for the search bar
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 5,
-                    offset: const Offset(0, 2),
+            padding: const EdgeInsets.fromLTRB(50, 100.0, 50, 50),
+            child: Column(
+              children: [
+                Container(
+                  height: 50, // Keep the search bar size
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  hintStyle: const TextStyle(fontSize: 18),
-                  prefixIcon: const Icon(Icons.search, size: 18),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
-                  border: InputBorder.none,
+                  child: TextField(
+                    decoration: const InputDecoration(
+                      hintText: 'Search',
+                      hintStyle: TextStyle(fontSize: 18),
+                      prefixIcon: Icon(Icons.search, size: 18),
+                      contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+                      border: InputBorder.none,
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchText = value.trim().toLowerCase(); // Update search text dynamically
+                      });
+                    },
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
       ),
-      body: const EmptyChatScreen(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SearchUserScreen()),
-          );
-        },
-        backgroundColor: const Color(0xFF662C2B),
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
+      body: Stack(
+        children: [
+          const EmptyChatScreen(), // Keep the original "No messages" content
+          if (searchText.isNotEmpty)
+            Positioned(
+              top: 0, // Bring the dropdown right below the search bar
+              left: 15, // Align the search results with the search bar
+              right: 15, // Ensure the search results stay within bounds
+              child: Material(
+                elevation: 2.0, // Add slight shadow for the dropdown
+                borderRadius: BorderRadius.circular(10.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white, // White background for the search results
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  constraints: BoxConstraints(
+                    maxHeight: _getDropdownHeight(), // Dynamically adjust based on content
+                  ),
+                  child: SearchUserResults(searchText: searchText), // Pass search text to the results
+                ),
+              ),
+            ),
+        ],
       ),
     );
+  }
+
+  // Dynamically calculate the dropdown height based on the number of results
+  double _getDropdownHeight() {
+    int resultsCount = SearchUserResults(searchText: searchText).getResultsCount();
+    return (resultsCount * 60.0).clamp(0.0, 300.0); // Each item is ~60px, limit to 300px
   }
 }
 
@@ -91,7 +124,6 @@ class EmptyChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // No additional search bar here since it's moved into the AppBar section.
         const Expanded(
           child: Center(
             child: Column(
@@ -115,82 +147,6 @@ class EmptyChatScreen extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// New screen for searching users
-class SearchUserScreen extends StatefulWidget {
-  const SearchUserScreen({super.key});
-
-  @override
-  _SearchUserScreenState createState() => _SearchUserScreenState();
-}
-
-class _SearchUserScreenState extends State<SearchUserScreen> {
-  String searchText = "";
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Users'),
-        backgroundColor: const Color(0xFF662C2B),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Search for someone to message...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  searchText = value.trim().toLowerCase();
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-            if (searchText == "creative")
-              GestureDetector(
-                onTap: () {
-                  print('Creative pressed');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MessagingScreen(),
-                    ),
-                  );
-                },
-                child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 24,
-                    backgroundColor: Colors.grey[300],
-                    child: const Icon(Icons.person, color: Colors.white),
-                  ),
-                  title: const Text(
-                    'Creative',
-                    style: TextStyle(fontSize: 18, color: Colors.black),
-                  ),
-                ),
-              ),
-            if (searchText != "creative" && searchText.isNotEmpty)
-              Expanded(
-                child: Center(
-                  child: const Text(
-                    'No results found',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                ),
-              )
-          ],
-        ),
-      ),
     );
   }
 }

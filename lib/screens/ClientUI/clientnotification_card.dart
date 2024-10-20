@@ -21,7 +21,7 @@ class NotificationCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Card(
-        color: const Color(0xFF7B3A3F), // Maroon color
+        color: const Color(0xFF662C2B), // Maroon color
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0),
         ),
@@ -81,7 +81,7 @@ class NotificationCard extends StatelessWidget {
                   onPressed: onPressed,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFF7B3A3F),
+                    foregroundColor: const Color(0xFF662C2B),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),

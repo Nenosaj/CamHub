@@ -1,75 +1,115 @@
 import 'package:flutter/material.dart';
-import 'creativechatbox.dart'; // Import the chat box widget for Creative
-import 'creativeMessagingPlusButton.dart'; // Import the plus button widget for Creative
-import 'package:intl/intl.dart'; // For formatting time
 
-class CreativeMessagingScreen extends StatefulWidget {
-  const CreativeMessagingScreen({super.key});
-
-  @override
-  _CreativeMessagingScreenState createState() => _CreativeMessagingScreenState();
+void main() {
+  runApp(const MyApp());
 }
 
-class _CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
-  List<Map<String, String>> messages = []; // List to hold the chat messages and time
-
-  void _addMessage(String message) {
-    final String currentTime = DateFormat('hh:mm a').format(DateTime.now());
-    setState(() {
-      messages.add({'message': message, 'time': currentTime});
-    });
-  }
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: CreativeChatScreen(),
+    );
+  }
+}
+
+class CreativeChatScreen extends StatefulWidget {
+  const CreativeChatScreen({super.key});
+
+  @override
+  _CreativeChatScreenState createState() => _CreativeChatScreenState();
+}
+
+class _CreativeChatScreenState extends State<CreativeChatScreen> {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        toolbarHeight: 80, // Increase the height of the AppBar for better visibility
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: const Color(0xFF662C2B), size: 28), // Bigger back button
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 24, // Make the avatar slightly larger
-              backgroundImage: AssetImage('assets/profile_image.png'), // Replace with actual image
-            ),
-            SizedBox(width: 12),
-            Text(
-              'Client', // Change this label based on your need
-              style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold), // Larger text
-            ),
-          ],
-        ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                return CreativeChatBox(
-                  message: messages[index]['message']!,
-                  time: messages[index]['time']!,
-                );
-              },
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(220), // Keep the original height
+        child: AppBar(
+          backgroundColor: const Color(0xFF662C2B), // Keep the AppBar design
+          title: const Padding(
+            padding: EdgeInsets.only(top: 30.0),
+            child: Text(
+              'Chat',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 25,
+              ),
             ),
           ),
-          Divider(thickness: 1),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-            child: CreativeMessagingPlusButton(
-              onSendMessage: _addMessage,
+          centerTitle: true,
+          elevation: 0,
+          flexibleSpace: Padding(
+            padding: const EdgeInsets.fromLTRB(50, 100.0, 50, 50),
+            child: Column(
+              children: [
+                Container(
+                  height: 50, // Keep the search bar size
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search',
+                      hintStyle: TextStyle(fontSize: 18),
+                      prefixIcon: Icon(Icons.search, size: 18),
+                      contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+                      border: InputBorder.none,
+                    ),
+                    enabled: false, // Disable input and search functionality
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
+      body: const EmptyChatScreen(), // Keep the original "No messages" content
+    );
+  }
+}
+
+class EmptyChatScreen extends StatelessWidget {
+  const EmptyChatScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.chat_bubble_outline,
+                  size: 80,
+                  color: Colors.grey,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'No Messages',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
