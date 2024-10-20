@@ -35,7 +35,7 @@ class _BookingPageState extends State<BookingPage> {
         backgroundColor: const Color(0xFF662C2B), // Maroon background color
         title: const Text(
           'Booking Log',
-           style: TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -45,11 +45,6 @@ class _BookingPageState extends State<BookingPage> {
       ),
       body: Column(
         children: [
-<<<<<<< HEAD
-          // Tabs for Ongoing, Completed, Cancelled
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-=======
           // Search Bar at the top
           Padding(
             padding:
@@ -92,7 +87,6 @@ class _BookingPageState extends State<BookingPage> {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
->>>>>>> 8cf812a313107714673d40dcac5e593187a3511d
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -129,13 +123,9 @@ class _BookingPageState extends State<BookingPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
         decoration: BoxDecoration(
-<<<<<<< HEAD
-          color: isSelected ? const Color(0xFF662C2B).withOpacity(0.1) : Colors.grey[200],
-=======
           color: isSelected
-              ? const Color(0xFF7B3A3F).withOpacity(0.1)
+              ? const Color(0xFF662C2B).withOpacity(0.1)
               : Colors.grey[200],
->>>>>>> 8cf812a313107714673d40dcac5e593187a3511d
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
