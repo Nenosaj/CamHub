@@ -34,11 +34,13 @@ class _BookingPageState extends State<BookingPage> {
         children: [
           // Search Bar at the top
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 16.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 30.0, vertical: 16.0),
             child: Container(
               height: 50,
               decoration: BoxDecoration(
-                color: const Color(0xFF7B3A3F), // Maroon color for search box background
+                color: const Color(
+                    0xFF7B3A3F), // Maroon color for search box background
                 borderRadius: BorderRadius.circular(30.0), // Rounded corners
               ),
               child: Row(
@@ -70,7 +72,8 @@ class _BookingPageState extends State<BookingPage> {
           ),
           // Tabs for Ongoing, Completed, Cancelled
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -107,7 +110,9 @@ class _BookingPageState extends State<BookingPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF7B3A3F).withOpacity(0.1) : Colors.grey[200],
+          color: isSelected
+              ? const Color(0xFF7B3A3F).withOpacity(0.1)
+              : Colors.grey[200],
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
@@ -199,7 +204,8 @@ class _BookingPageState extends State<BookingPage> {
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: const Color(0xFF7B3A3F),
                     borderRadius: BorderRadius.circular(12),
@@ -275,7 +281,8 @@ class _BookingPageState extends State<BookingPage> {
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.red, // Red color to indicate cancellation
                     borderRadius: BorderRadius.circular(12),
