@@ -147,7 +147,7 @@ class HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      const ChatScreen(), // Navigate to your Chat Page
+      //const ChatScreen(), // Navigate to your Chat Page
       const BookingPage(), // Navigate to your Bookings Page
       const NotificationPage(), // Navigate to your Notifications Page
       const ProfilePage(), // Navigate to your Profile Page

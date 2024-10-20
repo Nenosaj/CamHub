@@ -42,9 +42,3 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 *
-
-# Allow specific Dart files to be tracked
-!client_bookingconfirmation.dart
-!client_bookingdetails.dart
-!client_requestsummary.dart
-!client_packagedetails.dart
