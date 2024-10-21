@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'registration/signupscreen.dart';
+import 'package:example/screens/authentication.dart'; 
+import 'package:example/screens/loadingstate.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MyApp2());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp2 extends StatelessWidget {
+  const MyApp2({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +29,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final Map<String, String> adminCredentials = {
-    'email': 'admin',
-    'password': 'admin123'
-  };
-  final Map<String, String> clientCredentials = {
-    'email': 'client',
-    'password': 'client123'
-  };
-  final Map<String, String> creativeCredentials = {
-    'email': 'creative',
-    'password': 'creative123'
-  };
+
+  void initState() {
+    super.initState();
+    // Automatically hide loading dialog once the second page is loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      LoadingState.showLoading(context, false); // Hide loading dialog
+    });
+  }
+
+ 
+    final Authentication authController = Authentication(); 
 
   // Controllers for text fields
   final TextEditingController emailController = TextEditingController();
@@ -236,40 +238,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: () {
                                     final email = emailController.text;
                                     final password = passwordController.text;
+                                    LoadingState.showLoading(context, true);
 
-                                    // Check against hardcoded credentials
-                                    if (email == adminCredentials['email'] &&
-                                        password ==
-                                            adminCredentials['password']) {
-                                      Navigator.pushNamed(context, '/admin');
-                                    } else if (email ==
-                                            clientCredentials['email'] &&
-                                        password ==
-                                            clientCredentials['password']) {
-                                      Navigator.pushNamed(context, '/client');
-                                    } else if (email ==
-                                            creativeCredentials['email'] &&
-                                        password ==
-                                            creativeCredentials['password']) {
-                                      Navigator.pushNamed(context, '/creative');
-                                    } else {
-                                      // Show an error if login fails
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: const Text('Login Failed'),
-                                          content: const Text(
-                                              'Invalid email or password.'),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text('OK'),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }
+                                    authController.signIn(email, password, context);
+
+                          
+                                    
                                   },
                                   child: const Text(
                                     'Log in',
@@ -282,10 +256,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 // Sign-up Link
                                 TextButton(
                                   onPressed: () {
+                                      LoadingState.showLoading(context, true);
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
+                                          
                                               const SignUpScreen()),
                                     );
                                   },

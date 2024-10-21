@@ -5,6 +5,8 @@ import '../settingspage.dart';
 import 'creativeprofile.dart';
 import 'creativeanalytics.dart'; 
 import 'creativeuploadbutton.dart';
+import 'package:example/screens/loadingstate.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,8 +15,12 @@ class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
 }
 
+
+
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +55,15 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class HomePageState extends State<HomePage> {
+
+  void initState() {
+    super.initState();
+    // Automatically hide loading dialog once the second page is loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      LoadingState.showLoading(context, false); // Hide loading dialog
+    });
+  }
+
   int _currentIndex = 0;
 
   // Add the CreativeAnalytics as a part of the pages

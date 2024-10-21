@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../main.dart';
+import 'package:example/screens/authentication.dart'; 
+import 'package:example/screens/loadingstate.dart';
+
 
 
 class SettingsPage extends StatelessWidget {
@@ -7,6 +9,9 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final Authentication authController = Authentication(); // Initialize Authentication controller
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B), // Maroon color
@@ -104,13 +109,11 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(height: 50), // Spacer to push the logout option down
           ListTile(
             title: TextButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          const MyApp()), // Replace LoginScreen with your actual widget
-                );
+              onPressed: () async {
+                // Call signOut method from Authentication class
+                LoadingState.showLoading(context, true);
+
+                await authController.signOut(context);
               },
               child: const Text('Log Out', style: TextStyle(color: Colors.red)),
             ),

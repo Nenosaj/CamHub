@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:example/screens/registration/fillupcreatives.dart';
 import 'package:example/screens/registration/fillupclient.dart';
+import 'package:example/screens/registration/credentials_upload.dart';
+import 'package:example/screens/loadingstate.dart';
+
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -10,6 +12,15 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class SignUpScreenState extends State<SignUpScreen> {
+
+  void initState() {
+    super.initState();
+    // Automatically hide loading dialog once the second page is loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      LoadingState.showLoading(context, false); // Hide loading dialog
+    });
+  }
+
   // Variable to store selected role
   String selectedRole = '';
 
@@ -87,7 +98,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const FillUpPageCreatives(),
+                          builder: (context) => CredentialsUpload(),
                         ),
                       );
                     },
