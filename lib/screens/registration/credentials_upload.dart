@@ -417,8 +417,19 @@ class CredentialsUploadState extends State<CredentialsUpload> {
                           ? () async {
                            try {
                              // Call the registerClient function from the Authentication controller
-                             await authController.registerClient(businessEmailController.text, 'creative', context);
+                             await authController.registerCreative(
+                              businessEmailController.text, 
+                              businessNameController.text,
+                              unitNumberController.text,
+                              streetController.text,
+                              villageController.text,
+                              barangayController.text,
+                              cityController.text, 
+                              provinceController.text,
+                              businessPhoneNumberController.text, 
+                              context);
                             } catch (e) {
+                             // ignore: avoid_print
                              print('Error during registration: $e');
                             }
                              }

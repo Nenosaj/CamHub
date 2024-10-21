@@ -16,10 +16,10 @@ class CreativeNotificationCard extends StatefulWidget {
   });
 
   @override
-  _CreativeNotificationCardState createState() => _CreativeNotificationCardState();
+  CreativeNotificationCardState createState() => CreativeNotificationCardState();
 }
 
-class _CreativeNotificationCardState extends State<CreativeNotificationCard> {
+class CreativeNotificationCardState extends State<CreativeNotificationCard> {
   late bool _isSeen; // Track whether the notification has been pressed
 
   @override

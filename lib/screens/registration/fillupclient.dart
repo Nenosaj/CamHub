@@ -280,11 +280,23 @@ class FillUpPageClientState extends State<FillUpPageClient> {
                         onPressed: (isPrivacyChecked && isTermsChecked && allFieldsFilled)
                           ? () async {
                            try {
-                              LoadingState.showLoading(context, true);
-
                              // Call the registerClient function from the Authentication controller
-                             await authController.registerClient(emailController.text, 'client', context);
+                             await authController.registerClient(
+                              emailController.text,  
+                              firstNameController.text, 
+                              middleNameController.text,
+                              lastNameController.text,
+                              birthdayController.text,
+                              unitNumberController.text,
+                              streetController.text,
+                              villageController.text,
+                              barangayController.text,
+                              cityController.text,
+                              provinceController.text,
+                              phoneNumberController.text,
+                              context);
                             } catch (e) {
+                             // ignore: avoid_print
                              print('Error during registration: $e');
                             }
                              }

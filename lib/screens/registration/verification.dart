@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class Verification extends StatefulWidget {
   final String email;
-  const Verification({Key? key, required this.email}) : super(key: key);
+  const Verification({super.key, required this.email});
 
   @override
   VerificationState createState() => VerificationState();
@@ -92,6 +92,7 @@ Future<void> checkEmailVerification() async {
   if (user?.emailVerified ?? false) {
     // Navigate to the setpassword.dart page if email is verified
     Navigator.pushReplacement(
+      // ignore: use_build_context_synchronously
       context,
       MaterialPageRoute(
         builder: (context) => SetPassword(email: widget.email),
@@ -99,6 +100,7 @@ Future<void> checkEmailVerification() async {
     );
   } else {
     // Show a message if the email is not verified
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Please verify your email before proceeding')),
     );

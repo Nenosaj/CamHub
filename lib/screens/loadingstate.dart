@@ -23,10 +23,10 @@ class CameraLoadingIndicator extends StatefulWidget {
   const CameraLoadingIndicator({super.key});
 
   @override
-  _CameraLoadingIndicatorState createState() => _CameraLoadingIndicatorState();
+  CameraLoadingIndicatorState createState() => CameraLoadingIndicatorState();
 }
 
-class _CameraLoadingIndicatorState extends State<CameraLoadingIndicator>
+class CameraLoadingIndicatorState extends State<CameraLoadingIndicator>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;

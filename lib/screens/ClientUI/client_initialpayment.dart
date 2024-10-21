@@ -15,10 +15,10 @@ class InitialPayment extends StatefulWidget {
   });
 
   @override
-  _InitialPaymentState createState() => _InitialPaymentState();
+  InitialPaymentState createState() => InitialPaymentState();
 }
 
-class _InitialPaymentState extends State<InitialPayment> {
+class InitialPaymentState extends State<InitialPayment> {
   String?
       _selectedInitialPaymentMethod; // Store selected initial payment method
   String? _selectedFullPaymentMethod; // Store selected full payment method

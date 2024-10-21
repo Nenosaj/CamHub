@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:example/screens/authentication.dart';
-import 'package:example/screens/loadingstate.dart';
+//import 'package:example/screens/loadingstate.dart';
 
 
 class SetPassword extends StatefulWidget {
@@ -30,17 +30,13 @@ class SetPasswordState extends State<SetPassword> {
   String confirmPassword = '';
 
   @override
-  void initState() {
+   void initState() {
     super.initState();
     _passwordController.addListener(_updatePassword);
     _confirmPasswordController.addListener(_updatePassword);
 
-
-     WidgetsBinding.instance.addPostFrameCallback((_) {
-      LoadingState.showLoading(context, false); // Hide loading dialog
-    });
   }
-
+  
   @override
   void dispose() {
     _passwordController.dispose();

@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 class SelectCategory extends StatefulWidget {
   final Function(String) onCategorySelected;
 
-  const SelectCategory({Key? key, required this.onCategorySelected})
-      : super(key: key);
+  const SelectCategory({super.key, required this.onCategorySelected});
 
   @override
-  _SelectCategoryState createState() => _SelectCategoryState();
+  SelectCategoryState createState() => SelectCategoryState();
 }
 
-class _SelectCategoryState extends State<SelectCategory> {
+class SelectCategoryState extends State<SelectCategory> {
   String? _selectedCategory; // To store the currently selected category
 
   @override

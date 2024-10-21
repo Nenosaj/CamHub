@@ -2,11 +2,13 @@ import 'package:example/screens/CreativeUI/creative_selectCategoryUpload.dart';
 import 'package:flutter/material.dart';
 
 class UploadPackage extends StatefulWidget {
+  const UploadPackage({super.key});
+
   @override
-  _UploadPackageState createState() => _UploadPackageState();
+  UploadPackageState createState() => UploadPackageState();
 }
 
-class _UploadPackageState extends State<UploadPackage> {
+class UploadPackageState extends State<UploadPackage> {
   String? selectedCategory;
   String? priceInput;
   List<String> addOns = [""];

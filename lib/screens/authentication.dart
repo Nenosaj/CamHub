@@ -12,7 +12,21 @@ class Authentication {
 
 
   // Function to register a new client
-  Future<void> registerClient(String email, String userType , BuildContext context) async {
+  Future<void> registerClient(
+    String email,
+    String firstName,    
+    String middleName,   
+    String lastName,     
+    String birthday,     
+    String unitNumber,   
+    String street,       
+    String village,      
+    String barangay,     
+    String city,         
+    String province,     
+    String phoneNumber,  
+    BuildContext context
+    ) async {
 
     try {
       
@@ -21,32 +35,43 @@ class Authentication {
         password: 'TemporaryPassword123', // Temporary password
       );
 
-      await _firestore.collection('users').doc(userCredential.user?.uid).set({
-        'email': email,
-        'userType': userType, // Store whether the user is client or creative
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      String uid = userCredential.user?.uid ?? '';
+
+
+        if (uid.isNotEmpty) {
+    // Add general user information to Firestore
+    await _firestore.collection('users').doc(uid).set({
+      'email': email,
+      'userType': 'client',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    // Add client-specific details to Firestore
+    await _firestore.collection('clients').doc(uid).set({
+      'firstName': firstName,
+      'middleName': middleName,
+      'lastName': lastName,
+      'birthday': birthday,
+      'unitNumber': unitNumber,
+      'street': street,
+      'village': village,
+      'barangay': barangay,
+      'city': city,
+      'province': province,
+      'phoneNumber': phoneNumber,
+    });
 
 
 
-      if (userType == 'client') {
-        // Navigate to the client-specific SetPassword page
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SetPassword(email: email),
-          ),
-        );
-      } else if (userType == 'creative') {
-        // Navigate to the creative-specific SetPassword page or other pages
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SetPassword(email: email),
-          ),
-        );
-      }
-    
+     Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SetPassword(email: email),
+      ),
+    );
+  } else {
+    print('User ID is empty, navigation aborted.');
+  }
     } catch (e) {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -54,6 +79,72 @@ class Authentication {
       );
     } 
   }
+
+  // Function to register a new creative
+Future<void> registerCreative(
+  String businessEmail,
+  String businessName,  // Creatives may have business-specific details
+  String unitNumber,  // Example creative-specific detail
+  String street,          
+  String village,   
+  String barangay,
+  String city,
+  String province,
+  String businessPhoneNumber,
+  BuildContext context
+) async {
+  try {
+    // Create the user in Firebase Authentication
+    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      email: businessEmail,
+      password: 'TemporaryPassword123',
+    );
+
+    String uid = userCredential.user?.uid ?? '';
+    if (uid.isEmpty) {
+      print("User ID is null or empty.");
+    }
+
+    // Store general user information in the 'users' collection
+    await _firestore.collection('users').doc(uid).set({
+      'email': businessEmail,
+      'userType': 'creative',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    // Store creative-specific information in the 'creatives' collection
+    await _firestore.collection('creatives').doc(uid).set({
+      'businessName': businessName,
+      'unitNumber': unitNumber,
+      'street': street,
+      'village': village,
+      'barangay': barangay,
+      'city': city,
+      'province': province,
+      'businessPhoneNumber': businessPhoneNumber,
+    }).catchError((error) {
+      print('Failed to add creative: $error');
+    });
+
+
+    if (uid.isNotEmpty) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SetPassword(email: businessEmail),
+      ),
+    );
+  } else {
+    print('User ID is empty, navigation aborted.');
+  }
+  } catch (e) {
+    print('Error: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Registration failed: $e')),
+    );
+  }
+}
+
 
   // Function to update the user's password
   Future<void> updatePassword(String newPassword, BuildContext context) async {
