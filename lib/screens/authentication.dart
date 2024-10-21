@@ -227,11 +227,17 @@ class Authentication {
       } else if (e.code == 'wrong-password') {
         errorMessage = 'Incorrect password.';
       } else {
-        errorMessage = 'An error occurred. Please try again.';
+        errorMessage = 'Incorrect Username or Password. Please try again.';
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
+        SnackBar(
+          content: Text(
+            'Incorrect Username or Password. Please try again.',
+            style: TextStyle(color: Colors.white), // White text for visibility
+          ),
+          backgroundColor: Colors.red, // Red background for the container
+        ),
       );
     } catch (e) {
       // Handle other errors
