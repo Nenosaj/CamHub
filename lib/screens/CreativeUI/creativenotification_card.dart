@@ -37,7 +37,7 @@ class _CreativeNotificationCardState extends State<CreativeNotificationCard> {
       context,
       MaterialPageRoute(
         builder: (context) => CreativeNotificationAppointment(
-          clientName: 'Client C. User',
+          clientName: 'Client',
           contactNumber: '00000000000',
           message: "I'd like to schedule a photo session. Please let me know your availability.",
           eventTitle: 'Debut',

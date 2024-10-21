@@ -49,7 +49,7 @@ class CreativeNotificationAppointment extends StatelessWidget {
                 CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.grey[300],
-                  backgroundImage: AssetImage(
+                  backgroundImage: const AssetImage(
                       'assets/images/company_logo.png'), // Example placeholder for logo
                 ),
                 const SizedBox(width: 10),
