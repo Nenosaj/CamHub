@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:example/screens/registration/verification.dart';
+import 'package:example/screens/authentication.dart';
+
+
 
 class CredentialsUpload extends StatefulWidget {
-  const CredentialsUpload({super.key});
+   const CredentialsUpload({super.key});
 
   @override
   CredentialsUploadState createState() => CredentialsUploadState();
 }
 
 class CredentialsUploadState extends State<CredentialsUpload> {
+
+    final Authentication authController = Authentication();
+
+
+  bool isPrivacyChecked = false; // For first checkbox
+  bool isTermsChecked = false; // For second checkbox
+  bool showError =
+      false; // Flag to show error message if checkboxes are not ticked
+
+  bool allFieldsFilled = false;
+
+
   bool isSmallBusinessChecked = false; // Checkbox for Small Business
   bool isLargeBusinessChecked = false; // Checkbox for Large Business
 
@@ -98,6 +112,21 @@ class CredentialsUploadState extends State<CredentialsUpload> {
           businessPhoneNumber = value;
           break;
       }
+      _validateFields(); 
+    });
+  }
+
+  void _validateFields() {
+    setState(() {
+      allFieldsFilled = businessName.isNotEmpty &&
+          unitNumber.isNotEmpty &&
+          street.isNotEmpty &&
+          village.isNotEmpty &&
+          barangay.isNotEmpty &&
+          city.isNotEmpty &&
+          province.isNotEmpty &&
+          businessEmail.isNotEmpty &&
+          businessPhoneNumber.isNotEmpty;
     });
   }
 
@@ -331,12 +360,48 @@ class CredentialsUploadState extends State<CredentialsUpload> {
               ),
 
               const SizedBox(height: 30),
+               buildCheckbox(
+                  context,
+                  'I agree to the collection and use of data that I have provided to CamHUB through this application. I understand that the collection and use of this data, which may include personal information and sensitive personal information, shall be in accordance with the ',
+                  'Privacy Policy of CamHUB',
+                  isPrivacyChecked,
+                  (value) {
+                    setState(() {
+                      isPrivacyChecked = value!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 5),
+                buildCheckbox(
+                  context,
+                  'I agree to the ',
+                  'Terms and Conditions of CamHUB',
+                  isTermsChecked,
+                  (value) {
+                    setState(() {
+                      isTermsChecked = value!;
+                    });
+                  },
+                ),
+                if (showError)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      'Please agree to the Privacy Policy and Terms to continue.',
+                      style: TextStyle(color: Colors.red, fontSize: 14),
+                    ),
+                  ),
+                const SizedBox(height: 30),
 
-              // Next Button to proceed to Verification
+
               Center(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFF662C2B),
+                   color: (isPrivacyChecked &&
+                              isTermsChecked &&
+                              allFieldsFilled)
+                          ? const Color(0xFF662C2B)
+                          : Colors.grey,
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
@@ -348,14 +413,16 @@ class CredentialsUploadState extends State<CredentialsUpload> {
                     ],
                   ),
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Navigate to the Verification class
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Verification()),
-                      );
-                    },
+                     onPressed: (isPrivacyChecked && isTermsChecked && allFieldsFilled)
+                          ? () async {
+                           try {
+                             // Call the registerClient function from the Authentication controller
+                             await authController.registerClient(businessEmailController.text, 'creative', context);
+                            } catch (e) {
+                             print('Error during registration: $e');
+                            }
+                             }
+                            : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,
@@ -406,4 +473,35 @@ class CredentialsUploadState extends State<CredentialsUpload> {
       ),
     );
   }
+
+   Widget buildCheckbox(BuildContext context, String text, String linkText,
+      bool isChecked, Function(bool?) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Checkbox(
+            value: isChecked,
+            onChanged: onChanged,
+          ),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                text: text,
+                style: const TextStyle(color: Colors.black),
+                children: [
+                  TextSpan(
+                    text: linkText,
+                    style: const TextStyle(color: Colors.blue),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 }

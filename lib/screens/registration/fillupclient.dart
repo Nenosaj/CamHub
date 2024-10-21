@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:example/screens/registration/verification.dart';
+//import 'package:example/screens/registration/verification.dart';
 import 'package:intl/intl.dart'; // For formatting the date
+import 'package:example/screens/authentication.dart';
+import 'package:example/screens/loadingstate.dart';
+
 
 class FillUpPageClient extends StatefulWidget {
   const FillUpPageClient({super.key});
@@ -10,6 +13,10 @@ class FillUpPageClient extends StatefulWidget {
 }
 
 class FillUpPageClientState extends State<FillUpPageClient> {
+  final Authentication authController = Authentication();
+  
+
+
   bool isPrivacyChecked = false; // For first checkbox
   bool isTermsChecked = false; // For second checkbox
   bool showError =
@@ -270,35 +277,32 @@ class FillUpPageClientState extends State<FillUpPageClient> {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: (isPrivacyChecked &&
-                              isTermsChecked &&
-                              allFieldsFilled)
-                          ? () {
-                              // Navigate to the Verification class
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const Verification()),
-                              );
+                        onPressed: (isPrivacyChecked && isTermsChecked && allFieldsFilled)
+                          ? () async {
+                           try {
+                              LoadingState.showLoading(context, true);
+
+                             // Call the registerClient function from the Authentication controller
+                             await authController.registerClient(emailController.text, 'client', context);
+                            } catch (e) {
+                             print('Error during registration: $e');
                             }
-                          : null, // Disable button if conditions are not met
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors
-                            .transparent, // Make the button background transparent
-                        shadowColor: Colors
-                            .transparent, // Remove default shadow of ElevatedButton
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 140, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(8), // Rounded edges
+                             }
+                            : null, // Disable button if conditions are not met
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent, // Make the button background transparent
+                          shadowColor: Colors.transparent, // Remove default shadow of ElevatedButton
+                          padding: const EdgeInsets.symmetric(horizontal: 140, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8), // Rounded edges
+                          ),
+                        ),
+                        child: const Text(
+                          'Next',
+                          style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                       ),
-                      child: const Text(
-                        'Next',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
+
                   ),
                 ),
               ],

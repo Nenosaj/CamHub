@@ -18,6 +18,13 @@ dependencies:
   cupertino_icons: ^1.0.8
   table_calendar: ^3.0.0
 
+   # Firebase Core dependency
+  firebase_core: ^3.6.0  # You can use the latest version from pub.dev
+
+  # Optional: If you plan to use Firebase Authentication or other services
+  firebase_auth: ^5.3.1  # Example for Firebase Authentication
+  cloud_firestore: ^5.4.4  # Example for Firestore if you're using it
+
   # Updated intl package for date formatting
   intl: ^0.17.0
 
@@ -27,7 +34,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true

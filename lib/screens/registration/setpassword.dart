@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:example/screens/loginscreen.dart';
+import 'package:example/screens/authentication.dart';
+import 'package:example/screens/loadingstate.dart';
+
 
 class SetPassword extends StatefulWidget {
-  const SetPassword({super.key});
+  final String email;  
+
+  const SetPassword({super.key, required this.email});
 
   @override
   SetPasswordState createState() => SetPasswordState();
 }
 
 class SetPasswordState extends State<SetPassword> {
+
+
+  final Authentication authController = Authentication();
+
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -27,6 +34,11 @@ class SetPasswordState extends State<SetPassword> {
     super.initState();
     _passwordController.addListener(_updatePassword);
     _confirmPasswordController.addListener(_updatePassword);
+
+
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+      LoadingState.showLoading(context, false); // Hide loading dialog
+    });
   }
 
   @override
@@ -59,6 +71,7 @@ class SetPasswordState extends State<SetPassword> {
         containsSpecialCharacter &&
         hasMinimumLength;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -234,13 +247,8 @@ class SetPasswordState extends State<SetPassword> {
                   ),
                   child: ElevatedButton(
                     onPressed: isPasswordValid && doPasswordsMatch
-                        ? () {
-                            // Navigate to LoginScreen
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginScreen()),
-                            );
+                        ? () async {
+                          await authController.updatePassword(_passwordController.text, context);
                           }
                         : null, // Disable button if password is invalid
                     style: ElevatedButton.styleFrom(
@@ -253,7 +261,7 @@ class SetPasswordState extends State<SetPassword> {
                       ),
                     ),
                     child: const Text(
-                      'Sign Up',
+                      'Set Password',
                       style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   ),

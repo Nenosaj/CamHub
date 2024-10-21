@@ -2,15 +2,22 @@
 
 import 'package:flutter/material.dart';
 import 'package:example/screens/registration/setpassword.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class Verification extends StatefulWidget {
-  const Verification({super.key});
+  final String email;
+  const Verification({Key? key, required this.email}) : super(key: key);
 
   @override
   VerificationState createState() => VerificationState();
 }
 
 class VerificationState extends State<Verification> {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+
+    
+
   final _digitControllers =
       List.generate(4, (index) => TextEditingController());
   final _focusNodes = List.generate(4, (index) => FocusNode());
@@ -75,6 +82,28 @@ class VerificationState extends State<Verification> {
       ),
     );
   }
+
+Future<void> checkEmailVerification() async {
+  User? user = _auth.currentUser;
+
+  // Reload the user to get the latest email verification status
+  await user?.reload();
+
+  if (user?.emailVerified ?? false) {
+    // Navigate to the setpassword.dart page if email is verified
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SetPassword(email: widget.email),
+      ),
+    );
+  } else {
+    // Show a message if the email is not verified
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Please verify your email before proceeding')),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -174,21 +203,16 @@ class VerificationState extends State<Verification> {
                   ],
                 ),
                 child: ElevatedButton(
-                  onPressed: isComplete
-                      ? () {
-                          // Navigate to the SetPassword class after verification
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SetPassword()),
-                          );
+                      onPressed: isComplete
+                      ? () async {
+                          // Call checkEmailVerification to verify the email before navigating
+                          await checkEmailVerification();
                         }
                       : null, // Disable button if the input is incomplete
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 120, vertical: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 120, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -206,3 +230,5 @@ class VerificationState extends State<Verification> {
     );
   }
 }
+
+
