@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'creative_notificationappointment.dart';
 
 class CreativeNotificationCard extends StatefulWidget {
   final String title;
@@ -31,20 +32,56 @@ class _CreativeNotificationCardState extends State<CreativeNotificationCard> {
     setState(() {
       _isSeen = true; // Mark the notification as seen
     });
+    // Navigate to the appointment screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreativeNotificationAppointment(
+          clientName: 'Client C. User',
+          contactNumber: '00000000000',
+          message: "I'd like to schedule a photo session. Please let me know your availability.",
+          eventTitle: 'Debut',
+          eventDate: 'Fri, Dec 31, 2025',
+          eventTime: '12:00 PM - 3:30 PM',
+          eventLocation: 'Lumbia, Cagayan de Oro, Philippines',
+          packageName: 'Package 1',
+          services: [
+            'Drone Shot',
+            '5 more pictures',
+            '1-minute video',
+            '2-minutes video',
+            '3-minutes video',
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
-      child: GestureDetector(
-        onTap: _handlePress, // Handle press event
-        child: Card(
-          elevation: 1,
-          shape: RoundedRectangleBorder(
+      child: InkWell(
+        onTap: _handlePress,
+        splashColor: Colors.grey.withOpacity(0.2), // Splash effect color
+        highlightColor: Colors.grey.withOpacity(0.1), // Highlight effect color when pressed
+        borderRadius: BorderRadius.circular(12), // To match the card's border radius
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            color: _isSeen ? Colors.white : Colors.white, // White when pressed
+            boxShadow: [
+              if (_isSeen)
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3), // Subtle shadow after press
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: const Offset(0, 2),
+                ),
+            ],
             borderRadius: BorderRadius.circular(12),
           ),
-          color: _isSeen ? Colors.white : const Color.fromARGB(255, 218, 200, 200), // Dark grey for new, white for seen
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(

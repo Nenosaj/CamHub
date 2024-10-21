@@ -16,8 +16,8 @@ const List<Map<String, dynamic>> creativeNotifications = [
     "isNew": false,
   },
   {
-    "title": "Payment Transferred",
-    "message": "Payment has been successfully transferred to your account.",
+    "title": "Appointment Request",
+    "message": "A new client has requested an appointment.",
     "time": "Yesterday",
     "isNew": false,
   },
