@@ -3,10 +3,8 @@ import 'creativenofication.dart';
 import 'package:flutter/material.dart';
 import '../settingspage.dart';
 import 'creativeprofile.dart';
-import 'creativeanalytics.dart'; 
+import 'creativeanalytics.dart';
 import 'creativeuploadbutton.dart';
-import 'package:example/screens/loadingstate.dart';
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,12 +13,8 @@ class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
 }
 
-
-
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +49,6 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class HomePageState extends State<HomePage> {
-
-
   int _currentIndex = 0;
 
   // Add the CreativeAnalytics as a part of the pages
@@ -70,7 +62,10 @@ class HomePageState extends State<HomePage> {
         totalCustomers: 850,
         totalImpressions: 26000,
       ),
-      const CreativeChatScreen(clientName: '', messages: [],), // Navigate to your Chat Page
+      const CreativeChatScreen(
+        clientName: '',
+        messages: [],
+      ), // Navigate to your Chat Page
       const CreativeUploadButton(),
       const CreativeNotificationPage(), // Navigate to your Notifications Page
       const ProfilePage(), // Navigate to your Profile Page
@@ -78,7 +73,7 @@ class HomePageState extends State<HomePage> {
   }
 
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: _currentIndex == 0 ? const HomeAppBar() : null,
       body: _getPages()[_currentIndex],

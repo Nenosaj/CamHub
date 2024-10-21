@@ -1,6 +1,6 @@
 import 'package:example/screens/CreativeUI/creative_AccountsMessaged.dart';
 import 'package:flutter/material.dart';
-import 'creativemessagesearchbar.dart';  // Import the search bar logic
+import 'creativemessagesearchbar.dart'; // Import the search bar logic
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +21,8 @@ class CreativeChatScreen extends StatefulWidget {
   final String clientName;
   final List messages;
 
-  const CreativeChatScreen({super.key, required this.clientName, required this.messages});
+  const CreativeChatScreen(
+      {super.key, required this.clientName, required this.messages});
 
   @override
   CreativeChatScreenState createState() => CreativeChatScreenState();
@@ -76,7 +77,9 @@ class CreativeChatScreenState extends State<CreativeChatScreen> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        searchText = value.trim().toLowerCase(); // Update search text dynamically
+                        searchText = value
+                            .trim()
+                            .toLowerCase(); // Update search text dynamically
                       });
                     },
                   ),
@@ -99,13 +102,16 @@ class CreativeChatScreenState extends State<CreativeChatScreen> {
                     borderRadius: BorderRadius.circular(10.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white, // White background for the search results
+                        color: Colors
+                            .white, // White background for the search results
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       constraints: BoxConstraints(
-                        maxHeight: _getDropdownHeight(), // Dynamically adjust based on content
+                        maxHeight:
+                            _getDropdownHeight(), // Dynamically adjust based on content
                       ),
-                      child: CreativeSearchUserResults(searchText: searchText), // Use the search bar logic
+                      child: CreativeSearchUserResults(
+                          searchText: searchText), // Use the search bar logic
                     ),
                   ),
                 ),
@@ -116,7 +122,9 @@ class CreativeChatScreenState extends State<CreativeChatScreen> {
 
   // Dynamically calculate the dropdown height based on the number of results
   double _getDropdownHeight() {
-    int resultsCount = CreativeSearchUserResults(searchText: searchText).getResultsCount();
-    return (resultsCount * 60.0).clamp(0.0, 300.0); // Each item is ~60px, limit to 300px
+    int resultsCount =
+        CreativeSearchUserResults(searchText: searchText).getResultsCount();
+    return (resultsCount * 60.0)
+        .clamp(0.0, 300.0); // Each item is ~60px, limit to 300px
   }
 }

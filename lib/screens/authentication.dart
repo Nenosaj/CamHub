@@ -5,18 +5,16 @@ import 'package:example/screens/loginscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import '../main.dart';
 
-
 class Authentication {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-
   // Function to register a new client
-  Future<void> registerClient(String email, String userType , BuildContext context) async {
-
+  Future<void> registerClient(
+      String email, String userType, BuildContext context) async {
     try {
-      
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: email,
         password: 'TemporaryPassword123', // Temporary password
       );
@@ -26,8 +24,6 @@ class Authentication {
         'userType': userType, // Store whether the user is client or creative
         'createdAt': FieldValue.serverTimestamp(),
       });
-
-
 
       if (userType == 'client') {
         // Navigate to the client-specific SetPassword page
@@ -46,29 +42,25 @@ class Authentication {
           ),
         );
       }
-    
     } catch (e) {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration failed: $e')),
       );
-    } 
+    }
   }
 
   // Function to update the user's password
   Future<void> updatePassword(String newPassword, BuildContext context) async {
     try {
-
-
       User? user = _auth.currentUser;
       if (user != null) {
         await user.updatePassword(newPassword);
 
-
-
-         Navigator.pushReplacement(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()), // Navigating to login
+          MaterialPageRoute(
+              builder: (context) => const LoginScreen()), // Navigating to login
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -76,10 +68,10 @@ class Authentication {
         );
       } else {
         throw FirebaseAuthException(
-            code: 'no-current-user', message: 'No user is currently signed in.');
+            code: 'no-current-user',
+            message: 'No user is currently signed in.');
       }
     } on FirebaseAuthException catch (e) {
-
       _handleFirebaseErrors(e, context);
     } catch (e) {
       print('Error: $e');
@@ -112,9 +104,9 @@ class Authentication {
     );
   }
 
-   Future<void> signIn(String email, String password, BuildContext context) async {
+  Future<void> signIn(
+      String email, String password, BuildContext context) async {
     try {
-
       // Sign in the user
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -122,10 +114,11 @@ class Authentication {
       );
 
       // Fetch the user's role from Firestore
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(userCredential.user?.uid).get();
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(userCredential.user?.uid)
+          .get();
       String userType = userDoc['userType'];
-
-
 
       // Navigate based on user type
       if (userType == 'client') {
@@ -141,7 +134,6 @@ class Authentication {
         );
       }
     } on FirebaseAuthException catch (e) {
-
       String errorMessage = '';
       if (e.code == 'user-not-found') {
         errorMessage = 'No user found for that email.';
@@ -155,8 +147,6 @@ class Authentication {
         SnackBar(content: Text(errorMessage)),
       );
     } catch (e) {
-
-
       // Handle other errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login failed: $e')),
@@ -168,14 +158,13 @@ class Authentication {
     try {
       await _auth.signOut();
 
-       Navigator.pushAndRemoveUntil(
+      Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const MyApp()), // Redirects to MyApp
+        MaterialPageRoute(
+            builder: (context) => const MyApp()), // Redirects to MyApp
         (Route<dynamic> route) => false, // Removes all routes
       );
-
     } catch (e) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error signing out: $e')),
       );

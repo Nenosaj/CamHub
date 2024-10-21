@@ -1,8 +1,6 @@
 import 'package:example/screens/registration/credentials_upload.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/registration/fillupclient.dart';
-import 'package:example/screens/loadingstate.dart';
-
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,7 +10,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class SignUpScreenState extends State<SignUpScreen> {
-
   // Variable to store selected role
   String selectedRole = '';
 

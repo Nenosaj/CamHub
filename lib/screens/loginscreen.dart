@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'registration/signupscreen.dart';
-import 'package:example/screens/authentication.dart'; 
-import 'package:example/screens/loadingstate.dart';
-
+import 'package:example/screens/authentication.dart';
 
 void main() {
   runApp(const MyApp2());
@@ -29,8 +27,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
- 
-    final Authentication authController = Authentication(); 
+  final Authentication authController = Authentication();
 
   // Controllers for text fields
   final TextEditingController emailController = TextEditingController();
@@ -230,10 +227,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     final email = emailController.text;
                                     final password = passwordController.text;
 
-                                    authController.signIn(email, password, context);
-
-                          
-                                    
+                                    authController.signIn(
+                                        email, password, context);
                                   },
                                   child: const Text(
                                     'Log in',
@@ -246,12 +241,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 // Sign-up Link
                                 TextButton(
                                   onPressed: () {
-
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                          
                                               const SignUpScreen()),
                                     );
                                   },

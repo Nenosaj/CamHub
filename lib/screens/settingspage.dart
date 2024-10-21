@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:example/screens/authentication.dart'; 
-import 'package:example/screens/loadingstate.dart';
-
-
+import 'package:example/screens/authentication.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-    final Authentication authController = Authentication(); // Initialize Authentication controller
+    final Authentication authController =
+        Authentication(); // Initialize Authentication controller
 
     return Scaffold(
       appBar: AppBar(
@@ -72,7 +69,7 @@ class SettingsPage extends StatelessWidget {
           const Divider(),
           // More Section
           const Padding(
-            padding:  EdgeInsets.symmetric(vertical: 8.0),
+            padding: EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
               'More',
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
