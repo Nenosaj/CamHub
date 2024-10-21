@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:example/screens/registration/setpassword.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class Verification extends StatefulWidget {
   final String email;
   const Verification({super.key, required this.email});
@@ -14,9 +13,7 @@ class Verification extends StatefulWidget {
 }
 
 class VerificationState extends State<Verification> {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-
-    
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final _digitControllers =
       List.generate(4, (index) => TextEditingController());
@@ -83,29 +80,29 @@ class VerificationState extends State<Verification> {
     );
   }
 
-Future<void> checkEmailVerification() async {
-  User? user = _auth.currentUser;
+  Future<void> checkEmailVerification() async {
+    User? user = _auth.currentUser;
 
-  // Reload the user to get the latest email verification status
-  await user?.reload();
+    // Reload the user to get the latest email verification status
+    await user?.reload();
 
-  if (user?.emailVerified ?? false) {
-    // Navigate to the setpassword.dart page if email is verified
-    Navigator.pushReplacement(
+    if (user?.emailVerified ?? false) {
+      // Navigate to the setpassword.dart page if email is verified
+      Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(
+          builder: (context) => SetPassword(email: widget.email),
+        ),
+      );
+    } else {
+      // Show a message if the email is not verified
       // ignore: use_build_context_synchronously
-      context,
-      MaterialPageRoute(
-        builder: (context) => SetPassword(email: widget.email),
-      ),
-    );
-  } else {
-    // Show a message if the email is not verified
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Please verify your email before proceeding')),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please verify your email before proceeding')),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +202,7 @@ Future<void> checkEmailVerification() async {
                   ],
                 ),
                 child: ElevatedButton(
-                      onPressed: isComplete
+                  onPressed: isComplete
                       ? () async {
                           // Call checkEmailVerification to verify the email before navigating
                           await checkEmailVerification();
@@ -214,7 +211,8 @@ Future<void> checkEmailVerification() async {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
-                    padding: EdgeInsets.symmetric(horizontal: 120, vertical: 15),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 120, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -232,5 +230,3 @@ Future<void> checkEmailVerification() async {
     );
   }
 }
-
-

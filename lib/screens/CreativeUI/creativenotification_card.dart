@@ -16,7 +16,8 @@ class CreativeNotificationCard extends StatefulWidget {
   });
 
   @override
-  CreativeNotificationCardState createState() => CreativeNotificationCardState();
+  CreativeNotificationCardState createState() =>
+      CreativeNotificationCardState();
 }
 
 class CreativeNotificationCardState extends State<CreativeNotificationCard> {
@@ -25,7 +26,8 @@ class CreativeNotificationCardState extends State<CreativeNotificationCard> {
   @override
   void initState() {
     super.initState();
-    _isSeen = !widget.isNew; // If it's new, it's not seen; if not new, it's already seen
+    _isSeen = !widget
+        .isNew; // If it's new, it's not seen; if not new, it's already seen
   }
 
   void _handlePress() {
@@ -36,10 +38,11 @@ class CreativeNotificationCardState extends State<CreativeNotificationCard> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CreativeNotificationAppointment(
-          clientName: 'Client',
+        builder: (context) => const CreativeNotificationAppointment(
+          clientName: 'Client C. User',
           contactNumber: '00000000000',
-          message: "I'd like to schedule a photo session. Please let me know your availability.",
+          message:
+              "I'd like to schedule a photo session. Please let me know your availability.",
           eventTitle: 'Debut',
           eventDate: 'Fri, Dec 31, 2025',
           eventTime: '12:00 PM - 3:30 PM',
@@ -64,8 +67,10 @@ class CreativeNotificationCardState extends State<CreativeNotificationCard> {
       child: InkWell(
         onTap: _handlePress,
         splashColor: Colors.grey.withOpacity(0.2), // Splash effect color
-        highlightColor: Colors.grey.withOpacity(0.1), // Highlight effect color when pressed
-        borderRadius: BorderRadius.circular(12), // To match the card's border radius
+        highlightColor:
+            Colors.grey.withOpacity(0.1), // Highlight effect color when pressed
+        borderRadius:
+            BorderRadius.circular(12), // To match the card's border radius
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
@@ -74,7 +79,8 @@ class CreativeNotificationCardState extends State<CreativeNotificationCard> {
             boxShadow: [
               if (_isSeen)
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.3), // Subtle shadow after press
+                  color:
+                      Colors.grey.withOpacity(0.3), // Subtle shadow after press
                   spreadRadius: 1,
                   blurRadius: 5,
                   offset: const Offset(0, 2),

@@ -5,161 +5,149 @@ import 'package:example/screens/loginscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import '../main.dart';
 
-
 class Authentication {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-
   // Function to register a new client
   Future<void> registerClient(
-    String email,
-    String firstName,    
-    String middleName,   
-    String lastName,     
-    String birthday,     
-    String unitNumber,   
-    String street,       
-    String village,      
-    String barangay,     
-    String city,         
-    String province,     
-    String phoneNumber,  
-    BuildContext context
-    ) async {
-
+      String email,
+      String firstName,
+      String middleName,
+      String lastName,
+      String birthday,
+      String unitNumber,
+      String street,
+      String village,
+      String barangay,
+      String city,
+      String province,
+      String phoneNumber,
+      BuildContext context) async {
     try {
-      
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: email,
         password: 'TemporaryPassword123', // Temporary password
       );
 
       String uid = userCredential.user?.uid ?? '';
 
+      if (uid.isNotEmpty) {
+        // Add general user information to Firestore
+        await _firestore.collection('users').doc(uid).set({
+          'email': email,
+          'userType': 'client',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
 
-        if (uid.isNotEmpty) {
-    // Add general user information to Firestore
-    await _firestore.collection('users').doc(uid).set({
-      'email': email,
-      'userType': 'client',
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+        // Add client-specific details to Firestore
+        await _firestore.collection('clients').doc(uid).set({
+          'firstName': firstName,
+          'middleName': middleName,
+          'lastName': lastName,
+          'birthday': birthday,
+          'unitNumber': unitNumber,
+          'street': street,
+          'village': village,
+          'barangay': barangay,
+          'city': city,
+          'province': province,
+          'phoneNumber': phoneNumber,
+        });
 
-    // Add client-specific details to Firestore
-    await _firestore.collection('clients').doc(uid).set({
-      'firstName': firstName,
-      'middleName': middleName,
-      'lastName': lastName,
-      'birthday': birthday,
-      'unitNumber': unitNumber,
-      'street': street,
-      'village': village,
-      'barangay': barangay,
-      'city': city,
-      'province': province,
-      'phoneNumber': phoneNumber,
-    });
-
-
-
-     Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SetPassword(email: email),
-      ),
-    );
-  } else {
-    print('User ID is empty, navigation aborted.');
-  }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SetPassword(email: email),
+          ),
+        );
+      } else {
+        print('User ID is empty, navigation aborted.');
+      }
     } catch (e) {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration failed: $e')),
       );
-    } 
+    }
   }
 
   // Function to register a new creative
-Future<void> registerCreative(
-  String businessEmail,
-  String businessName,  // Creatives may have business-specific details
-  String unitNumber,  // Example creative-specific detail
-  String street,          
-  String village,   
-  String barangay,
-  String city,
-  String province,
-  String businessPhoneNumber,
-  BuildContext context
-) async {
-  try {
-    // Create the user in Firebase Authentication
-    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-      email: businessEmail,
-      password: 'TemporaryPassword123',
-    );
+  Future<void> registerCreative(
+      String businessEmail,
+      String businessName, // Creatives may have business-specific details
+      String unitNumber, // Example creative-specific detail
+      String street,
+      String village,
+      String barangay,
+      String city,
+      String province,
+      String businessPhoneNumber,
+      BuildContext context) async {
+    try {
+      // Create the user in Firebase Authentication
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: businessEmail,
+        password: 'TemporaryPassword123',
+      );
 
-    String uid = userCredential.user?.uid ?? '';
-    if (uid.isEmpty) {
-      print("User ID is null or empty.");
+      String uid = userCredential.user?.uid ?? '';
+      if (uid.isEmpty) {
+        print("User ID is null or empty.");
+      }
+
+      // Store general user information in the 'users' collection
+      await _firestore.collection('users').doc(uid).set({
+        'email': businessEmail,
+        'userType': 'creative',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      // Store creative-specific information in the 'creatives' collection
+      await _firestore.collection('creatives').doc(uid).set({
+        'businessName': businessName,
+        'unitNumber': unitNumber,
+        'street': street,
+        'village': village,
+        'barangay': barangay,
+        'city': city,
+        'province': province,
+        'businessPhoneNumber': businessPhoneNumber,
+      }).catchError((error) {
+        print('Failed to add creative: $error');
+      });
+
+      if (uid.isNotEmpty) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SetPassword(email: businessEmail),
+          ),
+        );
+      } else {
+        print('User ID is empty, navigation aborted.');
+      }
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration failed: $e')),
+      );
     }
-
-    // Store general user information in the 'users' collection
-    await _firestore.collection('users').doc(uid).set({
-      'email': businessEmail,
-      'userType': 'creative',
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-
-    // Store creative-specific information in the 'creatives' collection
-    await _firestore.collection('creatives').doc(uid).set({
-      'businessName': businessName,
-      'unitNumber': unitNumber,
-      'street': street,
-      'village': village,
-      'barangay': barangay,
-      'city': city,
-      'province': province,
-      'businessPhoneNumber': businessPhoneNumber,
-    }).catchError((error) {
-      print('Failed to add creative: $error');
-    });
-
-
-    if (uid.isNotEmpty) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SetPassword(email: businessEmail),
-      ),
-    );
-  } else {
-    print('User ID is empty, navigation aborted.');
   }
-  } catch (e) {
-    print('Error: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Registration failed: $e')),
-    );
-  }
-}
-
 
   // Function to update the user's password
   Future<void> updatePassword(String newPassword, BuildContext context) async {
     try {
-
-
       User? user = _auth.currentUser;
       if (user != null) {
         await user.updatePassword(newPassword);
 
-
-
-         Navigator.pushReplacement(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()), // Navigating to login
+          MaterialPageRoute(
+              builder: (context) => const LoginScreen()), // Navigating to login
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -167,10 +155,10 @@ Future<void> registerCreative(
         );
       } else {
         throw FirebaseAuthException(
-            code: 'no-current-user', message: 'No user is currently signed in.');
+            code: 'no-current-user',
+            message: 'No user is currently signed in.');
       }
     } on FirebaseAuthException catch (e) {
-
       _handleFirebaseErrors(e, context);
     } catch (e) {
       print('Error: $e');
@@ -203,9 +191,9 @@ Future<void> registerCreative(
     );
   }
 
-   Future<void> signIn(String email, String password, BuildContext context) async {
+  Future<void> signIn(
+      String email, String password, BuildContext context) async {
     try {
-
       // Sign in the user
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -213,10 +201,11 @@ Future<void> registerCreative(
       );
 
       // Fetch the user's role from Firestore
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(userCredential.user?.uid).get();
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(userCredential.user?.uid)
+          .get();
       String userType = userDoc['userType'];
-
-
 
       // Navigate based on user type
       if (userType == 'client') {
@@ -232,22 +221,25 @@ Future<void> registerCreative(
         );
       }
     } on FirebaseAuthException catch (e) {
-
       String errorMessage = '';
       if (e.code == 'user-not-found') {
         errorMessage = 'No user found for that email.';
       } else if (e.code == 'wrong-password') {
         errorMessage = 'Incorrect password.';
       } else {
-        errorMessage = 'An error occurred. Please try again.';
+        errorMessage = 'Incorrect Username or Password. Please try again.';
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
+        SnackBar(
+          content: Text(
+            'Incorrect Username or Password. Please try again.',
+            style: TextStyle(color: Colors.white), // White text for visibility
+          ),
+          backgroundColor: Colors.red, // Red background for the container
+        ),
       );
     } catch (e) {
-
-
       // Handle other errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login failed: $e')),
@@ -259,14 +251,13 @@ Future<void> registerCreative(
     try {
       await _auth.signOut();
 
-       Navigator.pushAndRemoveUntil(
+      Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const MyApp()), // Redirects to MyApp
+        MaterialPageRoute(
+            builder: (context) => const MyApp()), // Redirects to MyApp
         (Route<dynamic> route) => false, // Removes all routes
       );
-
     } catch (e) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error signing out: $e')),
       );

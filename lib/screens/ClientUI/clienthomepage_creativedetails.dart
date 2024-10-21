@@ -1,6 +1,6 @@
+import 'package:example/screens/ClientUI/client_reviewsandRatings.dart';
 import 'package:example/screens/ClientUI/clienthomepage_searchpage.dart';
 import 'package:flutter/material.dart';
-import 'package:example/screens/CreativeUI/creative_reviews.dart';
 import 'package:example/screens/ClientUI/client_packagedetails.dart'; // Import the package details page
 
 class CreativesDetailPage extends StatelessWidget {
@@ -84,8 +84,7 @@ class CreativesDetailPage extends StatelessWidget {
                                     await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            const CreativeReviews(),
+                                        builder: (context) => ReviewsPage(),
                                       ),
                                     );
                                   },

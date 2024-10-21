@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'creativemessaging.dart'; // Import MessagingScreen for navigation 
+import 'creativemessaging.dart'; // Import MessagingScreen for navigation
 
 // Mock client data (replace this with backend/database integration)
 final List<Map<String, String>> clients = [
@@ -53,7 +53,7 @@ class CreativeSearchUserResults extends StatelessWidget {
                       builder: (context) => CreativeMessagingScreen(
                         clientName: client['name']!,
                         clientImage: client['imagePath']!,
-                        existingMessages: [],
+                        existingMessages: const [],
                       ),
                     ),
                   );

@@ -1,3 +1,4 @@
+import 'package:example/screens/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/ClientUI/client_model.dart';
 import 'package:example/screens/authentication.dart'; 
@@ -33,6 +34,9 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final Authentication authController = Authentication(); // Initialize Authentication controller
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B), // Maroon color
@@ -105,7 +109,7 @@ class SettingsPageState extends State<SettingsPage> {
           const Divider(),
           // More Section
           const Padding(
-            padding:  EdgeInsets.symmetric(vertical: 8.0),
+            padding: EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
               'More',
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
