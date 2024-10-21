@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class SelectCategory extends StatefulWidget {
   final Function(String) onCategorySelected;
 
-  const SelectCategory({Key? key, required this.onCategorySelected})
-      : super(key: key);
+  const SelectCategory({super.key, required this.onCategorySelected});
 
   @override
   _SelectCategoryState createState() => _SelectCategoryState();

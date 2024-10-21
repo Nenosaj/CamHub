@@ -73,7 +73,7 @@ class NotificationPageState extends State<NotificationPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => InitialPayment(
+                      builder: (context) => const InitialPayment(
                         selectedAddOns: {
                           "Drone Shot": true,
                           "5 more pictures": true,

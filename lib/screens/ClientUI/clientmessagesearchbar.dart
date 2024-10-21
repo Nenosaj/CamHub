@@ -53,7 +53,7 @@ class SearchUserResults extends StatelessWidget {
                       builder: (context) => MessagingScreen(
                         photographerName: photographer['name']!,
                         photographerImage: photographer['imagePath']!,
-                        existingMessages: [],
+                        existingMessages: const [],
                       ),
                     ),
                   );
