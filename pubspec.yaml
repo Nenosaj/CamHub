@@ -42,6 +42,7 @@ flutter:
     - assets/images/package2.png
     - assets/images/package3.png
     - assets/images/package4.png
+    - assets/images/higala_logo1.jpg
 
   # To add custom fonts to your application, add a fonts section here.
   # Example:
