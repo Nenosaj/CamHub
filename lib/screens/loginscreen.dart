@@ -1,6 +1,8 @@
+import 'package:example/screens/authentication.dart';
 import 'package:flutter/material.dart';
 import 'registration/signupscreen.dart';
-import 'package:example/screens/authentication.dart';
+
+//import 'package:example/screens/loadingstate.dart';
 
 void main() {
   runApp(const MyApp2());
@@ -131,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       left: 10,
                                       top: 0,
                                       child: Text(
-                                        'Username',
+                                        'Email',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,

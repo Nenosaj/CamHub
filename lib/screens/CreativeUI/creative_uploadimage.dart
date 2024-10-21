@@ -5,10 +5,10 @@ class UploadImage extends StatefulWidget {
   const UploadImage({super.key});
 
   @override
-  _UploadImageState createState() => _UploadImageState();
+  UploadImageState createState() => UploadImageState();
 }
 
-class _UploadImageState extends State<UploadImage> {
+class UploadImageState extends State<UploadImage> {
   String? selectedCategory;
   String? selectedLocation;
 

@@ -6,10 +6,10 @@ class SelectCategory extends StatefulWidget {
   const SelectCategory({super.key, required this.onCategorySelected});
 
   @override
-  _SelectCategoryState createState() => _SelectCategoryState();
+  SelectCategoryState createState() => SelectCategoryState();
 }
 
-class _SelectCategoryState extends State<SelectCategory> {
+class SelectCategoryState extends State<SelectCategory> {
   String? _selectedCategory; // To store the currently selected category
 
   @override
