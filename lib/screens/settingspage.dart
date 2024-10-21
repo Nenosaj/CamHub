@@ -111,7 +111,6 @@ class SettingsPage extends StatelessWidget {
             title: TextButton(
               onPressed: () async {
                 // Call signOut method from Authentication class
-                LoadingState.showLoading(context, true);
 
                 await authController.signOut(context);
               },

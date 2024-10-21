@@ -56,13 +56,6 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 class HomePageState extends State<HomePage> {
 
-  void initState() {
-    super.initState();
-    // Automatically hide loading dialog once the second page is loaded
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      LoadingState.showLoading(context, false); // Hide loading dialog
-    });
-  }
 
   int _currentIndex = 0;
 

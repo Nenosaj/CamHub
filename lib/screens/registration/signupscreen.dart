@@ -13,14 +13,6 @@ class SignUpScreen extends StatefulWidget {
 
 class SignUpScreenState extends State<SignUpScreen> {
 
-  void initState() {
-    super.initState();
-    // Automatically hide loading dialog once the second page is loaded
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      LoadingState.showLoading(context, false); // Hide loading dialog
-    });
-  }
-
   // Variable to store selected role
   String selectedRole = '';
 

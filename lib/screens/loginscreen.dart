@@ -29,15 +29,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
-  void initState() {
-    super.initState();
-    // Automatically hide loading dialog once the second page is loaded
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      LoadingState.showLoading(context, false); // Hide loading dialog
-    });
-  }
-
  
     final Authentication authController = Authentication(); 
 
@@ -238,7 +229,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: () {
                                     final email = emailController.text;
                                     final password = passwordController.text;
-                                    LoadingState.showLoading(context, true);
 
                                     authController.signIn(email, password, context);
 
@@ -256,7 +246,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 // Sign-up Link
                                 TextButton(
                                   onPressed: () {
-                                      LoadingState.showLoading(context, true);
 
                                     Navigator.push(
                                       context,
