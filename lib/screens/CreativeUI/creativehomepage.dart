@@ -29,7 +29,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const SettingsPage()), // New route
+                builder: (context) => SettingsPage()), // New route
           );
         },
       ),

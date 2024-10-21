@@ -1,7 +1,6 @@
 import 'package:example/screens/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/ClientUI/client_model.dart';
-import 'package:example/screens/authentication.dart'; 
 import 'package:example/screens/ClientUI/clientProfile.dart';
 import 'package:example/screens/ClientUI/clientProfile_edit.dart';
 
