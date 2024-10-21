@@ -5,10 +5,10 @@ class CreativeVidPicsMessageWidget extends StatefulWidget {
   const CreativeVidPicsMessageWidget({super.key});
 
   @override
-  _CreativeVidPicsMessageWidgetState createState() => _CreativeVidPicsMessageWidgetState();
+  CreativeVidPicsMessageWidgetState createState() => CreativeVidPicsMessageWidgetState();
 }
 
-class _CreativeVidPicsMessageWidgetState extends State<CreativeVidPicsMessageWidget> {
+class CreativeVidPicsMessageWidgetState extends State<CreativeVidPicsMessageWidget> {
   bool _showMediaGrid = false; // Controls the visibility of the media grid
 
   // Toggle media grid visibility
@@ -49,7 +49,7 @@ class _CreativeVidPicsMessageWidgetState extends State<CreativeVidPicsMessageWid
         ),
         // Media grid that appears/disappears when the plus button is pressed
         if (_showMediaGrid)
-          Container(
+          SizedBox(
             height: 150, // Adjust the height based on the grid size
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'clientmessaging.dart'; // Import the messaging screen
+import 'clientmessaging.dart'; // Import MessagingScreen for navigation
 
-// Mock photographer data (replace with backend/database integration)
+// Mock photographer data (replace this with backend/database integration)
 final List<Map<String, String>> photographers = [
   {'name': 'John Doe', 'imagePath': 'assets/images/photographer1.jpg'},
   {'name': 'Jane Smith', 'imagePath': 'assets/images/photographer2.jpg'},
@@ -24,7 +24,11 @@ class SearchUserResults extends StatelessWidget {
             .contains(searchText.toLowerCase())) // Filter based on input
         .toList();
 
-    return filteredPhotographers.isEmpty
+    // If no search query is entered, show all photographers
+    List<Map<String, String>> photographersToShow =
+        searchText.isEmpty ? photographers : filteredPhotographers;
+
+    return photographersToShow.isEmpty
         ? const Padding(
             padding: EdgeInsets.all(20.0),
             child: Text(
@@ -33,22 +37,23 @@ class SearchUserResults extends StatelessWidget {
             ),
           )
         : ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8.0), // Add padding
-            itemCount: filteredPhotographers.length,
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            itemCount: photographersToShow.length,
             itemBuilder: (context, index) {
-              final photographer = filteredPhotographers[index];
+              final photographer = photographersToShow[index];
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: AssetImage(photographer['imagePath']!), // Use image from list
+                  backgroundImage: AssetImage(photographer['imagePath']!),
                 ),
-                title: Text(photographer['name']!), // Display photographer's name
+                title: Text(photographer['name']!),
                 onTap: () {
-                  // Navigate to the clientmessaging.dart page when a name is tapped
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => MessagingScreen(
-                        photographerName: photographer['name']!, // Pass the photographer's name to the chat screen
+                        photographerName: photographer['name']!,
+                        photographerImage: photographer['imagePath']!,
+                        existingMessages: [],
                       ),
                     ),
                   );

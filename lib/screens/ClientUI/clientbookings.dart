@@ -45,44 +45,6 @@ class BookingPageState extends State<BookingPage> {
       ),
       body: Column(
         children: [
-          // Search Bar at the top
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 30.0, vertical: 16.0),
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color(
-                    0xFF7B3A3F), // Maroon color for search box background
-                borderRadius: BorderRadius.circular(30.0), // Rounded corners
-              ),
-              child: const Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 16.0),
-                      child: TextField(
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          hintText: 'Search',
-                          border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 16.0),
-                    child: Icon(
-                      Icons.search,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
           // Tabs for Ongoing, Completed, Cancelled
           Padding(
             padding:

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class CreativeMessagingPlusButton extends StatefulWidget {
   final Function(String) onSendMessage;
 
-  const CreativeMessagingPlusButton({Key? key, required this.onSendMessage}) : super(key: key);
+  const CreativeMessagingPlusButton({super.key, required this.onSendMessage});
 
   @override
-  _CreativeMessagingPlusButtonState createState() => _CreativeMessagingPlusButtonState();
+  CreativeMessagingPlusButtonState createState() => CreativeMessagingPlusButtonState();
 }
 
-class _CreativeMessagingPlusButtonState extends State<CreativeMessagingPlusButton> {
+class CreativeMessagingPlusButtonState extends State<CreativeMessagingPlusButton> {
   final TextEditingController _controller = TextEditingController();
   bool showGallery = false; // Controls whether the photo gallery is shown
 
@@ -37,7 +37,7 @@ class _CreativeMessagingPlusButtonState extends State<CreativeMessagingPlusButto
             height: 200,
             color: Colors.grey[200],
             child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 8,
                 mainAxisSpacing: 8,
@@ -62,15 +62,15 @@ class _CreativeMessagingPlusButtonState extends State<CreativeMessagingPlusButto
               GestureDetector(
                 onTap: _toggleGallery, // Toggle the gallery view
                 child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
+                  padding: const EdgeInsets.all(10),
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF662C2B), // Maroon color
+                    color: Color(0xFF662C2B), // Maroon color
                   ),
-                  child: Icon(Icons.add, color: Colors.white),
+                  child: const Icon(Icons.add, color: Colors.white),
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Expanded(
                 child: TextField(
                   controller: _controller,
@@ -78,7 +78,7 @@ class _CreativeMessagingPlusButtonState extends State<CreativeMessagingPlusButto
                     hintText: "Type Message",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                   ),
                   onSubmitted: (value) {
@@ -86,9 +86,9 @@ class _CreativeMessagingPlusButtonState extends State<CreativeMessagingPlusButto
                   },
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               IconButton(
-                icon: Icon(Icons.send, color: const Color(0xFF662C2B)), // Maroon color for send button
+                icon: const Icon(Icons.send, color: Color(0xFF662C2B)), // Maroon color for send button
                 onPressed: _sendMessage, // Handle send button press
               ),
             ],
