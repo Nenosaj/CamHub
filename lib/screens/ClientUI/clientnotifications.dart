@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'clientnotification_card.dart'; // Import the new file
+import 'package:example/screens/ClientUI/client_initialpayment.dart';
 
 void main() {
   runApp(const MyApp());
@@ -41,7 +42,6 @@ class NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
         toolbarHeight: 80.0,
@@ -70,7 +70,27 @@ class NotificationPageState extends State<NotificationPage> {
                     'Hello Client,\nYour appointment has been confirmed. Please pay for the initial payment to proceed with the booking.',
                 buttonText: 'Proceed to Payment',
                 onPressed: () {
-                  // Action for button press
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InitialPayment(
+                        selectedAddOns: {
+                          "Drone Shot": true,
+                          "5 more pictures": true,
+                          "1-minute video": false,
+                          // Add other add-ons as necessary
+                        },
+                        addOnPrices: {
+                          "Drone Shot": "₱3,000",
+                          "5 more pictures": "₱500",
+                          "1-minute video": "₱1,000",
+                          // Add other prices as necessary
+                        },
+                        totalCost:
+                            14500, // Example total cost; replace with your calculation
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
