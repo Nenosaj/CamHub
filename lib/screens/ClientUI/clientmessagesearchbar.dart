@@ -4,10 +4,10 @@ import 'clientmessaging.dart'; // Import MessagingScreen for navigation
 // Mock photographer data (replace this with backend/database integration)
 final List<Map<String, String>> photographers = [
   {'name': 'John Doe', 'imagePath': 'assets/images/photographer1.jpg'},
-  {'name': 'Jane Smith', 'imagePath': 'assets/images/photographer2.jpg'},
-  {'name': 'Alice Brown', 'imagePath': 'assets/images/photographer3.jpg'},
-  {'name': 'David Wilson', 'imagePath': 'assets/images/photographer4.jpg'},
-  {'name': 'Emma Watson', 'imagePath': 'assets/images/photographer5.jpg'},
+  {'name': 'Jane Smith', 'imagePath': 'assets/images/photographer1.jpg'},
+  {'name': 'Alice Brown', 'imagePath': 'assets/images/photographer1.jpg'},
+  {'name': 'David Wilson', 'imagePath': 'assets/images/photographer1.jpg'},
+  {'name': 'Emma Watson', 'imagePath': 'assets/images/photographer1.jpg'},
 ];
 
 class SearchUserResults extends StatelessWidget {
