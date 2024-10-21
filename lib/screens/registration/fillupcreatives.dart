@@ -1,8 +1,6 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // For date formatting
 import 'package:example/screens/registration/credentials_upload.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 
 class FillUpPageCreatives extends StatefulWidget {
   const FillUpPageCreatives({super.key});
@@ -12,11 +10,6 @@ class FillUpPageCreatives extends StatefulWidget {
 }
 
 class FillUpPageCreativesState extends State<FillUpPageCreatives> {
-
-  final FirebaseAuth _auth = FirebaseAuth.instance; // for Firebase authentication
-
-
-
   bool isPrivacyChecked = false; // For first checkbox
   bool isTermsChecked = false; // For second checkbox
   bool showError =
@@ -51,31 +44,6 @@ class FillUpPageCreativesState extends State<FillUpPageCreatives> {
   TextEditingController phoneNumberController = TextEditingController();
 
   bool allFieldsFilled = false; // To track if all fields are filled
-
-
-Future<void> registerClient(String email) async {
-  try {
-    // Create the user with a temporary password
-    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: 'TemporaryPassword123', // Temporary password
-    );
-
-    // Instead of sending OTP, directly navigate to SetPassword
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CredentialsUpload(email: email),
-      ),
-    );
-  } catch (e) {
-    print(e); // Handle errors such as email already in use
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Registration failed: $e')),
-    );
-  }
-}
-
 
   @override
   void initState() {
@@ -312,11 +280,7 @@ Future<void> registerClient(String email) async {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                         CredentialsUpload(
-                                          email: emailController.text,
-
-                                        )
-                                    ),
+                                        const CredentialsUpload()),
                               );
                             }
                           : null, // Disable the button if conditions are not met
@@ -428,4 +392,3 @@ Future<void> registerClient(String email) async {
     );
   }
 }
-*/

@@ -28,7 +28,7 @@ class ClientUI extends StatelessWidget {
       routes: {
         '/': (context) => const HomePage(), 
         '/chat': (context) =>
-            const ChatScreen(), 
+            const ChatScreen(photographerName: '', messages: [],), 
         '/bookings': (context) =>
             const BookingPage(), 
         '/notifications': (context) =>

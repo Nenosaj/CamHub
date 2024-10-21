@@ -1,53 +1,69 @@
+import 'package:example/screens/ClientUI/clientMessagingPlusButton.dart';
 import 'package:flutter/material.dart';
 
-// Media upload grid widget
 class CreativeVidPicsMessageWidget extends StatefulWidget {
-  const CreativeVidPicsMessageWidget({super.key});
+  final Function(String) onSendMessage; // Accept a callback for sending a message
+
+  const CreativeVidPicsMessageWidget({super.key, required this.onSendMessage});
 
   @override
   CreativeVidPicsMessageWidgetState createState() => CreativeVidPicsMessageWidgetState();
 }
 
 class CreativeVidPicsMessageWidgetState extends State<CreativeVidPicsMessageWidget> {
-  bool _showMediaGrid = false; // Controls the visibility of the media grid
+  final TextEditingController _controller = TextEditingController();
+  bool _showMediaGrid = false; // Controls media grid visibility
 
-  // Toggle media grid visibility
-  void _toggleMediaGrid() {
+  // Toggle the media grid visibility
+  void _toggleGallery() {
     setState(() {
-      _showMediaGrid = !_showMediaGrid;
+      _showMediaGrid = !_showMediaGrid; // Toggle the gallery visibility
     });
+  }
+
+  // Send the message
+  void _sendMessage() {
+    if (_controller.text.trim().isNotEmpty) {
+      widget.onSendMessage(_controller.text.trim());
+      _controller.clear();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            // Plus icon to toggle the media grid
-            IconButton(
-              icon: const Icon(Icons.add_circle, color: Color(0xFF662C2B), size: 28),
-              onPressed: _toggleMediaGrid,
-            ),
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Type your message...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, right: 8, bottom: 10), // Added padding
+          child: Row(
+            children: [
+              // Plus button is now coming from ClientMessagingPlusButton.dart
+              ClientMessagingPlusButton(onPermissionGranted: _toggleGallery), // Use the plus button here
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    hintText: "Type your message...",
+                    contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16), // Adjusted padding
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
                   ),
+                  style: const TextStyle(fontSize: 18), // Larger text size
+                  onSubmitted: (value) {
+                    _sendMessage(); // Send the message when 'Enter' is pressed
+                  },
                 ),
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.send, color: Color(0xFF662C2B)),
-              onPressed: () {
-                // Future implementation for sending messages
-              },
-            ),
-          ],
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.send, color: Color(0xFF662C2B), size: 30),
+                onPressed: _sendMessage, // Send the message when the button is pressed
+              ),
+            ],
+          ),
         ),
-        // Media grid that appears/disappears when the plus button is pressed
         if (_showMediaGrid)
           SizedBox(
             height: 150, // Adjust the height based on the grid size

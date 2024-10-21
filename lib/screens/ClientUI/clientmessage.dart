@@ -1,5 +1,6 @@
+import 'package:example/screens/ClientUI/client_AccountsMessaged.dart';
 import 'package:flutter/material.dart';
-import 'clientmessagesearchbar.dart';  //Import the search bar logic
+import 'clientmessagesearchbar.dart';  // Import the search bar logic
 
 void main() {
   runApp(const MyApp());
@@ -11,13 +12,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: ChatScreen(),
+      home: ChatScreen(photographerName: '', messages: [],),
     );
   }
 }
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({super.key, required String photographerName, required List messages});
 
   @override
   ChatScreenState createState() => ChatScreenState();
@@ -84,27 +85,27 @@ class ChatScreenState extends State<ChatScreen> {
       ),
       body: Stack(
         children: [
-          const EmptyChatScreen(), // Keep the original "No messages" content
-          if (searchText.isNotEmpty)
-            Positioned(
-              top: 0, // Bring the dropdown right below the search bar
-              left: 15, // Align the search results with the search bar
-              right: 15, // Ensure the search results stay within bounds
-              child: Material(
-                elevation: 2.0, // Add slight shadow for the dropdown
-                borderRadius: BorderRadius.circular(10.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white, // White background for the search results
+          searchText.isEmpty
+              ? const ClientAccountsMessaged() // Show the full conversation list when no search query
+              : Positioned(
+                  top: 0, // Bring the dropdown right below the search bar
+                  left: 15, // Align the search results with the search bar
+                  right: 15, // Ensure the search results stay within bounds
+                  child: Material(
+                    elevation: 2.0, // Add slight shadow for the dropdown
                     borderRadius: BorderRadius.circular(10.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white, // White background for the search results
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      constraints: BoxConstraints(
+                        maxHeight: _getDropdownHeight(), // Dynamically adjust based on content
+                      ),
+                      child: SearchUserResults(searchText: searchText), // Use the search bar logic
+                    ),
                   ),
-                  constraints: BoxConstraints(
-                    maxHeight: _getDropdownHeight(), // Dynamically adjust based on content
-                  ),
-                  child: SearchUserResults(searchText: searchText), // Pass search text to the results
                 ),
-              ),
-            ),
         ],
       ),
     );
@@ -114,39 +115,5 @@ class ChatScreenState extends State<ChatScreen> {
   double _getDropdownHeight() {
     int resultsCount = SearchUserResults(searchText: searchText).getResultsCount();
     return (resultsCount * 60.0).clamp(0.0, 300.0); // Each item is ~60px, limit to 300px
-  }
-}
-
-class EmptyChatScreen extends StatelessWidget {
-  const EmptyChatScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        Expanded(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.chat_bubble_outline,
-                  size: 80,
-                  color: Colors.grey,
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'No Messages',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }

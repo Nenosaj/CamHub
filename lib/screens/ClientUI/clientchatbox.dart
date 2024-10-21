@@ -11,7 +11,7 @@ class ClientChatBox extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       child: Align(
-        alignment: Alignment.centerLeft, // Aligns the chat box to the left
+        alignment: Alignment.centerRight, // Aligns the chat box to the left
         child: Container(
           constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8), // Makes the chat box wider
           padding: const EdgeInsets.all(12),

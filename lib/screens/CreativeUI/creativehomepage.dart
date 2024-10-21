@@ -77,7 +77,7 @@ class HomePageState extends State<HomePage> {
         totalCustomers: 850,
         totalImpressions: 26000,
       ),
-      const CreativeChatScreen(), // Navigate to your Chat Page
+      const CreativeChatScreen(clientName: '', messages: [],), // Navigate to your Chat Page
       const CreativeUploadButton(),
       const CreativeNotificationPage(), // Navigate to your Notifications Page
       const ProfilePage(), // Navigate to your Profile Page

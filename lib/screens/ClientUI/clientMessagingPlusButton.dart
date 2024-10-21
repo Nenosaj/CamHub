@@ -1,104 +1,72 @@
 import 'package:flutter/material.dart';
 
 class ClientMessagingPlusButton extends StatefulWidget {
-  final Function(String) onSendMessage;
+  final VoidCallback onPermissionGranted; // Callback when permission is granted
 
-  const ClientMessagingPlusButton({super.key, required this.onSendMessage});
+  const ClientMessagingPlusButton({super.key, required this.onPermissionGranted});
 
   @override
   ClientMessagingPlusButtonState createState() => ClientMessagingPlusButtonState();
 }
 
 class ClientMessagingPlusButtonState extends State<ClientMessagingPlusButton> {
-  final TextEditingController _controller = TextEditingController();
-  bool showGallery = false; // Controls whether the photo gallery is shown
+  bool _permissionGranted = false; // Track if permission is granted
 
-  // Toggle the gallery visibility
-  void _toggleGallery() {
-    setState(() {
-      showGallery = !showGallery;
-    });
-  }
-
-  // Send the message
-  void _sendMessage() {
-    if (_controller.text.trim().isNotEmpty) {
-      widget.onSendMessage(_controller.text.trim());
-      _controller.clear();
+  // Show permission dialog only if permission is not yet granted
+  void _showPermissionDialog() {
+    if (_permissionGranted) {
+      widget.onPermissionGranted(); // Directly toggle the media grid if permission already granted
+      return;
     }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing the dialog by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          title: const Text("Allow CamHub to access photos and media on your device?"),
+          actions: [
+            TextButton(
+              child: const Text(
+                "Deny",
+                style: TextStyle(color: Color(0xFF662C2B)),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog without showing the media grid
+              },
+            ),
+            TextButton(
+              child: const Text(
+                "Allow",
+                style: TextStyle(color: Color(0xFF662C2B)),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                setState(() {
+                  _permissionGranted = true; // Mark permission as granted
+                });
+                widget.onPermissionGranted(); // Proceed with showing the media grid
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (showGallery)
-          Container(
-            height: 200,
-            color: Colors.grey[200],
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemCount: 4, // Number of photos (adjust as needed)
-              itemBuilder: (context, index) {
-                return Container(
-                  color: Colors.grey[300],
-                  child: Icon(
-                    Icons.image,
-                    size: 50,
-                    color: Colors.grey[600],
-                  ),
-                );
-              },
-            ),
-          ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: _toggleGallery, // Toggle the gallery view
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color.fromARGB(255, 194, 72, 72),
-                  ),
-                  child: const Icon(Icons.add, color: Colors.white),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    hintText: "Type Message",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: const BorderSide(color: Colors.grey),
-                    ),
-                  ),
-                  onSubmitted: (value) {
-                    _sendMessage();
-                  },
-                ),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.send, color: Color.fromARGB(255, 194, 72, 72)),
-                onPressed: _sendMessage, // Handle send button press
-              ),
-            ],
-          ),
+    return GestureDetector(
+      onTap: _showPermissionDialog, // Show the dialog on tapping the plus button
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Color(0xFF662C2B), // Maroon background color
         ),
-      ],
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
     );
   }
 }
-
-
-
-
