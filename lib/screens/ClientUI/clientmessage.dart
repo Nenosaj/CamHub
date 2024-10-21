@@ -1,5 +1,5 @@
-/*import 'package:flutter/material.dart';
-import 'clientmessagesearchbar.dart'; // Import the search bar logic
+import 'package:flutter/material.dart';
+import 'clientmessagesearchbar.dart';  //Import the search bar logic
 
 void main() {
   runApp(const MyApp());
@@ -20,10 +20,10 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  ChatScreenState createState() => ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class ChatScreenState extends State<ChatScreen> {
   String searchText = ""; // Track the search input
 
   @override
@@ -101,7 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   constraints: BoxConstraints(
                     maxHeight: _getDropdownHeight(), // Dynamically adjust based on content
                   ),
-                  child: //SearchUserResults(searchText: searchText), // Pass search text to the results
+                  child: SearchUserResults(searchText: searchText), // Pass search text to the results
                 ),
               ),
             ),
@@ -122,9 +122,9 @@ class EmptyChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
-        const Expanded(
+        Expanded(
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -149,4 +149,4 @@ class EmptyChatScreen extends StatelessWidget {
       ],
     );
   }
-}*/
+}

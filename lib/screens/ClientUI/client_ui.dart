@@ -1,3 +1,4 @@
+import 'package:example/screens/ClientUI/clientmessage.dart';
 import 'package:flutter/material.dart';
 import 'clienthomepage.dart';
 import 'clientbookings.dart';
@@ -25,13 +26,15 @@ class ClientUI extends StatelessWidget {
       // Start with the HomePage or other routes
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomePage(),
+        '/': (context) => const HomePage(), 
         '/chat': (context) =>
-          // const ChatScreen(),
-           // '/bookings': (context) =>
-            const BookingPage(),
-        '/notifications': (context) => const NotificationPage(),
-        '/profile': (context) => const ProfilePage(),
+            const ChatScreen(), 
+        '/bookings': (context) =>
+            const BookingPage(), 
+        '/notifications': (context) =>
+            const NotificationPage(),
+        '/profile': (context) =>
+            const ProfilePage(),
       },
     );
   }
