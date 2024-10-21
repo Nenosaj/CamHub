@@ -1,7 +1,7 @@
+import 'package:example/screens/ClientUI/clientmessage.dart';
 import 'package:flutter/material.dart';
 import 'clienthomepage.dart';
 import 'clientbookings.dart';
-import 'clientmessage.dart';
 import 'clientnotifications.dart';
 import 'clientProfile.dart';
 

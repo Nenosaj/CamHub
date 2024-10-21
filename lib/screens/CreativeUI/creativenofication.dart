@@ -43,11 +43,11 @@ class CreativeNotificationPage extends StatefulWidget {
   const CreativeNotificationPage({super.key});
 
   @override
-  _CreativeNotificationPageState createState() =>
-      _CreativeNotificationPageState();
+  CreativeNotificationPageState createState() =>
+      CreativeNotificationPageState();
 }
 
-class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
+class CreativeNotificationPageState extends State<CreativeNotificationPage> {
   bool _isCardVisible = false;
 
   @override

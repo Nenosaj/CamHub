@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'clientnotification_card.dart'; // Import the new file
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: NotificationPage(),
     );
@@ -21,10 +21,10 @@ class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
 
   @override
-  _NotificationPageState createState() => _NotificationPageState();
+  NotificationPageState createState() => NotificationPageState();
 }
 
-class _NotificationPageState extends State<NotificationPage> {
+class NotificationPageState extends State<NotificationPage> {
   bool _isCardVisible = false;
 
   @override
@@ -60,7 +60,7 @@ class _NotificationPageState extends State<NotificationPage> {
         child: Column(
           children: [
             AnimatedSlide(
-              offset: _isCardVisible ? Offset(0, 0) : Offset(0, 1),
+              offset: _isCardVisible ? const Offset(0, 0) : const Offset(0, 1),
               duration: const Duration(milliseconds: 500),
               curve: Curves.easeOut,
               child: NotificationCard(

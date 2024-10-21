@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: BookingPage(),
     );
@@ -20,10 +20,10 @@ class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
 
   @override
-  _BookingPageState createState() => _BookingPageState();
+  BookingPageState createState() => BookingPageState();
 }
 
-class _BookingPageState extends State<BookingPage> {
+class BookingPageState extends State<BookingPage> {
   String selectedCategory = "Ongoing";
 
   @override
@@ -56,14 +56,14 @@ class _BookingPageState extends State<BookingPage> {
                     0xFF7B3A3F), // Maroon color for search box background
                 borderRadius: BorderRadius.circular(30.0), // Rounded corners
               ),
-              child: Row(
+              child: const Row(
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
+                      padding: EdgeInsets.only(left: 16.0),
                       child: TextField(
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
                           hintText: 'Search',
                           border: InputBorder.none,
                           hintStyle: TextStyle(color: Colors.white),
@@ -72,8 +72,8 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: const Icon(
+                    padding: EdgeInsets.only(right: 16.0),
+                    child: Icon(
                       Icons.search,
                       color: Colors.white,
                       size: 24,
@@ -176,27 +176,27 @@ class _BookingPageState extends State<BookingPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '18-05-2024',
                   style: TextStyle(
-                    color: const Color(0xFF662C2B),
+                    color: Color(0xFF662C2B),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 4),
-                const Text(
+                SizedBox(height: 4),
+                Text(
                   'Order #4566',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
                   ),
                 ),
-                const SizedBox(height: 4),
-                const Text(
+                SizedBox(height: 4),
+                Text(
                   '• Portrait Session',
                   style: TextStyle(
                     color: Colors.black54,
@@ -253,27 +253,27 @@ class _BookingPageState extends State<BookingPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '22-06-2024',
                   style: TextStyle(
-                    color: const Color(0xFF7B3A3F),
+                    color: Color(0xFF7B3A3F),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 4),
-                const Text(
+                SizedBox(height: 4),
+                Text(
                   'Order #7890',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
                   ),
                 ),
-                const SizedBox(height: 4),
-                const Text(
+                SizedBox(height: 4),
+                Text(
                   '• Wedding Session',
                   style: TextStyle(
                     color: Colors.black54,

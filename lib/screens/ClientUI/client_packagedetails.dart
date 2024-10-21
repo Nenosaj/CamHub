@@ -6,10 +6,10 @@ class PackageDetailsPage extends StatefulWidget {
   const PackageDetailsPage({super.key});
 
   @override
-  _PackageDetailsPageState createState() => _PackageDetailsPageState();
+  PackageDetailsPageState createState() => PackageDetailsPageState();
 }
 
-class _PackageDetailsPageState extends State<PackageDetailsPage> {
+class PackageDetailsPageState extends State<PackageDetailsPage> {
   Map<String, bool> addOns = {
     'Drone shot': false,
     '5 more pictures': false,
@@ -84,9 +84,9 @@ class _PackageDetailsPageState extends State<PackageDetailsPage> {
                   fit: BoxFit.cover,
                 ),
                 const SizedBox(width: 10),
-                Column(
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
                       'Package 1',
                       style: TextStyle(
@@ -252,7 +252,7 @@ class _PackageDetailsPageState extends State<PackageDetailsPage> {
               ],
             ),
           );
-        }).toList(),
+        }),
         const SizedBox(height: 10),
         Align(
           alignment: Alignment.centerLeft, // Align to the right
