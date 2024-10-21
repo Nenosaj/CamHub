@@ -1,5 +1,5 @@
+import 'package:example/screens/registration/credentials_upload.dart';
 import 'package:flutter/material.dart';
-import 'package:example/screens/registration/fillupcreatives.dart';
 import 'package:example/screens/registration/fillupclient.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -87,7 +87,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const FillUpPageCreatives(),
+                          builder: (context) => const CredentialsUpload(),
                         ),
                       );
                     },
