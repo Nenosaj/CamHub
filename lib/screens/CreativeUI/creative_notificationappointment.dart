@@ -28,7 +28,8 @@ class CreativeNotificationAppointment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7B3A3F),
+        backgroundColor: const Color(0xFF662C2B),
+        toolbarHeight: 80.0,
         title: const Text('Appointment Request', style: TextStyle(color: Colors.white)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
