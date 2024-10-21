@@ -64,7 +64,7 @@ class ProfilePages extends State<ProfilePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7B3A3F), // Dark red background color
+        backgroundColor: const Color(0xFF662C2B), // Dark red background color
         title: const Text('Profile', style: TextStyle(color: Color.fromARGB(255, 252, 252, 252))),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),

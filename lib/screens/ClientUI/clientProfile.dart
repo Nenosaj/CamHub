@@ -1,5 +1,3 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
@@ -36,12 +34,7 @@ class ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            // Implement back navigation logic
-          },
-        ),
+        // Removed the leading property to get rid of the white arrow
       ),
       body: SingleChildScrollView(
         child: Column(

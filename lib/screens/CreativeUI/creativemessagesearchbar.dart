@@ -3,11 +3,11 @@ import 'creativemessaging.dart'; // Import MessagingScreen for navigation
 
 // Mock client data (replace this with backend/database integration)
 final List<Map<String, String>> clients = [
-  {'name': 'Client 1', 'imagePath': 'assets/images/client1.jpg'},
-  {'name': 'Client 2', 'imagePath': 'assets/images/client2.jpg'},
-  {'name': 'Client 3', 'imagePath': 'assets/images/client3.jpg'},
-  {'name': 'Client 4', 'imagePath': 'assets/images/client4.jpg'},
-  {'name': 'Client 5', 'imagePath': 'assets/images/client5.jpg'},
+  {'name': 'Client 1', 'imagePath': 'assets/images/photographer2.jpg'},
+  {'name': 'Client 2', 'imagePath': 'assets/images/photographer2.jpg'},
+  {'name': 'Client 3', 'imagePath': 'assets/images/photographer2.jpg'},
+  {'name': 'Client 4', 'imagePath': 'assets/images/photographer2.jpg'},
+  {'name': 'Client 5', 'imagePath': 'assets/images/photographer2.jpg'},
 ];
 
 class CreativeSearchUserResults extends StatelessWidget {
