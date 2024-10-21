@@ -28,8 +28,10 @@ class CreativeNotificationAppointment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7B3A3F),
-        title: const Text('Appointment Request', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF662C2B),
+        toolbarHeight: 80.0,
+        title: const Text('Appointment Request',
+            style: TextStyle(color: Colors.white)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
@@ -47,14 +49,18 @@ class CreativeNotificationAppointment extends StatelessWidget {
                 CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.grey[300],
-                  backgroundImage: AssetImage('assets/images/company_logo.png'), // Example placeholder for logo
+                  backgroundImage: AssetImage(
+                      'assets/images/company_logo.png'), // Example placeholder for logo
                 ),
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Higala Films', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text(clientName, style: const TextStyle(color: Colors.grey)),
+                    const Text('Higala Films',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(clientName,
+                        style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
               ],
@@ -96,7 +102,8 @@ class CreativeNotificationAppointment extends StatelessWidget {
               children: [
                 const Icon(Icons.date_range, color: Colors.black54),
                 const SizedBox(width: 8),
-                Text('$eventDate  •  $eventTime', style: const TextStyle(fontSize: 16)),
+                Text('$eventDate  •  $eventTime',
+                    style: const TextStyle(fontSize: 16)),
               ],
             ),
             const SizedBox(height: 8),
@@ -120,12 +127,12 @@ class CreativeNotificationAppointment extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             ...services.map((service) => Row(
-              children: [
-                const Icon(Icons.add, color: Colors.black54),
-                const SizedBox(width: 8),
-                Text(service, style: const TextStyle(fontSize: 16)),
-              ],
-            )),
+                  children: [
+                    const Icon(Icons.add, color: Colors.black54),
+                    const SizedBox(width: 8),
+                    Text(service, style: const TextStyle(fontSize: 16)),
+                  ],
+                )),
             const SizedBox(height: 20),
             // Confirm and Decline buttons
             const Spacer(), // Pushes buttons to the bottom
@@ -141,18 +148,19 @@ class CreativeNotificationAppointment extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF662C2B),
-                        padding: const EdgeInsets.symmetric(vertical: 18), // Adjust button height
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 18), // Adjust button height
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30), // Rounded corners for a more modern look
+                          borderRadius: BorderRadius.circular(
+                              30), // Rounded corners for a more modern look
                         ),
                       ),
                       child: const Text(
                         'Confirm',
                         style: TextStyle(
-                          color: Colors.white, 
-                          fontWeight: FontWeight.bold, 
-                          fontSize: 16
-                        ),
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
                       ),
                     ),
                   ),
@@ -166,18 +174,19 @@ class CreativeNotificationAppointment extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF662C2B),
-                        padding: const EdgeInsets.symmetric(vertical: 18), // Adjust button height
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 18), // Adjust button height
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30), // Rounded corners for a more modern look
+                          borderRadius: BorderRadius.circular(
+                              30), // Rounded corners for a more modern look
                         ),
                       ),
                       child: const Text(
                         'Decline',
                         style: TextStyle(
-                          color: Colors.white, 
-                          fontWeight: FontWeight.bold, 
-                          fontSize: 16
-                        ),
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
                       ),
                     ),
                   ),
