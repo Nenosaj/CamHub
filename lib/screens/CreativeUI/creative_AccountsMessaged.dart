@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'clientmessaging.dart'; // Import MessagingScreen for navigation
+import 'creativemessaging.dart'; // Import MessagingScreen for navigation
 
-// Declare clientConversationList globally to store the conversations and messages
-List<Map<String, dynamic>> clientConversationList = []; // Now holds photographerName, messages, and photographerImage
+// Declare creativeConversationList globally to store the conversations and messages
+List<Map<String, dynamic>> creativeConversationList = []; // Now holds clientName, messages, and clientImage
 
-class ClientAccountsMessaged extends StatelessWidget {
-  const ClientAccountsMessaged({super.key});
+class CreativeAccountsMessaged extends StatelessWidget {
+  const CreativeAccountsMessaged({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return clientConversationList.isEmpty
+    return creativeConversationList.isEmpty
         ? const EmptyChatScreen() // Show "No messages" when empty
         : ListView.builder(
-            itemCount: clientConversationList.length,
+            itemCount: creativeConversationList.length,
             itemBuilder: (context, index) {
-              final conversation = clientConversationList[index];
+              final conversation = creativeConversationList[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Container(
@@ -34,10 +34,10 @@ class ClientAccountsMessaged extends StatelessWidget {
                     contentPadding: const EdgeInsets.all(16.0),
                     leading: CircleAvatar(
                       radius: 24, // Keep profile picture size consistent
-                      backgroundImage: AssetImage(conversation['photographerImage']), // Display the photographer's image
+                      backgroundImage: AssetImage(conversation['clientImage']), // Display the client's image
                     ),
                     title: Text(
-                      conversation['photographerName']!,
+                      conversation['clientName']!,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -52,14 +52,14 @@ class ClientAccountsMessaged extends StatelessWidget {
                       style: const TextStyle(fontSize: 12),
                     ),
                     onTap: () {
-                      // Navigate back to MessagingScreen with existing messages and profile image when tapped
+                      // Navigate back to CreativeMessagingScreen with existing messages and profile image when tapped
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MessagingScreen(
-                            photographerName: conversation['photographerName']!,
-                            photographerImage: conversation['photographerImage'], // Pass the image
-                            existingMessages: _getExistingMessages(conversation['photographerName']!), // Pass the existing messages
+                          builder: (context) => CreativeMessagingScreen(
+                            clientName: conversation['clientName']!,
+                            clientImage: conversation['clientImage'], // Pass the image
+                            existingMessages: _getExistingMessages(conversation['clientName']!), // Pass the existing messages
                           ),
                         ),
                       );
@@ -71,11 +71,11 @@ class ClientAccountsMessaged extends StatelessWidget {
           );
   }
 
-  // Function to get existing messages for a specific photographer
-  List<Map<String, String>> _getExistingMessages(String photographerName) {
-    // Search for existing messages in the clientConversationList
-    for (var conversation in clientConversationList) {
-      if (conversation['photographerName'] == photographerName) {
+  // Function to get existing messages for a specific client
+  List<Map<String, String>> _getExistingMessages(String clientName) {
+    // Search for existing messages in the creativeConversationList
+    for (var conversation in creativeConversationList) {
+      if (conversation['clientName'] == clientName) {
         return List<Map<String, String>>.from(conversation['messages']);
       }
     }
