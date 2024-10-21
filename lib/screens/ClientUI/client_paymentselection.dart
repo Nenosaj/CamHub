@@ -25,16 +25,24 @@ class PaymentMethodSelection extends StatelessWidget {
               leading: const Icon(Icons.credit_card),
               title: const Text('Credit/Debit Card'),
               onTap: () {
-                // Handle Credit/Debit Card selection here
-                Navigator.pop(context);
+                // Return the selected payment method
+                Navigator.pop(context, 'Credit/Debit Card');
               },
             ),
             ListTile(
               leading: const Icon(Icons.account_balance_wallet),
-              title: const Text('E-Wallet'),
+              title: const Text('G-Cash'),
               onTap: () {
-                // Handle E-Wallet selection here
-                Navigator.pop(context);
+                // Return the selected payment method
+                Navigator.pop(context, 'G-Cash');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.account_balance_wallet),
+              title: const Text('Maya'),
+              onTap: () {
+                // Return the selected payment method
+                Navigator.pop(context, 'Maya');
               },
             ),
             if (!isInitialPayment) // Only show Cash option for full payment
@@ -42,8 +50,8 @@ class PaymentMethodSelection extends StatelessWidget {
                 leading: const Icon(Icons.attach_money),
                 title: const Text('Cash'),
                 onTap: () {
-                  // Handle Cash selection here
-                  Navigator.pop(context);
+                  // Return the selected payment method
+                  Navigator.pop(context, 'Cash');
                 },
               ),
           ],

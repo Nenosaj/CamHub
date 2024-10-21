@@ -1,21 +1,36 @@
-import 'package:example/screens/ClientUI/client_paymentconfirmation.dart';
-import 'package:example/screens/ClientUI/client_paymentselection.dart';
 import 'package:flutter/material.dart';
+import 'client_paymentconfirmation.dart';
+import 'client_paymentselection.dart';
 
-class InitialPayment extends StatelessWidget {
+class InitialPayment extends StatefulWidget {
   final Map<String, bool> selectedAddOns;
-  final Map<String, String> addOnPrices; // Map of add-on prices
+  final Map<String, String> addOnPrices;
   final int totalCost;
 
   const InitialPayment({
     super.key,
     required this.selectedAddOns,
-    required this.addOnPrices, // Pass the add-on prices map
+    required this.addOnPrices,
     required this.totalCost,
   });
 
   @override
+  _InitialPaymentState createState() => _InitialPaymentState();
+}
+
+class _InitialPaymentState extends State<InitialPayment> {
+  String?
+      _selectedInitialPaymentMethod; // Store selected initial payment method
+  String? _selectedFullPaymentMethod; // Store selected full payment method
+
+  @override
   Widget build(BuildContext context) {
+    // Calculate the downpayment (20% of the total cost)
+    final double downPayment = widget.totalCost * 0.2;
+
+    // Calculate the remaining amount (Total - Downpayment)
+    final double remainingAmount = widget.totalCost - downPayment;
+
     return Scaffold(
       backgroundColor: Colors.white, // Set the background color to white
       appBar: AppBar(
@@ -87,7 +102,7 @@ class InitialPayment extends StatelessWidget {
                       child: Text('₱5,000'),
                     ),
                   ]),
-                  ...selectedAddOns.entries.map((entry) {
+                  ...widget.selectedAddOns.entries.map((entry) {
                     if (entry.value) {
                       return TableRow(children: [
                         Padding(
@@ -96,7 +111,7 @@ class InitialPayment extends StatelessWidget {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(addOnPrices[entry.key] ?? '₱...'),
+                          child: Text(widget.addOnPrices[entry.key] ?? '₱...'),
                         ),
                       ]);
                     }
@@ -109,7 +124,7 @@ class InitialPayment extends StatelessWidget {
 
             // Total section
             Text(
-              'Total: ₱$totalCost',
+              'Total: ₱${widget.totalCost}',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
@@ -132,9 +147,9 @@ class InitialPayment extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     // Handle Initial Payment Method selection here
-                    showModalBottomSheet(
+                    final selectedMethod = await showModalBottomSheet<String>(
                       context: context,
                       builder: (context) => const PaymentMethodSelection(
                         isInitialPayment: true,
@@ -142,18 +157,28 @@ class InitialPayment extends StatelessWidget {
                       isScrollControlled:
                           true, // Enable scrolling in the bottom sheet
                     );
+
+                    // Update the selected initial payment method
+                    if (selectedMethod != null) {
+                      setState(() {
+                        _selectedInitialPaymentMethod = selectedMethod;
+                      });
+                    }
                   },
-                  child: const Text(
-                    'Select Initial Method',
+                  child: Text(
+                    _selectedInitialPaymentMethod ?? 'Select Initial Method',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Color(0xFF662C2B),
+                      color: const Color(0xFF662C2B),
                       decoration: TextDecoration.underline,
+                      fontWeight: _selectedInitialPaymentMethod != null
+                          ? FontWeight.bold // Make the text bold when selected
+                          : FontWeight.normal,
                     ),
                   ),
                 ),
                 Text(
-                  '₱${(totalCost * 0.2).toStringAsFixed(2)}',
+                  '₱${downPayment.toStringAsFixed(2)}',
                   style: const TextStyle(fontSize: 16),
                 ), // Assuming 20% of the total payment
               ],
@@ -177,29 +202,48 @@ class InitialPayment extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 5),
-            InkWell(
-              onTap: () {
-                // Handle Full Payment Method selection here
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => const PaymentMethodSelection(
-                    isInitialPayment: false,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  onTap: () async {
+                    // Handle Full Payment Method selection here
+                    final selectedMethod = await showModalBottomSheet<String>(
+                      context: context,
+                      builder: (context) => const PaymentMethodSelection(
+                        isInitialPayment: false,
+                      ),
+                      isScrollControlled:
+                          true, // Enable scrolling in the bottom sheet
+                    );
+
+                    // Update the selected full payment method
+                    if (selectedMethod != null) {
+                      setState(() {
+                        _selectedFullPaymentMethod = selectedMethod;
+                      });
+                    }
+                  },
+                  child: Text(
+                    _selectedFullPaymentMethod ?? 'Select Payment Method',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: const Color(0xFF662C2B),
+                      decoration: TextDecoration.underline,
+                      fontWeight: _selectedFullPaymentMethod != null
+                          ? FontWeight.bold // Make the text bold when selected
+                          : FontWeight.normal,
+                    ),
                   ),
-                  isScrollControlled:
-                      true, // Enable scrolling in the bottom sheet
-                );
-              },
-              child: const Text(
-                'Select Payment Method',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF662C2B),
-                  decoration: TextDecoration.underline,
                 ),
-              ),
+                // Display the remaining amount (Total - Downpayment)
+                Text(
+                  '₱${remainingAmount.toStringAsFixed(2)}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
-
             const SizedBox(height: 20),
             const Divider(), // Divider before CONFIRM button
             const SizedBox(height: 40),
