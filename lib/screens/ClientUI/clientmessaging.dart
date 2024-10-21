@@ -20,7 +20,6 @@ class MessagingScreen extends StatefulWidget {
 }
 
 class MessagingScreenState extends State<MessagingScreen> {
-  final TextEditingController _controller = TextEditingController();
   late List<Map<String, String>> _messages; // List of messages
 
   @override
@@ -39,7 +38,7 @@ class MessagingScreenState extends State<MessagingScreen> {
 
       // Update the conversation list or add a new entry
       bool found = false;
-      for (var conversation in conversationList) {
+      for (var conversation in clientConversationList) {
         if (conversation['photographerName'] == widget.photographerName) {
           conversation['messages'].add({'message': messageText, 'time': currentTime});
           found = true;
@@ -48,7 +47,7 @@ class MessagingScreenState extends State<MessagingScreen> {
       }
       if (!found) {
         // Add new conversation if it doesn't exist
-        conversationList.add({
+        clientConversationList.add({
           'photographerName': widget.photographerName,
           'photographerImage': widget.photographerImage, // Store the photographer's image
           'messages': [{'message': messageText, 'time': currentTime}],
