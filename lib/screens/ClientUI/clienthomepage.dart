@@ -147,7 +147,10 @@ class HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      const ChatScreen(photographerName: '', messages: [],), // Navigate to your Chat Page
+      const ChatScreen(
+        photographerName: '',
+        messages: [],
+      ), // Navigate to your Chat Page
       const BookingPage(), // Navigate to your Bookings Page
       const NotificationPage(), // Navigate to your Notifications Page
       const ProfilePage(), // Navigate to your Profile Page
@@ -255,7 +258,8 @@ class HomePageState extends State<HomePage> {
       appBar: _currentIndex == 0
           ? const HomeAppBar()
           : null, // Conditionally show the AppBar only on the Home page
-      body: _getPages()[_currentIndex], // Displaying the selected page
+      body: _getPages()[_currentIndex],
+      backgroundColor: Colors.white, // Displaying the selected page
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor:
@@ -316,23 +320,6 @@ class HomePageState extends State<HomePage> {
           ),
         ),
         elevation: 0, // Remove any elevation/shadow effect
-      ),
-    );
-  }
-}
-
-// Detail page to navigate to
-class PhotographerDetailPage extends StatelessWidget {
-  const PhotographerDetailPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Photographer Details'),
-      ),
-      body: const Center(
-        child: Text('Details about the selected photographer go here.'),
       ),
     );
   }
