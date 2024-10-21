@@ -1,7 +1,6 @@
-import 'package:example/screens/ClientUI/client_bookingconfirmation.dart';
+import 'package:example/screens/ClientUI/client_paymentconfirmation.dart';
 import 'package:example/screens/ClientUI/client_paymentselection.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // For formatting
 
 class InitialPayment extends StatelessWidget {
   final Map<String, bool> selectedAddOns;
@@ -118,8 +117,8 @@ class InitialPayment extends StatelessWidget {
             const SizedBox(height: 10),
 
             // Initial Payment Method section with Wallet Icon
-            Row(
-              children: const [
+            const Row(
+              children: [
                 Icon(Icons.account_balance_wallet, color: Colors.black),
                 SizedBox(width: 8),
                 Text(
@@ -167,8 +166,8 @@ class InitialPayment extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Full Payment Method section with Money Icon
-            Row(
-              children: const [
+            const Row(
+              children: [
                 Icon(Icons.attach_money, color: Colors.black),
                 SizedBox(width: 8),
                 Text(
@@ -212,7 +211,7 @@ class InitialPayment extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const BookingConfirmation(),
+                      builder: (context) => const PaymentConfirmation(),
                     ),
                   );
                 },
