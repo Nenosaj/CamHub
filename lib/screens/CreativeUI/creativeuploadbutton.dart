@@ -1,3 +1,6 @@
+import 'package:example/screens/CreativeUI/creative_uploadimage.dart';
+import 'package:example/screens/CreativeUI/creative_uploadpackage.dart';
+import 'package:example/screens/CreativeUI/creative_uploadvideo.dart';
 import 'package:flutter/material.dart';
 
 class CreativeUploadButton extends StatelessWidget {
@@ -45,8 +48,12 @@ class CreativeUploadButton extends StatelessWidget {
                   icon: Icons.photo_camera,
                   label: 'PHOTOS',
                   onTap: () {
-                    // Handle photo upload logic
-                    Navigator.of(context).pop(); // Close after action
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UploadImage(),
+                      ),
+                    );
                   },
                 ),
                 _buildOptionButton(
@@ -54,8 +61,12 @@ class CreativeUploadButton extends StatelessWidget {
                   icon: Icons.local_shipping,
                   label: 'PACKAGE',
                   onTap: () {
-                    // Handle package upload logic
-                    Navigator.of(context).pop(); // Close after action
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UploadPackage(),
+                      ),
+                    );
                   },
                 ),
                 _buildOptionButton(
@@ -63,8 +74,12 @@ class CreativeUploadButton extends StatelessWidget {
                   icon: Icons.video_library,
                   label: 'VIDEOS',
                   onTap: () {
-                    // Handle video upload logic
-                    Navigator.of(context).pop(); // Close after action
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UploadVideos(),
+                      ),
+                    );
                   },
                 ),
               ],
@@ -75,7 +90,10 @@ class CreativeUploadButton extends StatelessWidget {
     );
   }
 
-  Widget _buildOptionButton(BuildContext context, {required IconData icon, required String label, required VoidCallback onTap}) {
+  Widget _buildOptionButton(BuildContext context,
+      {required IconData icon,
+      required String label,
+      required VoidCallback onTap}) {
     return Column(
       children: [
         GestureDetector(
