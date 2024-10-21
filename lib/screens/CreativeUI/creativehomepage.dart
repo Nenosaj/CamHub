@@ -3,7 +3,8 @@ import 'creativenofication.dart';
 import 'package:flutter/material.dart';
 import '../settingspage.dart';
 import 'creativeprofile.dart';
-import 'creativeanalytics.dart'; // Import Creative Analytics
+import 'creativeanalytics.dart'; 
+import 'creativeuploadbutton.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -54,7 +55,6 @@ class HomePageState extends State<HomePage> {
   List<Widget> _getPages() {
     return [
       const CreativeAnalytics(
-        // Add Creative Analytics here as the first page
         creativeName: 'Higala Films',
         rating: 4.3,
         monthlyRevenue: 48500,
@@ -63,35 +63,33 @@ class HomePageState extends State<HomePage> {
         totalImpressions: 26000,
       ),
       const CreativeChatScreen(), // Navigate to your Chat Page
+      const CreativeUploadButton(),
       const CreativeNotificationPage(), // Navigate to your Notifications Page
       const ProfilePage(), // Navigate to your Profile Page
     ];
   }
 
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _currentIndex == 0
-          ? const HomeAppBar()
-          : null, // Conditionally show the AppBar only on the Home page
-      body: _getPages()[_currentIndex], // Displaying the selected page
+      appBar: _currentIndex == 0 ? const HomeAppBar() : null,
+      body: _getPages()[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex >= 2
-            ? _currentIndex + 1
-            : _currentIndex, // Adjust to skip index 2 (FAB)
-        selectedItemColor:
-            const Color(0xFF7B3A3F), // Maroon color for selected icon
-        unselectedItemColor: Colors.grey, // Gray for unselected icons
+        currentIndex: _currentIndex,
+        selectedItemColor: const Color(0xFF7B3A3F),
+        unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         onTap: (index) {
-          setState(() {
-            if (index == 2) {
-              // Do nothing for the floating action button
-              return;
-            }
-            // Skip index 2 (the floating action button), shift indices after that by 1
-            _currentIndex = index > 2 ? index - 1 : index;
-          });
+          if (index == 2) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => const CreativeUploadButton(),
+            );
+          } else {
+            setState(() {
+              _currentIndex = index;
+            });
+          }
         },
         items: const [
           BottomNavigationBarItem(
@@ -103,8 +101,8 @@ class HomePageState extends State<HomePage> {
             label: 'Chat',
           ),
           BottomNavigationBarItem(
-            icon: SizedBox.shrink(), // Placeholder for FAB
-            label: '',
+            icon: Icon(Icons.add_circle, size: 35.0), // Add icon integrated
+            label: 'Add',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
@@ -116,26 +114,6 @@ class HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Your action here
-        },
-        backgroundColor: Colors.transparent,
-        child: Container(
-          width: 56.0, // Width and height of the circular white background
-          height: 56.0,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white, // White circle background
-          ),
-          child: const Icon(
-            Icons.add, // "+" icon
-            color: Color(0xFF7B3A3F), // Maroon color for the "+" icon
-            size: 30.0, // Adjust the size if needed
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
