@@ -1,8 +1,7 @@
 import 'package:example/screens/authentication.dart';
 import 'package:flutter/material.dart';
 import 'registration/signupscreen.dart';
-
-//import 'package:example/screens/loadingstate.dart';
+import 'loadingstate.dart'; // Import the loading state class
 
 void main() {
   runApp(const MyApp2());
@@ -38,6 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
   // Boolean to track password visibility
   bool _isPasswordVisible = false;
 
+  // Boolean to track loading state
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,12 +74,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           boxShadow: [
                             BoxShadow(
                               color: const Color.fromARGB(85, 85, 84, 84)
-                                  .withOpacity(
-                                      0.4), // Shadow color with opacity
-                              spreadRadius: 1, // How wide the shadow spreads
-                              blurRadius: 20, // How soft the shadow is
-                              offset: const Offset(2,
-                                  1), // Horizontal and vertical offset of the shadow
+                                  .withOpacity(0.4),
+                              spreadRadius: 1,
+                              blurRadius: 20,
+                              offset: const Offset(2, 1),
                             ),
                           ],
                         ),
@@ -225,19 +225,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                     side: const BorderSide(
                                         color: Color(0xFF662C2B), width: 2),
                                   ),
-                                  onPressed: () {
-                                    final email = emailController.text;
-                                    final password = passwordController.text;
+                                  onPressed: _isLoading
+                                      ? null
+                                      : () {
+                                          final email = emailController.text;
+                                          final password =
+                                              passwordController.text;
 
-                                    authController.signIn(
-                                        email, password, context);
-                                  },
-                                  child: const Text(
-                                    'Log in',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                          _login(email, password);
+                                        },
+                                  child: _isLoading
+                                      ? const CircularProgressIndicator()
+                                      : const Text(
+                                          'Log in',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                 ),
                                 const SizedBox(height: 0),
                                 // Sign-up Link
@@ -283,5 +287,26 @@ class _LoginScreenState extends State<LoginScreen> {
         },
       ),
     );
+  }
+
+  Future<void> _login(String email, String password) async {
+    setState(() {
+      _isLoading = true; // Start loading
+    });
+
+    // Show the loading dialog
+    LoadingState.showLoading(context, true);
+
+    try {
+      // Simulate authentication process
+      await authController.signIn(email, password, context);
+    } finally {
+      setState(() {
+        _isLoading = false; // Stop loading
+      });
+
+      // Hide the loading dialog
+      LoadingState.showLoading(context, false);
+    }
   }
 }
