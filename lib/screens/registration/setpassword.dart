@@ -1,10 +1,10 @@
+import 'package:example/screens/registration/verification.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/authentication.dart';
-//import 'package:example/screens/loadingstate.dart';
-
+import 'package:example/screens/loadingstate.dart'; // Import your loading state
 
 class SetPassword extends StatefulWidget {
-  final String email;  
+  final String email;
 
   const SetPassword({super.key, required this.email});
 
@@ -13,12 +13,11 @@ class SetPassword extends StatefulWidget {
 }
 
 class SetPasswordState extends State<SetPassword> {
-
-
   final Authentication authController = Authentication();
 
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -30,13 +29,12 @@ class SetPasswordState extends State<SetPassword> {
   String confirmPassword = '';
 
   @override
-   void initState() {
+  void initState() {
     super.initState();
     _passwordController.addListener(_updatePassword);
     _confirmPasswordController.addListener(_updatePassword);
-
   }
-  
+
   @override
   void dispose() {
     _passwordController.dispose();
@@ -67,7 +65,6 @@ class SetPasswordState extends State<SetPassword> {
         containsSpecialCharacter &&
         hasMinimumLength;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +221,7 @@ class SetPasswordState extends State<SetPassword> {
               ),
               const SizedBox(height: 30),
 
-              // Sign Up Button
+              // Set Password Button
               Center(
                 child: Container(
                   decoration: BoxDecoration(
@@ -244,14 +241,43 @@ class SetPasswordState extends State<SetPassword> {
                   child: ElevatedButton(
                     onPressed: isPasswordValid && doPasswordsMatch
                         ? () async {
-                          await authController.updatePassword(_passwordController.text, context);
+                            LoadingState.showLoading(
+                                context, true); // Show loading spinner
+                            try {
+                              // Update the password in the backend
+                              await authController.updatePassword(
+                                  _passwordController.text, context);
+
+                              // Hide loading spinner once done
+                              LoadingState.showLoading(context, false);
+
+                              // Navigate to Verification screen after success
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      Verification(email: widget.email),
+                                ),
+                              );
+                            } catch (e) {
+                              // Hide loading spinner if an error occurs
+                              LoadingState.showLoading(context, false);
+
+                              // Handle any errors
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content:
+                                      Text('Failed to update password: $e'),
+                                ),
+                              );
+                            }
                           }
                         : null, // Disable button if password is invalid
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 140, vertical: 15),
+                          horizontal: 120, vertical: 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),

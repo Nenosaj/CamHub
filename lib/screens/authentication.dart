@@ -10,7 +10,8 @@ class Authentication {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Function to register a new client
-  Future<void> registerClient(
+  // Function to register a new client
+  Future<bool> registerClient(
       String email,
       String firstName,
       String middleName,
@@ -56,20 +57,28 @@ class Authentication {
           'phoneNumber': phoneNumber,
         });
 
+        // Optionally, send verification email
+        await sendEmailVerification(context);
+
+        // Navigate to the next page
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => SetPassword(email: email),
           ),
         );
+
+        return true; // Indicate success
       } else {
-        print('User ID is empty, navigation aborted.');
+        print('User ID is empty, registration failed.');
+        return false; // Indicate failure
       }
     } catch (e) {
-      print('Error: $e');
+      print('Error during registration: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration failed: $e')),
       );
+      return false; // Indicate failure
     }
   }
 
@@ -119,6 +128,9 @@ class Authentication {
         print('Failed to add creative: $error');
       });
 
+      // Send email verification
+      await sendEmailVerification(context);
+
       if (uid.isNotEmpty) {
         Navigator.push(
           context,
@@ -135,6 +147,50 @@ class Authentication {
         SnackBar(content: Text('Registration failed: $e')),
       );
     }
+  }
+
+  // Send email verification
+  Future<void> sendEmailVerification(BuildContext context) async {
+    try {
+      User? user = _auth.currentUser;
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Verification email sent to ${user.email}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send verification email: $e')),
+      );
+    }
+  }
+
+  // Send password reset email
+  Future<void> sendPasswordResetEmail(
+      String email, BuildContext context) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Password reset email sent to $email')),
+      );
+    } on FirebaseAuthException catch (e) {
+      _handleFirebaseErrors(e, context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send password reset email: $e')),
+      );
+    }
+  }
+
+  // Check if the user's email is verified
+  Future<bool> isEmailVerified() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await user.reload(); // Ensure the user's info is up-to-date
+      return user.emailVerified;
+    }
+    return false;
   }
 
   // Function to update the user's password
