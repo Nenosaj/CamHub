@@ -1,20 +1,26 @@
+import 'package:flutter/material.dart';
 import 'package:example/screens/ClientUI/client_reviewsandRatings.dart';
 import 'package:example/screens/ClientUI/clienthomepage_searchpage.dart';
-import 'package:flutter/material.dart';
-import 'package:example/screens/ClientUI/client_packagedetails.dart'; // Import the package details page
+import 'package:example/screens/ClientUI/client_packagedetails.dart';
+import 'package:example/screens/CreativeUI/creative_model.dart';
+import 'package:example/screens/ClientUI/client_reviewsandRatings.dart';
 
 class CreativesDetailPage extends StatelessWidget {
-  const CreativesDetailPage({super.key});
+  final Map<String, dynamic> creative;
+
+  const CreativesDetailPage({super.key, required this.creative});
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, // Number of tabs
+      length: 3,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('Higala Films',
-              style: TextStyle(color: Color(0xFF662C2B))),
+          title: Text(
+            creative['businessName'] ?? 'Creative Details',
+            style: const TextStyle(color: Color.fromARGB(255, 48, 45, 44)),
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.favorite_border, color: Color(0xFF662C2B)),
@@ -27,12 +33,7 @@ class CreativesDetailPage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.search, color: Color(0xFF662C2B)),
               onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SearchPage(),
-                  ),
-                );
+                // Your SearchPage navigation here
               },
             ),
           ],
@@ -41,109 +42,88 @@ class CreativesDetailPage extends StatelessWidget {
           children: [
             Column(
               children: [
-                // Header with details
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Left side: Image of the logo
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                            8.0), // Rounded corners for image
-                        child: Image.asset(
-                          'assets/images/higala_logo.png', // Replace with your actual image path
-                          width: 80, // Adjusted size for larger image
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network(
+                          creative['profilePicture'] ?? 'https://via.placeholder.com/150',
+                          width: 80,
                           height: 80,
                           fit: BoxFit.cover,
                         ),
                       ),
-                      const SizedBox(width: 10), // Space between image and text
-                      // Middle section: Details (Name, distance, rating, price range)
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Business Name and See Reviews in a row
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Expanded(
+                                Expanded(
                                   child: Text(
-                                    'Higala Films',
-                                    style: TextStyle(
-                                      fontSize: 24, // Larger font size
+                                    creative['businessName'] ?? 'Creative',
+                                    style: const TextStyle(
+                                      fontSize: 24,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    overflow: TextOverflow
-                                        .ellipsis, // Prevent text overflow
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 TextButton(
                                   onPressed: () async {
-                                    await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ReviewsPage(),
-                                      ),
-                                    );
+                                      Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => ReviewsPage()),
+  );
                                   },
                                   child: const Text(
                                     'See Reviews',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF662C2B),
-                                      decoration: TextDecoration
-                                          .underline, // Keeps the underline to mimic a link
+                                      decoration: TextDecoration.underline,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 8),
-                            // Distance
-                            const Row(
+                            Row(
                               children: [
-                                Icon(Icons.location_on,
-                                    color: Color(0xFF662C2B), size: 24.0),
-                                SizedBox(width: 4),
+                                const Icon(Icons.location_on, color: Color(0xFF662C2B), size: 24.0),
+                                const SizedBox(width: 4),
                                 Text(
                                   '4.4km away',
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.black),
+                                  style: const TextStyle(fontSize: 14, color: Colors.black),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 4),
-                            // Rating row
-                            const Row(
+                            Row(
                               children: [
-                                Icon(Icons.star,
-                                    color: Color(0xFF662C2B), size: 20),
-                                SizedBox(width: 4),
+                                const Icon(Icons.star, color: Color(0xFF662C2B), size: 20),
+                                const SizedBox(width: 4),
                                 Text(
-                                  '4.3 1000+ ratings',
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.black),
+                                  '${creative['rating']?.toString() ?? 'N/A'} Ratings',
+                                  style: const TextStyle(fontSize: 14, color: Colors.black),
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                                height:
-                                    4), // Space between rating and price range
-                            // Price Range row
-                            const Row(
-                              children: [
-                                Icon(Icons.attach_money,
-                                    color: Color(0xFF662C2B), size: 20),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: const [
+                                Icon(Icons.attach_money, color: Color(0xFF662C2B), size: 20),
                                 SizedBox(width: 4),
                                 Flexible(
                                   child: Text(
                                     'Price Range: ₱5,000 - ₱30,000',
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.black),
-                                    overflow: TextOverflow
-                                        .ellipsis, // Prevent overflow
+                                    style: TextStyle(fontSize: 14, color: Colors.black),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
@@ -154,61 +134,28 @@ class CreativesDetailPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Tab bar here
                 const TabBar(
-                  indicatorColor: Color(0xFF662C2B), // Color of the underline
-                  indicatorWeight: 1.0, // Thickness of the underline
-                  labelColor:
-                      Color(0xFF662C2B), // Color of the selected tab label
-                  unselectedLabelColor:
-                      Colors.black, // Color of unselected tab labels
-                  isScrollable:
-                      true, // Allows the tabs to scroll if there are many
+                  indicatorColor: Color(0xFF662C2B),
+                  indicatorWeight: 1.0,
+                  labelColor: Color(0xFF662C2B),
+                  unselectedLabelColor: Colors.black,
+                  isScrollable: true,
                   tabs: [
                     Tab(text: 'Packages'),
                     Tab(text: 'Photos'),
                     Tab(text: 'Videos'),
                   ],
                 ),
-                // TabBarView content
                 Expanded(
                   child: TabBarView(
                     children: [
-                      // First Tab: Packages
                       _buildPackagesTab(context),
-                      // Second Tab: Photos
                       _buildPhotosTab(context),
-                      // Third Tab: Videos
                       _buildVideosTab(context),
                     ],
                   ),
                 ),
               ],
-            ),
-            // Positioned Chat button at the bottom-right corner
-            Positioned(
-              bottom: 20,
-              right: 20,
-              child: Column(
-                children: [
-                  FloatingActionButton(
-                    backgroundColor: const Color.fromARGB(255, 250, 250, 250),
-                    onPressed: () {
-                      // Handle chat button press
-                    },
-                    child: const Icon(Icons.message),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Chat with us',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),
@@ -223,12 +170,7 @@ class CreativesDetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 16),
-          // Popular section
-          _buildSectionTitle(
-            context,
-            Icons.whatshot,
-            'Popular',
-          ),
+          _buildSectionTitle(context, Icons.whatshot, 'Popular'),
           const SizedBox(height: 16),
           _buildPackageGrid(context, [
             {
@@ -253,7 +195,6 @@ class CreativesDetailPage extends StatelessWidget {
             },
           ]),
           const SizedBox(height: 16),
-          // Graduation section
           _buildSectionTitle(context, Icons.school, 'Graduation'),
           const SizedBox(height: 16),
           _buildPackageGrid(context, [
@@ -279,7 +220,6 @@ class CreativesDetailPage extends StatelessWidget {
             },
           ]),
           const SizedBox(height: 16),
-          // Wedding section
           _buildSectionTitle(context, Icons.cake, 'Weddings'),
           const SizedBox(height: 16),
           _buildPackageGrid(context, [
@@ -309,21 +249,7 @@ class CreativesDetailPage extends StatelessWidget {
     );
   }
 
-  // Helper method to create the Photos Tab content
-  Widget _buildPhotosTab(BuildContext context) {
-    return const Center(
-      child: Text('Photos will be displayed here'),
-    );
-  }
-
-  // Helper method to create the Videos Tab content
-  Widget _buildVideosTab(BuildContext context) {
-    return const Center(
-      child: Text('Videos will be displayed here'),
-    );
-  }
-
-  // Helper method to create section titles
+  // Helper method to build a section title
   Widget _buildSectionTitle(BuildContext context, IconData icon, String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -331,9 +257,10 @@ class CreativesDetailPage extends StatelessWidget {
         children: [
           Icon(icon, color: Colors.red),
           const SizedBox(width: 8),
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
@@ -351,7 +278,7 @@ class CreativesDetailPage extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 4 / 5, // Adjusted for rectangle images
+          childAspectRatio: 4 / 5,
         ),
         itemCount: packages.length,
         itemBuilder: (context, index) {
@@ -367,11 +294,10 @@ class CreativesDetailPage extends StatelessWidget {
   }
 
   // Helper method to build individual package cards
-  Widget _buildPackageCard(BuildContext context, String packageName,
-      String price, String imagePath) {
+  Widget _buildPackageCard(
+      BuildContext context, String packageName, String price, String imagePath) {
     return GestureDetector(
       onTap: () {
-        // Navigate to the package details page when tapped
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const PackageDetailsPage()),
@@ -392,11 +318,24 @@ class CreativesDetailPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(packageName,
-              style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(packageName, style: const TextStyle(fontWeight: FontWeight.bold)),
           Text(price),
         ],
       ),
+    );
+  }
+
+  // Helper method to create the Photos Tab content
+  Widget _buildPhotosTab(BuildContext context) {
+    return const Center(
+      child: Text('Photos will be displayed here'),
+    );
+  }
+
+  // Helper method to create the Videos Tab content
+  Widget _buildVideosTab(BuildContext context) {
+    return const Center(
+      child: Text('Videos will be displayed here'),
     );
   }
 }

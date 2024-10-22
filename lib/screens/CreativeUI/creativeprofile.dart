@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'creative_bookingprofile.dart'; // Import the separated BookingPage here
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'creative_bookingprofile.dart';
+import 'creative_model.dart'; // Import the creative model
 
 void main() => runApp(const MyApp());
 
@@ -10,32 +13,63 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ProfilePage(),
+      home: CreativeProfilePage(),
     );
   }
 }
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+class CreativeProfilePage extends StatefulWidget {
+  const CreativeProfilePage({super.key});
 
   @override
   ProfilePages createState() => ProfilePages();
 }
 
-class ProfilePages extends State<ProfilePage>
+class ProfilePages extends State<CreativeProfilePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  Creative? creative; // Store the fetched creative data
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _fetchCreativeData(); // Fetch creative data on init
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  // Fetch the currently signed-in creative
+  Future<void> _fetchCreativeData() async {
+    try {
+      // Get the current signed-in user from FirebaseAuth
+      User? user = FirebaseAuth.instance.currentUser;
+
+      String businessEmail = FirebaseAuth.instance.currentUser!.email!;
+
+
+      if (user != null) {
+        // Fetch creative's data from Firestore
+        DocumentSnapshot creativeDoc = await FirebaseFirestore.instance
+            .collection('creatives')
+            .doc(user.uid)
+            .get();
+
+        if (creativeDoc.exists) {
+          setState(() {
+            creative = Creative.fromFirestore(creativeDoc, businessEmail);
+          });
+        } else {
+          print("No creative data found.");
+        }
+      }
+    } catch (e) {
+      print("Error fetching creative data: $e");
+    }
   }
 
   void _enlargeProfileImage(BuildContext context) {
@@ -52,7 +86,12 @@ class ProfilePages extends State<ProfilePage>
               child: CircleAvatar(
                 radius: 150, // Larger radius for the profile image
                 backgroundColor: Colors.grey[300],
-                child: Icon(Icons.person, size: 150, color: Colors.grey[600]),
+                backgroundImage: creative?.profilePictureUrl != null
+                    ? NetworkImage(creative!.profilePictureUrl!)
+                    : null,
+                child: creative?.profilePictureUrl == null
+                    ? Icon(Icons.person, size: 150, color: Colors.grey[600])
+                    : null,
               ),
             ),
           ),
@@ -69,7 +108,8 @@ class ProfilePages extends State<ProfilePage>
         backgroundColor: const Color(0xFF662C2B), // Dark red background color
         title: const Text('Profile', style: TextStyle(color: Color.fromARGB(255, 252, 252, 252))),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.transparent, // Set the color to white
+),
           onPressed: () {
             // Implement back navigation if necessary
           },
@@ -90,31 +130,37 @@ class ProfilePages extends State<ProfilePage>
                     child: CircleAvatar(
                       radius: 55,
                       backgroundColor: Colors.grey[300],
-                      child: Icon(Icons.person, size: 55, color: Colors.grey[600]),
+                      backgroundImage: creative?.profilePictureUrl != null
+                          ? NetworkImage(creative!.profilePictureUrl!)
+                          : null,
+                      child: creative?.profilePictureUrl == null
+                          ? Icon(Icons.person, size: 55, color: Colors.grey[600])
+                          : null,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Name',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      Text(
+                        creative?.businessName ?? 'Business Name',
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        'Photographer /Videographer',
+                        creative?.city ?? 'Location',
                         style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                       ),
                       Row(
                         children: [
                           Icon(Icons.location_on, color: Colors.grey[600], size: 16),
-                          Text('Location', style: TextStyle(color: Colors.grey[600])),
+                          Text(creative?.city ?? 'Location', style: TextStyle(color: Colors.grey[600])),
                         ],
                       ),
-                      const Row(
+                      Row(
                         children: [
-                           Text('Rating: '),
-                           Icon(Icons.star, color: Colors.orange, size: 16),
+                          const Text('Rating: '),
+                          Icon(Icons.star, color: Colors.orange, size: 16),
+                          Text(creative?.rating.toString() ?? '0.0'),
                         ],
                       ),
                     ],

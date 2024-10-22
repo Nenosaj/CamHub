@@ -34,7 +34,7 @@ class ClientUI extends StatelessWidget {
         '/notifications': (context) =>
             const NotificationPage(),
         '/profile': (context) =>
-            const ProfilePage(),
+            const ClientProfilePage(),
       },
     );
   }

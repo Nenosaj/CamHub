@@ -1,43 +1,12 @@
-import 'package:example/screens/ClientUI/clientmessage.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'clientmessage.dart';
 import 'clientbookings.dart';
 import 'clientnotifications.dart';
 import 'clientProfile.dart';
 import 'clienthomepage_searchpage.dart';
 import '../settingspage.dart';
 import 'clienthomepage_creativedetails.dart';
-
-class Photographer {
-  final String name;
-  final String imagePath;
-  final double rating;
-
-  Photographer(
-      {required this.name, required this.imagePath, required this.rating});
-}
-
-List<Photographer> photographers = [
-  Photographer(
-      name: 'John Doe',
-      imagePath: 'assets/images/photographer1.jpg',
-      rating: 4.8),
-  Photographer(
-      name: 'Jane Smith',
-      imagePath: 'assets/images/photographer1.jpg',
-      rating: 4.7),
-  Photographer(
-      name: 'Alice Brown',
-      imagePath: 'assets/images/photographer1.jpg',
-      rating: 4.5),
-  Photographer(
-      name: 'David Wilson',
-      imagePath: 'assets/images/photographer1.jpg',
-      rating: 4.9),
-  Photographer(
-      name: 'Emma Watson',
-      imagePath: 'assets/images/photographer1.jpg',
-      rating: 4.6),
-];
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -60,14 +29,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => SettingsPage()), // New route
-          ).then((result) {
-            // Handle any result returned when the SearchPage is popped
-            if (result != null) {
-              // Do something with the result (if needed)
-            }
-          });
+            MaterialPageRoute(builder: (context) => const SettingsPage()),
+          );
         },
       ),
       title: const Text(
@@ -83,17 +46,10 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: const Icon(Icons.search,
               color: Colors.white, size: 35.0), // Increased search icon size
           onPressed: () {
-            // Push the SearchPage route onto the stack
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const SearchPage()), // New route
-            ).then((result) {
-              // Handle any result returned when the SearchPage is popped
-              if (result != null) {
-                // Do something with the result (if needed)
-              }
-            });
+              MaterialPageRoute(builder: (context) => const SearchPage()),
+            );
           },
         ),
       ],
@@ -101,12 +57,43 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize =>
-      const Size.fromHeight(80.0); // Define the height of the AppBar
+  Size get preferredSize => const Size.fromHeight(80.0);
 }
 
 class HomePageState extends State<HomePage> {
-  int _currentIndex = 0; // Starting with the first tab (Home)
+  int _currentIndex = 0; // Bottom Navigation Index
+  List<Map<String, dynamic>> creatives = []; // Store fetched creatives here
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCreatives(); // Fetch creatives when the page loads
+  }
+
+  // Fetch creatives from Firestore directly as Map<String, dynamic>
+  Future<void> _fetchCreatives() async {
+    print('Fetching creatives from Firestore...');
+
+    try {
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('creatives').get();
+      List<Map<String, dynamic>> fetchedCreatives = snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList(); // Fetch data directly
+
+      setState(() {
+        creatives = fetchedCreatives;
+      });
+
+      if (creatives.isEmpty) {
+        print('No creatives found.');
+      } else {
+        print('Fetched ${creatives.length} creatives.');
+      }
+    } catch (e) {
+      print('Error fetching creatives: $e');
+    }
+  }
 
   // List of pages for each bottom navigation item
   List<Widget> _getPages() {
@@ -133,33 +120,30 @@ class HomePageState extends State<HomePage> {
               ),
             ),
 
-            // Spacing between categories and photographer cards
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 20.0), // Spacing
 
-            // Photographers/Cinematographers you may like
-            _buildPhotographerSection("Creatives you may like"),
+            // Creatives you may like section
+            _buildCreativeSection("Creatives you may like"),
 
-            // Spacing between sections
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 20.0), // Spacing
 
-            // Popular Picks
-            _buildPhotographerSection("Popular Picks"),
+            // Popular Picks section
+            _buildCreativeSection("Popular Picks"),
           ],
         ),
       ),
       const ChatScreen(
         photographerName: '',
         messages: [],
-      ), // Navigate to your Chat Page
-      const BookingPage(), // Navigate to your Bookings Page
-      const NotificationPage(), // Navigate to your Notifications Page
-      const ProfilePage(), // Navigate to your Profile Page
+      ), // Navigate to Chat Page
+      const BookingPage(), // Navigate to Bookings Page
+      const NotificationPage(), // Navigate to Notifications Page
+      const ClientProfilePage(), // Navigate to Profile Page
     ];
   }
 
-  // Photographer/Cinematographer section builder
-  // Photographer/Cinematographer section builder
-  Widget _buildPhotographerSection(String title) {
+  // Creative section builder
+  Widget _buildCreativeSection(String title) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -174,27 +158,36 @@ class HomePageState extends State<HomePage> {
           ),
         ),
         const SizedBox(height: 10.0),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: photographers.map((photographer) {
-              return _buildPhotographerCard(photographer);
-            }).toList(),
-          ),
-        ),
+        creatives.isNotEmpty
+            ? SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: creatives.map((creative) {
+                    return _buildCreativeCard(creative);
+                  }).toList(),
+                ),
+              )
+            : const Center(
+                child: Text(
+                  'No creatives available.',
+                  style: TextStyle(fontSize: 16.0, color: Colors.black54),
+                ),
+              ),
       ],
     );
   }
 
-// Photographer/Cinematographer card builder
-  Widget _buildPhotographerCard(Photographer photographer) {
+  // Creative card builder (without Creative model, just using Firestore data)
+  Widget _buildCreativeCard(Map<String, dynamic> creative) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  const CreativesDetailPage()), // Navigate to detail page
+            builder: (context) => CreativesDetailPage(
+              creative: creative, // Pass the creative map
+            ), // Navigate to detail page
+          ),
         );
       },
       child: Padding(
@@ -219,28 +212,50 @@ class HomePageState extends State<HomePage> {
                 width: double.infinity,
                 height: 120.0,
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(photographer.imagePath), // Dynamic image
-                    fit: BoxFit.cover,
-                  ),
+                  image: creative['profilePicture'] != null
+                      ? DecorationImage(
+                          image: NetworkImage(creative['profilePicture']),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
                   borderRadius:
                       const BorderRadius.vertical(top: Radius.circular(10.0)),
                 ),
+                child: creative['profilePicture'] == null
+                    ? const Center(
+                        child: Icon(Icons.person, size: 60, color: Colors.grey),
+                      )
+                    : null,
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
                     Text(
-                      photographer.name, // Dynamic name
+                      creative['businessName'] ?? 'Unknown Business', // Display business name
                       style: const TextStyle(
                           fontSize: 16.0, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 5.0),
-                    const Text(
-                      '★★★★★', // Static stars for now
-                      style: TextStyle(fontSize: 14.0, color: Colors.amber),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.star, color: Colors.amber, size: 16.0),
+                        const Icon(Icons.star, color: Colors.amber, size: 16.0),
+                        const Icon(Icons.star, color: Colors.amber, size: 16.0),
+                        const Icon(Icons.star, color: Colors.amber, size: 16.0),
+                        const Icon(Icons.star_half,
+                            color: Colors.amber, size: 16.0),
+                        const SizedBox(width: 5.0),
+                        Text(
+                          (creative['rating']?.toStringAsFixed(1) ?? '0.0'),
+                          style: const TextStyle(
+                            fontSize: 14.0,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -297,7 +312,7 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  // Move the _buildCategoryChip method inside the _HomePageState class
+  // Widget for category chips
   Widget _buildCategoryChip(String label) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -314,12 +329,7 @@ class HomePageState extends State<HomePage> {
             horizontal: 20.0, vertical: 10.0), // Padding for size
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0), // Rounded corners
-          side: const BorderSide(
-            color: Colors.transparent, // Ensure the border is fully transparent
-            width: 0, // Set width to 0 to remove the outline
-          ),
         ),
-        elevation: 0, // Remove any elevation/shadow effect
       ),
     );
   }

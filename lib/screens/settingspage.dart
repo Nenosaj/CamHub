@@ -1,8 +1,17 @@
+import 'package:example/screens/CreativeUI/creativeprofile.dart';
 import 'package:example/screens/authentication.dart';
 import 'package:flutter/material.dart';
+
+
 import 'package:example/screens/ClientUI/client_model.dart';
 import 'package:example/screens/ClientUI/clientProfile.dart';
 import 'package:example/screens/ClientUI/clientProfile_edit.dart';
+
+
+
+import 'package:example/screens/CreativeUI/creative_model.dart'; // Import the Creative model
+import 'package:example/screens/CreativeUI/creativeProfileDetails.dart'; // Import the Creative profile
+import 'package:example/screens/CreativeUI/creativeprofile_edit.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -13,29 +22,48 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
   final Authentication authController = Authentication(); // Initialize Authentication controller
-  Client? client; // This will store the current client information
+  Client? client; // Store client info if logged in as a client
+  Creative? creative; // Store creative info if logged in as a creative
+  String? profilePictureUrl; // For storing the profile picture URL
+  bool isClient = false; // Flag to determine if the user is a client or creative
 
   @override
   void initState() {
     super.initState();
-    _fetchClientData(); // Fetch client data when the screen is loaded
+    _fetchUserData(); // Fetch user data (client or creative) when the screen is loaded
   }
 
-  // Fetch client data from the database
-  Future<void> _fetchClientData() async {
-    Client? fetchedClient = await Client.fetchCurrentClient();
-    if (fetchedClient != null) {
-      setState(() {
-        client = fetchedClient; // Store the client data
-      });
+  // Fetch user data based on the current user's role
+  Future<void> _fetchUserData() async {
+    // Fetch user UID from FirebaseAuth
+    final user = authController.getCurrentUser();
+    if (user != null) {
+      String uid = user.uid;
+
+      // Try fetching client data first
+      Client? fetchedClient = await Client.fetchCurrentClient();
+      if (fetchedClient != null) {
+        setState(() {
+          isClient = true;
+          client = fetchedClient;
+          profilePictureUrl = client?.profilePictureUrl;
+        });
+      } else {
+        // If no client data found, try fetching creative data
+        Creative? fetchedCreative = await Creative.fetchCurrentCreative();
+        if (fetchedCreative != null) {
+          setState(() {
+            isClient = false; // Not a client, so it's a creative
+            creative = fetchedCreative;
+            profilePictureUrl = creative?.profilePictureUrl;
+          });
+        }
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final Authentication authController = Authentication(); // Initialize Authentication controller
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B), // Maroon color
@@ -52,19 +80,27 @@ class SettingsPageState extends State<SettingsPage> {
         children: [
           // User Info Section
           ListTile(
-            leading: const CircleAvatar(
+            leading: CircleAvatar(
+              radius: 25,
+              backgroundImage: profilePictureUrl != null
+                  ? NetworkImage(profilePictureUrl!)
+                  : null, // Load the profile picture if available
               backgroundColor: Colors.grey,
-              child: Icon(Icons.person, color: Colors.white),
+              child: profilePictureUrl == null
+                  ? Icon(Icons.person, color: Colors.white)
+                  : null, // Show icon if no profile picture is available
             ),
-            title: Text(client != null 
-              ? '${client!.firstName} ${client!.lastName}' 
-              : 'Loading...'),
-            subtitle: const Text('View Profile'),
+            title: Text(isClient
+                ? '${client?.firstName} ${client?.lastName}' // Display client info if logged in as a client
+                : creative?.businessName ?? 'Loading...'), // Display creative info if logged in as a creative
+            subtitle: const Text('View Profile Details'),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ProfilePage(), // Navigate to ProfilePage
+                  builder: (context) => isClient
+                      ? const ClientProfilePage() // Navigate to Client Profile
+                      : const CreativeProfileDetails(), // Navigate to Creative Profile
                 ),
               );
             },
@@ -85,7 +121,9 @@ class SettingsPageState extends State<SettingsPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ClientProfileEdit(), 
+                  builder: (context) => isClient
+                      ? const ClientProfileEdit() // Edit Client Profile
+                      : const CreativeProfileEdit(), // Edit Creative Profile (you'll need to create this)
                 ),
               );
             },

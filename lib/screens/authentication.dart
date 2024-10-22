@@ -314,4 +314,13 @@ class Authentication {
       );
     }
   }
+
+  // Method to get the current user
+  User? getCurrentUser() {
+    return FirebaseAuth.instance.currentUser;
+  }
+
+  // Add other authentication-related methods if needed
+
+
 }
