@@ -277,14 +277,9 @@ class Authentication {
         );
       }
     } on FirebaseAuthException catch (e) {
-      String errorMessage = '';
       if (e.code == 'user-not-found') {
-        errorMessage = 'No user found for that email.';
       } else if (e.code == 'wrong-password') {
-        errorMessage = 'Incorrect password.';
-      } else {
-        errorMessage = 'Incorrect Username or Password. Please try again.';
-      }
+      } else {}
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
