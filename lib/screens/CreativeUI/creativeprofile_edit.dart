@@ -3,10 +3,9 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // For File handling
 import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage
 import 'package:cloud_firestore/cloud_firestore.dart'; // For Firestore
-import 'package:example/screens/ClientUI/client_model.dart';
+import 'package:example/screens/CreativeUI/creative_model.dart'; // Use the Creative model
 import 'package:permission_handler/permission_handler.dart'; 
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth
-
 
 void main() => runApp(const MyApp());
 
@@ -17,58 +16,55 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ClientProfileEdit(),
+      home: CreativeProfileEdit(),
     );
   }
 }
 
-class ClientProfileEdit extends StatefulWidget {
-  const ClientProfileEdit({super.key});
+class CreativeProfileEdit extends StatefulWidget {
+  const CreativeProfileEdit({super.key});
 
   @override
-  ClientProfileEditState createState() => ClientProfileEditState();
+  CreativeProfileEditState createState() => CreativeProfileEditState();
 }
 
-class ClientProfileEditState extends State<ClientProfileEdit> {
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController dobController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
+class CreativeProfileEditState extends State<CreativeProfileEdit> {
+  final TextEditingController businessNameController = TextEditingController();
+  final TextEditingController businessEmailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
 
-  Client? client;
+  Creative? creative; // Creative model
   XFile? _pickedImage; // For the selected image
 
   @override
   void initState() {
     super.initState();
-    _fetchClientData();
+    _fetchCreativeData();
   }
 
-  // Fetch client data from Firestore
-  Future<void> _fetchClientData() async {
-  User? currentUser = FirebaseAuth.instance.currentUser; // Get the current user
-  if (currentUser != null) {
-    String uid = currentUser.uid;
+  // Fetch creative data from Firestore
+  Future<void> _fetchCreativeData() async {
+    User? currentUser = FirebaseAuth.instance.currentUser; // Get the current user
+    if (currentUser != null) {
+      String uid = currentUser.uid;
 
-    // Fetch client data from Firestore using uid
-    DocumentSnapshot userData =
-        await FirebaseFirestore.instance.collection('clients').doc(uid).get();
+      // Fetch creative data from Firestore using uid
+      DocumentSnapshot userData =
+          await FirebaseFirestore.instance.collection('creatives').doc(uid).get();
 
-    if (userData.exists) {
-      setState(() {
-        client = Client.fromFirestore(userData, currentUser.email ?? ''); // Pass both DocumentSnapshot and email
-        usernameController.text = '${client!.firstName} ${client!.lastName}';
-        emailController.text = client!.email;
-        dobController.text = client!.birthday;
-        addressController.text =
-            '${client!.street}, ${client!.city}, ${client!.province}';
-        phoneController.text = client!.phoneNumber;
-      });
+      if (userData.exists) {
+        setState(() {
+          creative = Creative.fromFirestore(userData, currentUser.email ?? ''); // Pass both DocumentSnapshot and email
+          businessNameController.text = creative!.businessName;
+          businessEmailController.text = creative!.businessEmail;
+          phoneController.text = creative!.businessPhoneNumber;
+          addressController.text =
+              '${creative!.street}, ${creative!.city}, ${creative!.province}';
+        });
+      }
     }
   }
-}
-
 
   // Pick image for profile picture
   Future<void> _pickImage() async {
@@ -89,63 +85,62 @@ class ClientProfileEditState extends State<ClientProfileEdit> {
       );
     }
   }
+
   // Upload profile picture to Firebase Storage and get the download URL
- Future<String?> _uploadProfilePicture(String uid, File imageFile) async {
-  try {
-    Reference storageReference =
-        FirebaseStorage.instance.ref().child('profilePictures/$uid.jpg');
-    UploadTask uploadTask = storageReference.putFile(imageFile);
-    TaskSnapshot snapshot = await uploadTask;
-    return await snapshot.ref.getDownloadURL();
-  } catch (e) {
-    print('Error uploading profile picture: $e');
-    return null;
+  Future<String?> _uploadProfilePicture(String uid, File imageFile) async {
+    try {
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child('profilePictures/$uid.jpg');
+      UploadTask uploadTask = storageReference.putFile(imageFile);
+      TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      print('Error uploading profile picture: $e');
+      return null;
+    }
   }
-}
 
   // Save changes logic (for the text fields and profile picture)
   Future<void> _saveChanges() async {
-  User? currentUser = FirebaseAuth.instance.currentUser; // Get the current user
-  if (currentUser != null) {
-    String uid = currentUser.uid;
+    User? currentUser = FirebaseAuth.instance.currentUser; // Get the current user
+    if (currentUser != null) {
+      String uid = currentUser.uid;
 
-    // Check if a new profile picture was picked
-    String? profilePictureUrl;
-    if (_pickedImage != null) {
-      profilePictureUrl = await _uploadProfilePicture(uid, File(_pickedImage!.path));
+      // Check if a new profile picture was picked
+      String? profilePictureUrl;
+      if (_pickedImage != null) {
+        profilePictureUrl = await _uploadProfilePicture(uid, File(_pickedImage!.path));
+      }
+
+      // Update Firestore with the new data, including profile picture URL if available
+      await FirebaseFirestore.instance.collection('creatives').doc(uid).update({
+        'businessName': businessNameController.text,
+        'businessEmail': businessEmailController.text,
+        'businessPhoneNumber': phoneController.text,
+        'street': addressController.text.split(',').first,
+        'city': addressController.text.split(',')[1],
+        'province': addressController.text.split(',').last,
+        'profilePicture': profilePictureUrl ?? creative?.profilePictureUrl, // Use the new profile picture if available, otherwise keep the old one
+      });
+
+      // Refresh the creative data to update the UI with the new profile picture
+      await _fetchCreativeData();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Changes saved successfully!')),
+      );
     }
-
-    // Update Firestore with the new data, including profile picture URL if available
-    await FirebaseFirestore.instance.collection('clients').doc(uid).update({
-      'firstName': usernameController.text.split(' ').first,
-      'lastName': usernameController.text.split(' ').last,
-      'phoneNumber': phoneController.text,
-      'birthday': dobController.text,
-      'street': addressController.text.split(',').first,
-      'city': addressController.text.split(',').last,
-      'profilePicture': profilePictureUrl ?? client?.profilePictureUrl, // Use the new profile picture if available, otherwise keep the old one
-    });
-
-    // Refresh the client data to update the UI with the new profile picture
-    await _fetchClientData();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Changes saved successfully!')),
-    );
   }
-}
-
 
   // Discard changes logic
   void _discardChanges() {
     setState(() {
-      // Reset all fields to original values from the client model
-      if (client != null) {
-        usernameController.text = '${client!.firstName} ${client!.lastName}';
-        emailController.text = client!.email;
-        dobController.text = client!.birthday;
-        addressController.text = '${client!.street}, ${client!.city}, ${client!.province}';
-        phoneController.text = client!.phoneNumber;
+      // Reset all fields to original values from the creative model
+      if (creative != null) {
+        businessNameController.text = creative!.businessName;
+        businessEmailController.text = creative!.businessEmail;
+        phoneController.text = creative!.businessPhoneNumber;
+        addressController.text = '${creative!.street}, ${creative!.city}, ${creative!.province}';
       }
       // Reset picked image
       _pickedImage = null;
@@ -202,14 +197,13 @@ class ClientProfileEditState extends State<ClientProfileEdit> {
                       radius: 80,
                       backgroundImage: _pickedImage != null
                           ? FileImage(File(_pickedImage!.path))
-                          : client?.profilePictureUrl != null
-                              ? NetworkImage(client!.profilePictureUrl!)
+                          : creative?.profilePictureUrl != null
+                              ? NetworkImage(creative!.profilePictureUrl!)
                               : null, // No default image, placeholder will show
-                      child: _pickedImage == null && client?.profilePictureUrl == null
+                      child: _pickedImage == null && creative?.profilePictureUrl == null
                           ? const Icon(Icons.person, size: 40, color: Colors.white)
                           : null,
-                    )
-                    ,
+                    ),
                 ),
               ],
             ),
@@ -221,28 +215,23 @@ class ClientProfileEditState extends State<ClientProfileEdit> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildEditableTextField(
-                    controller: usernameController,
-                    label: 'Username',
+                    controller: businessNameController,
+                    label: 'Business Name',
                   ),
                   const SizedBox(height: 16),
                   buildEditableTextField(
-                    controller: emailController,
-                    label: 'Email',
+                    controller: businessEmailController,
+                    label: 'Business Email',
                   ),
                   const SizedBox(height: 16),
                   buildEditableTextField(
-                    controller: dobController,
-                    label: 'Date of Birth',
+                    controller: phoneController,
+                    label: 'Business Phone Number',
                   ),
                   const SizedBox(height: 16),
                   buildEditableTextField(
                     controller: addressController,
                     label: 'Address',
-                  ),
-                  const SizedBox(height: 16),
-                  buildEditableTextField(
-                    controller: phoneController,
-                    label: 'Phone Number',
                   ),
                   const SizedBox(height: 30),
                   // Discard Changes button

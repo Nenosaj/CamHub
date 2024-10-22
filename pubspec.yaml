@@ -20,6 +20,7 @@ dependencies:
   table_calendar: ^3.0.0
   image_picker: ^1.1.2
   firebase_storage: ^12.3.4
+  permission_handler: ^11.3.1
    # Firebase Core dependency
   firebase_core: ^3.6.0  # You can use the latest version from pub.dev
 
@@ -52,6 +53,7 @@ flutter:
     - assets/images/package3.png
     - assets/images/package4.png
     - assets/images/higala_logo1.jpg
+
 
   # To add custom fonts to your application, add a fonts section here.
   # Example:

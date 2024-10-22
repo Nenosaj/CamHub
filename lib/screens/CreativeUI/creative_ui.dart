@@ -29,7 +29,7 @@ class CreativeUI extends StatelessWidget {
         '/': (context) => const HomePage(), // 'const' added here
         '/chat': (context) => const CreativeChatScreen(clientName: '', messages: [],), // Define ChatPage in a separate file
         '/notifications': (context) => const CreativeNotificationPage(), // Define NotificationsPage in a separate file
-        '/profile': (context) => const ProfilePage(), // Define ProfilePage in a separate file
+        '/profile': (context) => const CreativeProfilePage(), // Define ProfilePage in a separate file
       },
     );
   }
