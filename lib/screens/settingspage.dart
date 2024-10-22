@@ -1,14 +1,40 @@
 import 'package:example/screens/authentication.dart';
 import 'package:flutter/material.dart';
-//import 'package:example/screens/loadingstate.dart';
+import 'package:example/screens/ClientUI/client_model.dart';
+import 'package:example/screens/ClientUI/clientProfile.dart';
+import 'package:example/screens/ClientUI/clientProfile_edit.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
   @override
+  SettingsPageState createState() => SettingsPageState();
+}
+
+class SettingsPageState extends State<SettingsPage> {
+  final Authentication authController = Authentication(); // Initialize Authentication controller
+  Client? client; // This will store the current client information
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchClientData(); // Fetch client data when the screen is loaded
+  }
+
+  // Fetch client data from the database
+  Future<void> _fetchClientData() async {
+    Client? fetchedClient = await Client.fetchCurrentClient();
+    if (fetchedClient != null) {
+      setState(() {
+        client = fetchedClient; // Store the client data
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final Authentication authController =
-        Authentication(); // Initialize Authentication controller
+
+    final Authentication authController = Authentication(); // Initialize Authentication controller
 
     return Scaffold(
       appBar: AppBar(
@@ -30,10 +56,17 @@ class SettingsPage extends StatelessWidget {
               backgroundColor: Colors.grey,
               child: Icon(Icons.person, color: Colors.white),
             ),
-            title: const Text('Name'),
+            title: Text(client != null 
+              ? '${client!.firstName} ${client!.lastName}' 
+              : 'Loading...'),
             subtitle: const Text('View Profile'),
             onTap: () {
-              // Navigate to Profile or Edit Profile
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfilePage(), // Navigate to ProfilePage
+                ),
+              );
             },
           ),
           const Divider(),
@@ -49,7 +82,12 @@ class SettingsPage extends StatelessWidget {
             leading: const Icon(Icons.edit),
             title: const Text('Edit Profile'),
             onTap: () {
-              // Navigate to Edit Profile
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ClientProfileEdit(), 
+                ),
+              );
             },
           ),
           // New Change Password Option
@@ -109,7 +147,6 @@ class SettingsPage extends StatelessWidget {
             title: TextButton(
               onPressed: () async {
                 // Call signOut method from Authentication class
-
                 await authController.signOut(context);
               },
               child: const Text('Log Out', style: TextStyle(color: Colors.red)),

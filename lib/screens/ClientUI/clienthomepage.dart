@@ -61,7 +61,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const SettingsPage()), // New route
+                builder: (context) => SettingsPage()), // New route
           ).then((result) {
             // Handle any result returned when the SearchPage is popped
             if (result != null) {
