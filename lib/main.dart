@@ -1,4 +1,3 @@
-import 'package:example/screens/welcome_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'screens/loginscreen.dart';
@@ -25,14 +24,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/', // Define the initial route
+      // jason
+      initialRoute: '/',
       routes: {
-        '/': (context) => WelcomePage(), // Welcome page as the initial route
-        '/login': (context) => const LoginScreen(), // Login route
-        '/admin': (context) => const AdminUI(), // Admin route
-        '/client': (context) => const ClientUI(), // Client route
-        '/creative': (context) => const CreativeUI(), // Creative route
-        '/signup': (context) => const SignUpScreen(), // Signup route
+        '/': (context) => const LoginScreen(),
+        '/admin': (context) => const AdminUI(),
+        '/client': (context) => const ClientUI(),
+        '/creative': (context) => const CreativeUI(),
+        '/signup': (context) => const SignUpScreen(),
       },
     );
   }
