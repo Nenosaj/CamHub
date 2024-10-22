@@ -3,6 +3,7 @@ import 'package:example/screens/ClientUI/client_reviewsandRatings.dart';
 import 'package:example/screens/ClientUI/clienthomepage_searchpage.dart';
 import 'package:example/screens/ClientUI/client_packagedetails.dart';
 import 'package:example/screens/CreativeUI/creative_model.dart';
+import 'package:example/screens/ClientUI/client_reviewsandRatings.dart';
 
 class CreativesDetailPage extends StatelessWidget {
   final Map<String, dynamic> creative;
@@ -75,7 +76,10 @@ class CreativesDetailPage extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () async {
-                                    // Your reviews navigation here
+                                      Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => ReviewsPage()),
+  );
                                   },
                                   child: const Text(
                                     'See Reviews',
