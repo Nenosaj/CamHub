@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:example/screens/authentication.dart';
 
-
-
 class CredentialsUpload extends StatefulWidget {
-   const CredentialsUpload({super.key});
+  const CredentialsUpload({super.key});
 
   @override
   CredentialsUploadState createState() => CredentialsUploadState();
 }
 
 class CredentialsUploadState extends State<CredentialsUpload> {
-
-    final Authentication authController = Authentication();
-
+  final Authentication authController = Authentication();
 
   bool isPrivacyChecked = false; // For first checkbox
   bool isTermsChecked = false; // For second checkbox
@@ -21,7 +17,6 @@ class CredentialsUploadState extends State<CredentialsUpload> {
       false; // Flag to show error message if checkboxes are not ticked
 
   bool allFieldsFilled = false;
-
 
   bool isSmallBusinessChecked = false; // Checkbox for Small Business
   bool isLargeBusinessChecked = false; // Checkbox for Large Business
@@ -112,7 +107,7 @@ class CredentialsUploadState extends State<CredentialsUpload> {
           businessPhoneNumber = value;
           break;
       }
-      _validateFields(); 
+      _validateFields();
     });
   }
 
@@ -360,48 +355,46 @@ class CredentialsUploadState extends State<CredentialsUpload> {
               ),
 
               const SizedBox(height: 30),
-               buildCheckbox(
-                  context,
-                  'I agree to the collection and use of data that I have provided to CamHUB through this application. I understand that the collection and use of this data, which may include personal information and sensitive personal information, shall be in accordance with the ',
-                  'Privacy Policy of CamHUB',
-                  isPrivacyChecked,
-                  (value) {
-                    setState(() {
-                      isPrivacyChecked = value!;
-                    });
-                  },
-                ),
-                const SizedBox(height: 5),
-                buildCheckbox(
-                  context,
-                  'I agree to the ',
-                  'Terms and Conditions of CamHUB',
-                  isTermsChecked,
-                  (value) {
-                    setState(() {
-                      isTermsChecked = value!;
-                    });
-                  },
-                ),
-                if (showError)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      'Please agree to the Privacy Policy and Terms to continue.',
-                      style: TextStyle(color: Colors.red, fontSize: 14),
-                    ),
+              buildCheckbox(
+                context,
+                'I agree to the collection and use of data that I have provided to CamHUB through this application. I understand that the collection and use of this data, which may include personal information and sensitive personal information, shall be in accordance with the ',
+                'Privacy Policy of CamHUB',
+                isPrivacyChecked,
+                (value) {
+                  setState(() {
+                    isPrivacyChecked = value!;
+                  });
+                },
+              ),
+              const SizedBox(height: 5),
+              buildCheckbox(
+                context,
+                'I agree to the ',
+                'Terms and Conditions of CamHUB',
+                isTermsChecked,
+                (value) {
+                  setState(() {
+                    isTermsChecked = value!;
+                  });
+                },
+              ),
+              if (showError)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    'Please agree to the Privacy Policy and Terms to continue.',
+                    style: TextStyle(color: Colors.red, fontSize: 14),
                   ),
-                const SizedBox(height: 30),
-
+                ),
+              const SizedBox(height: 30),
 
               Center(
                 child: Container(
                   decoration: BoxDecoration(
-                   color: (isPrivacyChecked &&
-                              isTermsChecked &&
-                              allFieldsFilled)
-                          ? const Color(0xFF662C2B)
-                          : Colors.grey,
+                    color:
+                        (isPrivacyChecked && isTermsChecked && allFieldsFilled)
+                            ? const Color(0xFF662C2B)
+                            : Colors.grey,
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
@@ -413,26 +406,27 @@ class CredentialsUploadState extends State<CredentialsUpload> {
                     ],
                   ),
                   child: ElevatedButton(
-                     onPressed: (isPrivacyChecked && isTermsChecked && allFieldsFilled)
-                          ? () async {
-                           try {
-                             // Call the registerClient function from the Authentication controller
-                             await authController.registerCreative(
-                              businessEmailController.text, 
-                              businessNameController.text,
-                              unitNumberController.text,
-                              streetController.text,
-                              villageController.text,
-                              barangayController.text,
-                              cityController.text, 
-                              provinceController.text,
-                              businessPhoneNumberController.text, 
-                              context);
-                            } catch (e) {
-                             // ignore: avoid_print
-                             print('Error during registration: $e');
-                            }
-                             }
+                    onPressed:
+                        (isPrivacyChecked && isTermsChecked && allFieldsFilled)
+                            ? () async {
+                                try {
+                                  // Call the registerClient function from the Authentication controller
+                                  await authController.registerCreative(
+                                      businessEmailController.text,
+                                      businessNameController.text,
+                                      unitNumberController.text,
+                                      streetController.text,
+                                      villageController.text,
+                                      barangayController.text,
+                                      cityController.text,
+                                      provinceController.text,
+                                      businessPhoneNumberController.text,
+                                      context);
+                                } catch (e) {
+                                  // ignore: avoid_print
+                                  print('Error during registration: $e');
+                                }
+                              }
                             : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
@@ -485,7 +479,7 @@ class CredentialsUploadState extends State<CredentialsUpload> {
     );
   }
 
-   Widget buildCheckbox(BuildContext context, String text, String linkText,
+  Widget buildCheckbox(BuildContext context, String text, String linkText,
       bool isChecked, Function(bool?) onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -514,5 +508,4 @@ class CredentialsUploadState extends State<CredentialsUpload> {
       ),
     );
   }
-
 }

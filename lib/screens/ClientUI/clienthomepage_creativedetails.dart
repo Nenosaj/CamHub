@@ -3,7 +3,6 @@ import 'package:example/screens/ClientUI/client_reviewsandRatings.dart';
 import 'package:example/screens/ClientUI/clienthomepage_searchpage.dart';
 import 'package:example/screens/ClientUI/client_packagedetails.dart';
 import 'package:example/screens/CreativeUI/creative_model.dart';
-import 'package:example/screens/ClientUI/client_reviewsandRatings.dart';
 
 class CreativesDetailPage extends StatelessWidget {
   final Map<String, dynamic> creative;
@@ -50,7 +49,8 @@ class CreativesDetailPage extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
                         child: Image.network(
-                          creative['profilePicture'] ?? 'https://via.placeholder.com/150',
+                          creative['profilePicture'] ??
+                              'https://via.placeholder.com/150',
                           width: 80,
                           height: 80,
                           fit: BoxFit.cover,
@@ -76,10 +76,11 @@ class CreativesDetailPage extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () async {
-                                      Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => ReviewsPage()),
-  );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ReviewsPage()),
+                                    );
                                   },
                                   child: const Text(
                                     'See Reviews',
@@ -95,34 +96,40 @@ class CreativesDetailPage extends StatelessWidget {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                const Icon(Icons.location_on, color: Color(0xFF662C2B), size: 24.0),
+                                const Icon(Icons.location_on,
+                                    color: Color(0xFF662C2B), size: 24.0),
                                 const SizedBox(width: 4),
                                 Text(
                                   '4.4km away',
-                                  style: const TextStyle(fontSize: 14, color: Colors.black),
+                                  style: const TextStyle(
+                                      fontSize: 14, color: Colors.black),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 4),
                             Row(
                               children: [
-                                const Icon(Icons.star, color: Color(0xFF662C2B), size: 20),
+                                const Icon(Icons.star,
+                                    color: Color(0xFF662C2B), size: 20),
                                 const SizedBox(width: 4),
                                 Text(
                                   '${creative['rating']?.toString() ?? 'N/A'} Ratings',
-                                  style: const TextStyle(fontSize: 14, color: Colors.black),
+                                  style: const TextStyle(
+                                      fontSize: 14, color: Colors.black),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 4),
                             Row(
                               children: const [
-                                Icon(Icons.attach_money, color: Color(0xFF662C2B), size: 20),
+                                Icon(Icons.attach_money,
+                                    color: Color(0xFF662C2B), size: 20),
                                 SizedBox(width: 4),
                                 Flexible(
                                   child: Text(
                                     'Price Range: ₱5,000 - ₱30,000',
-                                    style: TextStyle(fontSize: 14, color: Colors.black),
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.black),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -294,8 +301,8 @@ class CreativesDetailPage extends StatelessWidget {
   }
 
   // Helper method to build individual package cards
-  Widget _buildPackageCard(
-      BuildContext context, String packageName, String price, String imagePath) {
+  Widget _buildPackageCard(BuildContext context, String packageName,
+      String price, String imagePath) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -318,7 +325,8 @@ class CreativesDetailPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(packageName, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(packageName,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           Text(price),
         ],
       ),

@@ -2,12 +2,9 @@ import 'package:example/screens/CreativeUI/creativeprofile.dart';
 import 'package:example/screens/authentication.dart';
 import 'package:flutter/material.dart';
 
-
 import 'package:example/screens/ClientUI/client_model.dart';
 import 'package:example/screens/ClientUI/clientProfile.dart';
 import 'package:example/screens/ClientUI/clientProfile_edit.dart';
-
-
 
 import 'package:example/screens/CreativeUI/creative_model.dart'; // Import the Creative model
 import 'package:example/screens/CreativeUI/creativeProfileDetails.dart'; // Import the Creative profile
@@ -21,11 +18,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
-  final Authentication authController = Authentication(); // Initialize Authentication controller
+  final Authentication authController =
+      Authentication(); // Initialize Authentication controller
   Client? client; // Store client info if logged in as a client
   Creative? creative; // Store creative info if logged in as a creative
   String? profilePictureUrl; // For storing the profile picture URL
-  bool isClient = false; // Flag to determine if the user is a client or creative
+  bool isClient =
+      false; // Flag to determine if the user is a client or creative
 
   @override
   void initState() {
@@ -92,7 +91,8 @@ class SettingsPageState extends State<SettingsPage> {
             ),
             title: Text(isClient
                 ? '${client?.firstName} ${client?.lastName}' // Display client info if logged in as a client
-                : creative?.businessName ?? 'Loading...'), // Display creative info if logged in as a creative
+                : creative?.businessName ??
+                    'Loading...'), // Display creative info if logged in as a creative
             subtitle: const Text('View Profile Details'),
             onTap: () {
               Navigator.push(

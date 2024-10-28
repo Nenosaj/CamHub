@@ -1,7 +1,8 @@
 import 'package:example/screens/authentication.dart';
 import 'package:flutter/material.dart';
 import 'registration/signupscreen.dart';
-import 'loadingstate.dart'; // Import the loading state class
+
+//import 'package:example/screens/loadingstate.dart';
 
 void main() {
   runApp(const MyApp2());
@@ -47,7 +48,6 @@ class _LoginScreenState extends State<LoginScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
-            // Scrollable content
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
               child: IntrinsicHeight(
@@ -74,10 +74,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           boxShadow: [
                             BoxShadow(
                               color: const Color.fromARGB(85, 85, 84, 84)
-                                  .withOpacity(0.4),
-                              spreadRadius: 1,
-                              blurRadius: 20,
-                              offset: const Offset(2, 1),
+                                  .withOpacity(
+                                      0.4), // Shadow color with opacity
+                              spreadRadius: 1, // How wide the shadow spreads
+                              blurRadius: 20, // How soft the shadow is
+                              offset: const Offset(2,
+                                  1), // Horizontal and vertical offset of the shadow
                             ),
                           ],
                         ),
@@ -88,7 +90,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    // Adjust based on the visibility of the keyboard
                     Positioned(
                       top: MediaQuery.of(context).viewInsets.bottom > 0
                           ? constraints.maxHeight * 0.25
@@ -97,7 +98,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       right: 0,
                       child: Column(
                         children: [
-                          // Maroon Container
                           Container(
                             padding: const EdgeInsets.all(25),
                             decoration: const BoxDecoration(
@@ -126,7 +126,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 0),
-                                // Username TextField
                                 Stack(
                                   children: [
                                     const Positioned(
@@ -161,7 +160,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 0),
-                                // Password TextField
                                 Stack(
                                   children: [
                                     const Positioned(
@@ -212,39 +210,53 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 15),
-                                // Log in Button
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: const Color(0xFF662C2B),
-                                    backgroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 120, vertical: 15),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    side: const BorderSide(
-                                        color: Color(0xFF662C2B), width: 2),
-                                  ),
-                                  onPressed: _isLoading
-                                      ? null
-                                      : () {
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    // Log in Button
+                                    if (!_isLoading)
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor:
+                                              const Color(0xFF662C2B),
+                                          backgroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 120, vertical: 15),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                          ),
+                                          side: const BorderSide(
+                                              color: Color(0xFF662C2B),
+                                              width: 2),
+                                        ),
+                                        onPressed: () async {
+                                          setState(() {
+                                            _isLoading = true;
+                                          });
                                           final email = emailController.text;
                                           final password =
                                               passwordController.text;
+                                          await authController.signIn(
+                                              email, password, context);
 
-                                          _login(email, password);
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
                                         },
-                                  child: _isLoading
-                                      ? const CircularProgressIndicator()
-                                      : const Text(
+                                        child: const Text(
                                           'Log in',
                                           style: TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold),
                                         ),
+                                      ),
+                                    // Loading Indicator
+                                    if (_isLoading)
+                                      const CircularProgressIndicator(),
+                                  ],
                                 ),
                                 const SizedBox(height: 0),
-                                // Sign-up Link
                                 TextButton(
                                   onPressed: () {
                                     Navigator.push(
@@ -287,26 +299,5 @@ class _LoginScreenState extends State<LoginScreen> {
         },
       ),
     );
-  }
-
-  Future<void> _login(String email, String password) async {
-    setState(() {
-      _isLoading = true; // Start loading
-    });
-
-    // Show the loading dialog
-    LoadingState.showLoading(context, true);
-
-    try {
-      // Simulate authentication process
-      await authController.signIn(email, password, context);
-    } finally {
-      setState(() {
-        _isLoading = false; // Stop loading
-      });
-
-      // Hide the loading dialog
-      LoadingState.showLoading(context, false);
-    }
   }
 }

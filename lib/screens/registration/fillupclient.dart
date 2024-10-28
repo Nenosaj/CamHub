@@ -1,5 +1,3 @@
-import 'package:example/screens/loadingstate.dart';
-import 'package:example/screens/registration/setpassword.dart';
 import 'package:flutter/material.dart';
 //import 'package:example/screens/registration/verification.dart';
 import 'package:intl/intl.dart'; // For formatting the date
@@ -279,61 +277,28 @@ class FillUpPageClientState extends State<FillUpPageClient> {
                               isTermsChecked &&
                               allFieldsFilled)
                           ? () async {
-                              LoadingState.showLoading(
-                                  context, true); // Show loading spinner
                               try {
-                                bool isSuccess =
-                                    await authController.registerClient(
-                                        emailController.text,
-                                        firstNameController.text,
-                                        middleNameController.text,
-                                        lastNameController.text,
-                                        birthdayController.text,
-                                        unitNumberController.text,
-                                        streetController.text,
-                                        villageController.text,
-                                        barangayController.text,
-                                        cityController.text,
-                                        provinceController.text,
-                                        phoneNumberController.text,
-                                        context);
-
-                                if (isSuccess) {
-                                  LoadingState.showLoading(
-                                      context, false); // Hide loading spinner
-
-                                  // Navigate to SetPassword screen
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SetPassword(
-                                          email: emailController.text),
-                                    ),
-                                  );
-                                } else {
-                                  print("Registration failed.");
-                                  LoadingState.showLoading(
-                                      context, false); // Hide loading spinner
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'Registration failed. Please try again.')),
-                                  );
-                                }
+                                // Call the registerClient function from the Authentication controller
+                                await authController.registerClient(
+                                    emailController.text,
+                                    firstNameController.text,
+                                    middleNameController.text,
+                                    lastNameController.text,
+                                    birthdayController.text,
+                                    unitNumberController.text,
+                                    streetController.text,
+                                    villageController.text,
+                                    barangayController.text,
+                                    cityController.text,
+                                    provinceController.text,
+                                    phoneNumberController.text,
+                                    context);
                               } catch (e) {
-                                print(
-                                    "Error during registration: $e"); // Debug message
-                                LoadingState.showLoading(
-                                    context, false); // Hide loading spinner
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          'Error during registration: $e')),
-                                );
+                                // ignore: avoid_print
+                                print('Error during registration: $e');
                               }
                             }
-                          : null,
-                      // Disable button if conditions are not met
+                          : null, // Disable button if conditions are not met
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors
                             .transparent, // Make the button background transparent
