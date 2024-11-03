@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'creativehomepage.dart';
 import 'creativemessage.dart';
-import 'creativenofication.dart';
+import 'creativenotification.dart';
 import 'creativeprofile.dart';
 
 class CreativeUI extends StatelessWidget {

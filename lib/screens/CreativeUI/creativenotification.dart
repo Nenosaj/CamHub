@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'creativenotification_card.dart'; // Import the Creative Notification Card
+import 'creativenotification_card.dart';
+import 'creative_notificationappointment.dart'; // Ensure proper import of the appointment page
 
 // Mock data (which can later be integrated with backend)
 const List<Map<String, dynamic>> creativeNotifications = [
@@ -23,22 +24,6 @@ const List<Map<String, dynamic>> creativeNotifications = [
   },
 ];
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: CreativeNotificationPage(),
-    );
-  }
-}
-
 class CreativeNotificationPage extends StatefulWidget {
   const CreativeNotificationPage({super.key});
 
@@ -60,11 +45,33 @@ class CreativeNotificationPageState extends State<CreativeNotificationPage> {
     });
   }
 
+  // Function to handle dialog based on the result
+  void _showActionMessage(String message) {
+    Future.delayed(Duration.zero, () {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close dialog
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-       appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
         toolbarHeight: 80.0,
         elevation: 0,
@@ -90,6 +97,32 @@ class CreativeNotificationPageState extends State<CreativeNotificationPage> {
                 message: notification['message'],
                 time: notification['time'],
                 isNew: notification['isNew'],
+                // Navigate to appointment screen and handle result
+                onPress: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreativeNotificationAppointment(
+                        clientName: 'Client C. User',
+                        contactNumber: '00000000000',
+                        message: "I'd like to schedule a photo session. Please let me know your availability.",
+                        eventTitle: 'Debut',
+                        eventDate: 'Fri, Dec 31, 2025',
+                        eventTime: '12:00 PM - 3:30 PM',
+                        eventLocation: 'Lumbia, Cagayan de Oro, Philippines',
+                        packageName: 'Package 1',
+                        services: [
+                          'Drone Shot',
+                          '5 more pictures',
+                          '1-minute video',
+                          '2-minutes video',
+                          '3-minutes video',
+                        ],
+                      ),
+                    ),
+                  );
+            
+                },
               ),
             );
           }).toList(),

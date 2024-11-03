@@ -12,7 +12,7 @@ class CreativeNotificationCard extends StatefulWidget {
     required this.title,
     required this.message,
     required this.time,
-    this.isNew = false, // Default is not new
+    this.isNew = false, required Future<Null> Function() onPress, // Default is not new
   });
 
   @override

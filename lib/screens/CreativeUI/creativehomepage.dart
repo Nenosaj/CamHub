@@ -1,5 +1,5 @@
 import 'creativemessage.dart';
-import 'creativenofication.dart';
+import 'creativenotification.dart';
 import 'package:flutter/material.dart';
 import '../settingspage.dart';
 import 'creativeprofile.dart';
