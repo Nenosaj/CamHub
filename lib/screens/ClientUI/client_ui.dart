@@ -1,9 +1,9 @@
-import 'package:example/screens/ClientUI/clientmessage.dart';
+import 'package:example/screens/ClientUI/client_message/client_message.dart';
 import 'package:flutter/material.dart';
-import 'clienthomepage.dart';
-import 'clientbookings.dart';
-import 'clientnotifications.dart';
-import 'clientProfile.dart';
+import 'client_homepage/client_homepage.dart';
+import 'client_booking/client_booking.dart';
+import 'client_notication/client_notification.dart';
+import 'client_profile/client_profile.dart';
 
 class ClientUI extends StatelessWidget {
   const ClientUI({super.key});
@@ -26,7 +26,7 @@ class ClientUI extends StatelessWidget {
       // Start with the HomePage or other routes
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomePage(), 
+        '/': (context) => const ClientHomePage(), 
         '/chat': (context) =>
             const ChatScreen(photographerName: '', messages: [],), 
         '/bookings': (context) =>
@@ -34,7 +34,7 @@ class ClientUI extends StatelessWidget {
         '/notifications': (context) =>
             const NotificationPage(),
         '/profile': (context) =>
-            const ProfilePage(),
+            const ClientProfilePage(),
       },
     );
   }

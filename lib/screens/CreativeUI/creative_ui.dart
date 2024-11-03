@@ -1,9 +1,16 @@
 
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'creativehomepage.dart';
 import 'creativemessage.dart';
 import 'creativenotification.dart';
 import 'creativeprofile.dart';
+=======
+import 'creative_homepage/creative_homepage.dart';
+import 'creative_message/creative_message.dart';
+import 'creative_nofication/creative_nofication.dart';
+import 'creative_profile/creative_profile.dart';
+>>>>>>> 5ca0714a00e02cf5cef8b4cab28ea1e74a9ca5bd
 
 class CreativeUI extends StatelessWidget {
   const CreativeUI({super.key});
@@ -29,7 +36,7 @@ class CreativeUI extends StatelessWidget {
         '/': (context) => const HomePage(), // 'const' added here
         '/chat': (context) => const CreativeChatScreen(clientName: '', messages: [],), // Define ChatPage in a separate file
         '/notifications': (context) => const CreativeNotificationPage(), // Define NotificationsPage in a separate file
-        '/profile': (context) => const ProfilePage(), // Define ProfilePage in a separate file
+        '/profile': (context) => const CreativeProfilePage(), // Define ProfilePage in a separate file
       },
     );
   }
