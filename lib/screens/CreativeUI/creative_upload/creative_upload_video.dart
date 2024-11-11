@@ -1,8 +1,14 @@
-import 'package:example/screens/CreativeUI/creative_upload/creative_upload_selectcategory.dart';
+import 'package:example/screens/Firebase/firestoreservice.dart';
+import 'package:example/screens/ImagePicker/imagepickerservice.dart';
+import 'package:example/screens/Firebase/storage.dart';
 import 'package:flutter/material.dart';
+import 'package:example/screens/CreativeUI/creative_upload/creative_upload_selectcategory.dart';
+import 'package:example/screens/Firebase/authentication.dart';
+
+import 'dart:io';
 
 class UploadVideos extends StatefulWidget {
-  const UploadVideos({super.key});
+  const UploadVideos ({super.key});
 
   @override
   UploadVideosState createState() => UploadVideosState();
@@ -10,16 +16,92 @@ class UploadVideos extends StatefulWidget {
 
 class UploadVideosState extends State<UploadVideos> {
   String? selectedCategory;
-  String? selectedLocation;
-
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+    final TextEditingController _locationController = TextEditingController();
+  final FirestoreService _firestoreService = FirestoreService();
+  final ImagePickerService _imagePickerService = ImagePickerService();
+  final Storage _storage = Storage();
+  final Authentication _authenticationService = Authentication();
+
+  final List<File> _selectedVideos = [];
 
   // Placeholder function for video selection
-  void _pickVideo() {
-    // Handle video picker functionality here
-    // ignore: avoid_print
-    print('Plus button clicked - Open Video Picker');
+  Future<void> _pickVideo () async {
+    if (_selectedVideos.length < 5) {
+      File? _pickVideo = await _imagePickerService.pickImageFromGallery();
+      if (_pickVideo != null) {
+        setState(() {
+          _selectedVideos.add(_pickVideo);
+        });
+      }
+    } else {
+      // Display a message if the user tries to add more than 5 videos
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You can only select up to 5 videos.')),
+      );
+    }
+  }
+
+  // Function to handle image upload and data submission
+  Future<void> _uploadAndSubmit() async {
+    String title = _titleController.text.trim();
+    String description = _descriptionController.text.trim();
+    String? category = selectedCategory;
+    String location = _locationController.text.trim();
+    String? creativeUid = _authenticationService.getCurrentUser()?.uid; // Replace this with the actual creative's UID
+
+    //print(creativeUid);
+
+    if (title.isEmpty || description.isEmpty || category == null || location.isEmpty || _selectedVideos.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields and select at least one video.')),
+      );
+      return;
+    }
+
+    // Generate unique timestamp for this upload to use in storage paths
+    String createdAt = DateTime.now().millisecondsSinceEpoch.toString();
+    List<String> videoUrls = [];
+
+    // Upload each selected image to Firebase Storage
+      List<File> videosToUpload = List.from(_selectedVideos);
+
+      for (var video in videosToUpload) {
+        String? downloadUrl = await _storage.uploadFile(
+            'videos/$creativeUid/$createdAt/${video.path.split('/').last}', video);
+        if (downloadUrl != null) {
+          videoUrls.add(downloadUrl);
+        }
+      }
+
+    // Save the data to Firestore
+        await _firestoreService.addVideoDetails(
+      uid: creativeUid!,
+      videoDetails: {
+        'title': title,
+        'description': description,
+        'category': category,
+        'location': location,
+        'createdAt': DateTime.now(),
+        'images': videoUrls, // List of image URLs
+      },
+    );
+
+
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Upload Successful')),
+    );
+
+    // Clear the form after submission
+    setState(() {
+      _titleController.clear();
+      _descriptionController.clear();
+      selectedCategory = null;
+      _locationController.clear();
+      _selectedVideos.clear();
+    });
   }
 
   @override
@@ -27,7 +109,7 @@ class UploadVideosState extends State<UploadVideos> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        title: const Text('Upload Video',
+        title: const Text('Upload Image',
             style: TextStyle(
                 color: Color(0xFF662C2B), fontWeight: FontWeight.bold)),
         leading: IconButton(
@@ -57,7 +139,7 @@ class UploadVideosState extends State<UploadVideos> {
                   ),
                 ],
               ),
-              width: double.infinity, // Full width
+              width: double.infinity,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -153,38 +235,34 @@ class UploadVideosState extends State<UploadVideos> {
                   const SizedBox(height: 8.0),
 
                   // Location Selection
-                  GestureDetector(
-                    onTap: () {
-                      // Handle location selection
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Location',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16.0),
-                          ),
-                          Icon(Icons.arrow_forward_ios),
-                        ],
+                    TextFormField(
+                       controller: _locationController,  // Attach the controller
+                      decoration: const InputDecoration(
+                        labelText: 'Location',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                        ),
+                        hintText: 'Type location here',
+                        hintStyle: TextStyle(
+                          color: Color(0xFF662C2B),
+                          fontStyle: FontStyle.italic,
+                          fontSize: 16.0,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
             const SizedBox(height: 40.0),
 
-            // Upload Videos Area with clickable plus button
+            // Upload Images Area with clickable plus button
             const Text(
-              'Upload Videos Here:',
+              'Upload Images Here:',
               style: TextStyle(fontSize: 16.0),
             ),
             const SizedBox(height: 8.0),
             GestureDetector(
-              onTap: _pickVideo, // Handle the video picking functionality
+              onTap: _pickVideo,
               child: Container(
                 height: 150.0,
                 width: double.infinity,
@@ -193,13 +271,20 @@ class UploadVideosState extends State<UploadVideos> {
                   borderRadius: BorderRadius.circular(8.0),
                   border: Border.all(color: Colors.grey.shade400),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.add_circle_outline,
-                    size: 50.0,
-                    color: Colors.grey,
-                  ),
-                ),
+                child: _selectedVideos.isEmpty
+                    ? const Center(
+                        child: Icon(
+                          Icons.add_circle_outline,
+                          size: 50.0,
+                          color: Colors.grey,
+                        ),
+                      )
+                    : Wrap(
+                        spacing: 8.0,
+                        children: _selectedVideos.map((file) {
+                          return Image.file(file, width: 100, height: 100);
+                        }).toList(),
+                      ),
               ),
             ),
             const SizedBox(height: 20.0),
@@ -207,9 +292,7 @@ class UploadVideosState extends State<UploadVideos> {
             // Post Button
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  // Handle post action
-                },
+                onPressed: _uploadAndSubmit,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF662C2B),
                   padding: const EdgeInsets.symmetric(
