@@ -54,6 +54,7 @@ class VerificationState extends State<Verification> {
     if (user?.emailVerified ?? false) {
       // Navigate to the setpassword.dart page if email is verified
       Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(
           builder: (context) => SetPassword(email: widget.email),
@@ -61,6 +62,7 @@ class VerificationState extends State<Verification> {
       );
     } else {
       // Show a message if the email is not verified
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please verify your email before proceeding')),
       );
