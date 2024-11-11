@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:example/screens/SignUp/setpassword.dart';
 import 'package:example/screens/SignIn/loginscreen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:example/main.dart';
+import 'package:example/screens/Firebase/firestoreservice.dart';
 
 class Authentication {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirestoreService _firestoreService = FirestoreService();
 
   // Function to register a new client
   Future<void> registerClient(
@@ -33,41 +33,38 @@ class Authentication {
 
       String uid = userCredential.user?.uid ?? '';
 
-      if (uid.isNotEmpty) {
-        // Add general user information to Firestore
-        await _firestore.collection('users').doc(uid).set({
-          'email': email,
-          'userType': 'client',
-          'createdAt': FieldValue.serverTimestamp(),
-        });
+      if (uid.isEmpty) throw Exception('User ID is empty.');
+      await _firestoreService.addUser(uid: uid, email: email, userType: 'client');
+
+
+
 
         // Add client-specific details to Firestore
-        await _firestore.collection('clients').doc(uid).set({
-          'firstName': firstName,
-          'middleName': middleName,
-          'lastName': lastName,
-          'birthday': birthday,
-          'unitNumber': unitNumber,
-          'street': street,
-          'village': village,
-          'barangay': barangay,
-          'city': city,
-          'province': province,
-          'phoneNumber': phoneNumber,
-        });
+        await _firestoreService.addClientDetails(uid: uid, clientDetails: {
+        'firstName': firstName,
+        'middleName': middleName,
+        'lastName': lastName,
+        'birthday': birthday,
+        'unitNumber': unitNumber,
+        'street': street,
+        'village': village,
+        'barangay': barangay,
+        'city': city,
+        'province': province,
+        'phoneNumber': phoneNumber,
+      });
+
         
+        // ignore: use_build_context_synchronously
         Navigator.push( context,
           MaterialPageRoute(
             builder: (context) => SetPassword(email: email),
           ),
         );
-      } else {
-        // ignore: avoid_print
-        print('User ID is empty, navigation aborted.');
-      }
     } catch (e) {
       // ignore: avoid_print
       print('Error: $e');
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration failed: $e')),
       );
@@ -95,20 +92,14 @@ class Authentication {
       );
 
       String uid = userCredential.user?.uid ?? '';
-      if (uid.isEmpty) {
-        // ignore: avoid_print
-        print("User ID is null or empty.");
-      }
+      if (uid.isEmpty) throw Exception("User ID is null or empty.");
+
 
       // Store general user information in the 'users' collection
-      await _firestore.collection('users').doc(uid).set({
-        'email': businessEmail,
-        'userType': 'creative',
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      await _firestoreService.addUser(uid: uid, email: businessEmail, userType: 'creative');
 
       // Store creative-specific information in the 'creatives' collection
-      await _firestore.collection('creatives').doc(uid).set({
+      await _firestoreService.addCreativeDetails(uid: uid, creativeDetails: {        
         'businessName': businessName,
         'unitNumber': unitNumber,
         'street': street,
@@ -121,21 +112,19 @@ class Authentication {
         // ignore: avoid_print
         print('Failed to add creative: $error');
       });
-
-      if (uid.isNotEmpty) {
+      
         Navigator.push(
+          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
             builder: (context) => SetPassword(email: businessEmail),
           ),
         );
-      } else {
-        // ignore: avoid_print
-        print('User ID is empty, navigation aborted.');
-      }
+       
     } catch (e) {
       // ignore: avoid_print
       print('Error: $e');
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration failed: $e')),
       );
@@ -143,31 +132,31 @@ class Authentication {
   }
 
   // Function to update the user's password
-  Future<void> updatePassword(String newPassword, BuildContext context) async {
+  Future<void> registrationPassword(String newPassword, BuildContext context) async {
     try {
       User? user = _auth.currentUser;
       if (user != null) {
         await user.updatePassword(newPassword);
 
         Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
               builder: (context) => const LoginScreen()), // Navigating to login
         );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Password updated successfully!')),
-        );
       } else {
         throw FirebaseAuthException(
             code: 'no-current-user',
             message: 'No user is currently signed in.');
       }
     } on FirebaseAuthException catch (e) {
+      // ignore: use_build_context_synchronously
       _handleFirebaseErrors(e, context);
     } catch (e) {
       // ignore: avoid_print
       print('Error: $e');
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to update password. Please try again.')),
       );
@@ -207,21 +196,23 @@ class Authentication {
       );
 
       // Fetch the user's role from Firestore
-      DocumentSnapshot userDoc = await _firestore
-          .collection('users')
-          .doc(userCredential.user?.uid)
-          .get();
-      String userType = userDoc['userType'];
+      String uid = userCredential.user?.uid ?? '';
+
+      String userType = await _firestoreService.getUserType(uid);
 
       // Navigate based on user type
       if (userType == 'client') {
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacementNamed(context, '/client');
       } else if (userType == 'creative') {
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacementNamed(context, '/creative');
       } else if (userType == 'admin') {
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacementNamed(context, '/admin');
       } else {
         // Handle case where no valid role is found
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Invalid user role.')),
         );
@@ -236,17 +227,14 @@ class Authentication {
       String errorMessage = '';
       if (e.code == 'user-not-found') {
         errorMessage = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        errorMessage = 'Incorrect password.';
       } else if (e.code == 'invalid-email') {
         errorMessage = 'The email address is badly formatted .';
-      } else if (e.code == 'user-not-found') {
-      errorMessage = 'No user found for that email.';
       }
         else {
         errorMessage = 'Incorrect Username or Password. Please try again.';
       }
 
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -258,6 +246,7 @@ class Authentication {
       );
     } catch (e) {
       // Handle other errors
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login failed: $e')),
       );
@@ -269,12 +258,14 @@ class Authentication {
       await _auth.signOut();
 
       Navigator.pushAndRemoveUntil(
+        // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(
             builder: (context) => const MyApp()), // Redirects to MyApp
         (Route<dynamic> route) => false, // Removes all routes
       );
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error signing out: $e')),
       );
