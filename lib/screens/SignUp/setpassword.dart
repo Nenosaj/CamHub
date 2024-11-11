@@ -240,7 +240,7 @@ class SetPasswordState extends State<SetPassword> {
                   child: ElevatedButton(
                     onPressed: isPasswordValid && doPasswordsMatch
                         ? () async {
-                            await authController.updatePassword(
+                            await authController.registrationPassword(
                                 _passwordController.text, context);
                           }
                         : null, // Disable button if password is invalid
