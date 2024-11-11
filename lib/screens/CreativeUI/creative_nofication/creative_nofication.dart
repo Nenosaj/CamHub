@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-<<<<<<<< HEAD:lib/screens/CreativeUI/creativenotification.dart
-import 'creativenotification_card.dart';
-import 'creative_notificationappointment.dart'; // Ensure proper import of the appointment page
-========
 import 'creative_notification_card.dart'; // Import the Creative Notification Card
->>>>>>>> 5ca0714a00e02cf5cef8b4cab28ea1e74a9ca5bd:lib/screens/CreativeUI/creative_nofication/creative_nofication.dart
+import 'creative_notificationappointment.dart'; // Ensure proper import of the appointment page
 
 // Mock data (which can later be integrated with backend)
 const List<Map<String, dynamic>> creativeNotifications = [

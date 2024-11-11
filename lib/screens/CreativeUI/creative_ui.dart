@@ -1,16 +1,9 @@
 
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'creativehomepage.dart';
-import 'creativemessage.dart';
-import 'creativenotification.dart';
-import 'creativeprofile.dart';
-=======
 import 'creative_homepage/creative_homepage.dart';
 import 'creative_message/creative_message.dart';
 import 'creative_nofication/creative_nofication.dart';
 import 'creative_profile/creative_profile.dart';
->>>>>>> 5ca0714a00e02cf5cef8b4cab28ea1e74a9ca5bd
 
 class CreativeUI extends StatelessWidget {
   const CreativeUI({super.key});
