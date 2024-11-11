@@ -94,6 +94,22 @@ class NotificationPageState extends State<NotificationPage> {
                 },
               ),
             ),
+            const SizedBox(height: 16), // Spacing between cards
+            AnimatedSlide(
+              offset: _isCardVisible ? const Offset(0, 0) : const Offset(0, 1),
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOut,
+              child: NotificationCard(
+                title: 'Booking',
+                subtitle: 'Appointment Completed',
+                message:
+                    'Hello Client,\nYour appointment is completed. Please rate your creative to provide feedback.',
+                buttonText: 'Rate Creative',
+                onPressed: () {
+                  // Add your route or action for rating the creative
+                },
+              ),
+            ),
           ],
         ),
       ),

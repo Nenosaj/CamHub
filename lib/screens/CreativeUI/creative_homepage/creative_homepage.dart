@@ -1,3 +1,8 @@
+<<<<<<< HEAD:lib/screens/CreativeUI/creativehomepage.dart
+import 'creativemessage.dart';
+import 'creativenotification.dart';
+=======
+>>>>>>> 5ca0714a00e02cf5cef8b4cab28ea1e74a9ca5bd:lib/screens/CreativeUI/creative_homepage/creative_homepage.dart
 import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:example/screens/CreativeUI/creative_model/creative_model.dart';
