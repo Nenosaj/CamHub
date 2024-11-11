@@ -1,5 +1,11 @@
-import 'package:example/screens/CreativeUI/creative_upload/creative_upload_selectcategory.dart';
+import 'package:example/screens/Firebase/firestoreservice.dart';
+import 'package:example/screens/ImagePicker/imagepickerservice.dart';
+import 'package:example/screens/Firebase/storage.dart';
 import 'package:flutter/material.dart';
+import 'package:example/screens/CreativeUI/creative_upload/creative_upload_selectcategory.dart';
+import 'package:example/screens/Firebase/authentication.dart';
+
+import 'dart:io';
 
 class UploadImage extends StatefulWidget {
   const UploadImage({super.key});
@@ -10,16 +16,92 @@ class UploadImage extends StatefulWidget {
 
 class UploadImageState extends State<UploadImage> {
   String? selectedCategory;
-  String? selectedLocation;
-
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+    final TextEditingController _locationController = TextEditingController();
+  final FirestoreService _firestoreService = FirestoreService();
+  final ImagePickerService _imagePickerService = ImagePickerService();
+  final Storage _storage = Storage();
+  final Authentication _authenticationService = Authentication();
+
+  final List<File> _selectedImages = [];
 
   // Placeholder function for image selection
-  void _pickImage() {
-    // Handle image picker functionality here
-    //ignore: avoid_print
-    print('Plus button clicked - Open Image Picker');
+  Future<void> _pickImage() async {
+    if (_selectedImages.length < 5) {
+      File? pickedImage = await _imagePickerService.pickImageFromGallery();
+      if (pickedImage != null) {
+        setState(() {
+          _selectedImages.add(pickedImage);
+        });
+      }
+    } else {
+      // Display a message if the user tries to add more than 5 images
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You can only select up to 5 images.')),
+      );
+    }
+  }
+
+  // Function to handle image upload and data submission
+  Future<void> _uploadAndSubmit() async {
+    String title = _titleController.text.trim();
+    String description = _descriptionController.text.trim();
+    String? category = selectedCategory;
+    String location = _locationController.text.trim();
+    String? creativeUid = _authenticationService.getCurrentUser()?.uid; // Replace this with the actual creative's UID
+
+    //print(creativeUid);
+
+    if (title.isEmpty || description.isEmpty || category == null || location.isEmpty || _selectedImages.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields and select at least one image.')),
+      );
+      return;
+    }
+
+    // Generate unique timestamp for this upload to use in storage paths
+    String createdAt = DateTime.now().millisecondsSinceEpoch.toString();
+    List<String> imageUrls = [];
+
+    // Upload each selected image to Firebase Storage
+      List<File> imagesToUpload = List.from(_selectedImages);
+
+      for (var image in imagesToUpload) {
+        String? downloadUrl = await _storage.uploadFile(
+            'images/$creativeUid/$createdAt/${image.path.split('/').last}', image);
+        if (downloadUrl != null) {
+          imageUrls.add(downloadUrl);
+        }
+      }
+
+    // Save the data to Firestore
+        await _firestoreService.addImageDetails(
+      uid: creativeUid!,
+      imageDetails: {
+        'title': title,
+        'description': description,
+        'category': category,
+        'location': location,
+        'createdAt': DateTime.now(),
+        'images': imageUrls, // List of image URLs
+      },
+    );
+
+
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Upload Successful')),
+    );
+
+    // Clear the form after submission
+    setState(() {
+      _titleController.clear();
+      _descriptionController.clear();
+      selectedCategory = null;
+      _locationController.clear();
+      _selectedImages.clear();
+    });
   }
 
   @override
@@ -57,7 +139,7 @@ class UploadImageState extends State<UploadImage> {
                   ),
                 ],
               ),
-              width: double.infinity, // Full width
+              width: double.infinity,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -153,25 +235,21 @@ class UploadImageState extends State<UploadImage> {
                   const SizedBox(height: 8.0),
 
                   // Location Selection
-                  GestureDetector(
-                    onTap: () {
-                      // Handle location selection
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Location',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16.0),
-                          ),
-                          Icon(Icons.arrow_forward_ios),
-                        ],
+                    TextFormField(
+                       controller: _locationController,  // Attach the controller
+                      decoration: const InputDecoration(
+                        labelText: 'Location',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                        ),
+                        hintText: 'Type location here',
+                        hintStyle: TextStyle(
+                          color: Color(0xFF662C2B),
+                          fontStyle: FontStyle.italic,
+                          fontSize: 16.0,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -184,7 +262,7 @@ class UploadImageState extends State<UploadImage> {
             ),
             const SizedBox(height: 8.0),
             GestureDetector(
-              onTap: _pickImage, // Handle the image picking functionality
+              onTap: _pickImage,
               child: Container(
                 height: 150.0,
                 width: double.infinity,
@@ -193,13 +271,20 @@ class UploadImageState extends State<UploadImage> {
                   borderRadius: BorderRadius.circular(8.0),
                   border: Border.all(color: Colors.grey.shade400),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.add_circle_outline,
-                    size: 50.0,
-                    color: Colors.grey,
-                  ),
-                ),
+                child: _selectedImages.isEmpty
+                    ? const Center(
+                        child: Icon(
+                          Icons.add_circle_outline,
+                          size: 50.0,
+                          color: Colors.grey,
+                        ),
+                      )
+                    : Wrap(
+                        spacing: 8.0,
+                        children: _selectedImages.map((file) {
+                          return Image.file(file, width: 100, height: 100);
+                        }).toList(),
+                      ),
               ),
             ),
             const SizedBox(height: 20.0),
@@ -207,9 +292,7 @@ class UploadImageState extends State<UploadImage> {
             // Post Button
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  // Handle post action
-                },
+                onPressed: _uploadAndSubmit,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF662C2B),
                   padding: const EdgeInsets.symmetric(
