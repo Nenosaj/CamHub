@@ -28,6 +28,9 @@ dependencies:
   firebase_auth: ^5.3.1  # Example for Firebase Authentication
   cloud_firestore: ^5.4.4  # Example for Firestore if you're using it
 
+  #env.files :))
+  flutter_dotenv: ^5.2.1
+
   # Updated intl package for date formatting
   intl: ^0.17.0
 
@@ -54,6 +57,7 @@ flutter:
     - assets/images/package3.png
     - assets/images/package4.png
     - assets/images/higala_logo1.jpg
+    - assets/firebase.env
 
 
   # To add custom fonts to your application, add a fonts section here.
