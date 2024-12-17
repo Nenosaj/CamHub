@@ -70,7 +70,7 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                         headingRowColor: MaterialStateProperty.all(
                           const Color(0xFFF4F4F4),
                         ),
-                        columnSpacing: 40.0,
+                        columnSpacing: 180.0,
                         headingTextStyle: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16.0),
                         dataTextStyle: const TextStyle(

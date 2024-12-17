@@ -48,12 +48,18 @@ class ApprovalReviewPage extends StatelessWidget {
               "Business Information",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
             ),
-            _buildInfoRow(Icons.business, "Higala Films"),
-            _buildInfoRow(Icons.location_on, "Santa Cruz I, Lapasan\nCagayan de Oro, Misamis Oriental, Philippines"),
-            _buildInfoRow(Icons.email, "higala.films@gmail.com"),
-            _buildInfoRow(Icons.phone, "091600008975"),
-
             const SizedBox(height: 20.0),
+
+            _buildInfoRow(Icons.business, "Higala Films"),
+            const SizedBox(height: 5.0),
+            _buildInfoRow(Icons.location_on, "Santa Cruz I, Lapasan\nCagayan de Oro, Misamis Oriental, Philippines"),
+            const SizedBox(height: 5.0),
+            _buildInfoRow(Icons.email, "higala.films@gmail.com"),
+            const SizedBox(height: 5.0),
+            _buildInfoRow(Icons.phone, "091600008975"),
+            
+
+            const SizedBox(height: 50.0),
 
             // Proof of Documents
             const Text(
@@ -96,7 +102,7 @@ class ApprovalReviewPage extends StatelessWidget {
         leading: const Icon(Icons.insert_drive_file, color: Colors.black54),
         title: Text(fileName),
         trailing: ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
           onPressed: () {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Previewing $fileName")),
@@ -128,7 +134,7 @@ class ApprovalReviewPage extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("Request Declined")),
