@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:example/screens/Firebase/authentication.dart';
 import 'package:example/screens/CreativeUI/creative_upload/creative_upload_selectcategory.dart';
 
-
 import 'dart:io';
 
 class UploadPackage extends StatefulWidget {
@@ -20,7 +19,6 @@ class UploadPackageState extends State<UploadPackage> {
   final FirestoreService _firestoreService = FirestoreService();
   final Storage _storage = Storage();
   final Authentication _authenticationService = Authentication();
-
 
   String? _title;
   String? _description;
@@ -60,7 +58,7 @@ class UploadPackageState extends State<UploadPackage> {
     }
   }
 
-   // Function to validate numeric input
+  // Function to validate numeric input
   String? validateNumericInput(String? input) {
     if (input == null || input.isEmpty) return null;
     final parsedValue = int.tryParse(input);
@@ -92,9 +90,8 @@ class UploadPackageState extends State<UploadPackage> {
     return true;
   }
 
-
   // Function to upload the package
-    // Function to upload the package
+  // Function to upload the package
   Future<void> _uploadAndSubmit() async {
     String? creativeUid = _authenticationService.getCurrentUser()?.uid;
 
@@ -137,7 +134,8 @@ class UploadPackageState extends State<UploadPackage> {
       String? imageUrl;
       try {
         imageUrl = await _storage.uploadFile(
-            'packages/${_selectedImage!.path.split('/').last}', _selectedImage!);
+            'package/$creativeUid/$createdAt/${_selectedImage!.path.split('/').last}',
+            _selectedImage!);
         if (imageUrl == null) throw Exception('Image upload failed.');
       } catch (e) {
         throw Exception('Image upload failed: $e');
@@ -157,12 +155,13 @@ class UploadPackageState extends State<UploadPackage> {
           'description': _description,
           'category': selectedCategory ?? 'Uncategorized',
           'price': _price,
-          'imageUrl': imageUrl,
+          'package': imageUrl,
           'addOns': addOnDetails,
           'createdAt': DateTime.now(),
         },
       );
 
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Upload Successful!')),
       );
@@ -177,6 +176,7 @@ class UploadPackageState extends State<UploadPackage> {
         addOnPrices = [""];
       });
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Upload Failed: $e')),
       );
@@ -221,7 +221,7 @@ class UploadPackageState extends State<UploadPackage> {
             TextField(
               decoration: const InputDecoration(labelText: 'Price'),
               keyboardType: TextInputType.number,
-              onChanged: (value) => _price = value,
+              onChanged: (value) => _price = validateNumericInput(value),
             ),
             const SizedBox(height: 10),
 
@@ -289,8 +289,8 @@ class UploadPackageState extends State<UploadPackage> {
                   children: [
                     Expanded(
                       child: TextField(
-                        decoration: const InputDecoration(
-                            hintText: 'Add-on Name'),
+                        decoration:
+                            const InputDecoration(hintText: 'Add-on Name'),
                         onChanged: (value) => addOns[index] = value,
                       ),
                     ),
@@ -300,7 +300,8 @@ class UploadPackageState extends State<UploadPackage> {
                         decoration:
                             const InputDecoration(hintText: 'Add-on Price'),
                         keyboardType: TextInputType.number,
-                        onChanged: (value) => addOnPrices[index] = value,
+                        onChanged: (value) => addOnPrices[index] =
+                            validateNumericInput(value) ?? "",
                       ),
                     ),
                   ],
@@ -323,8 +324,7 @@ class UploadPackageState extends State<UploadPackage> {
                       child: const Text(
                         'POST',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
+                            color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
             ),

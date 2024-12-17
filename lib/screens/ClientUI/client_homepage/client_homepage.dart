@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../client_message/client_message.dart';
 import '../client_booking/client_booking.dart';
@@ -78,9 +78,13 @@ class ClientHomePageState extends State<ClientHomePage> {
     try {
       QuerySnapshot snapshot =
           await FirebaseFirestore.instance.collection('creatives').get();
-      List<Map<String, dynamic>> fetchedCreatives = snapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .toList(); // Fetch data directly
+
+      List<Map<String, dynamic>> fetchedCreatives = snapshot.docs.map((doc) {
+        // Add the document ID (uid) to the map
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data['uid'] = doc.id; // Attach the document ID as 'uid'
+        return data;
+      }).toList();
 
       setState(() {
         creatives = fetchedCreatives;
@@ -141,7 +145,7 @@ class ClientHomePageState extends State<ClientHomePage> {
         messages: [],
       ), // Navigate to Chat Page
       const BookingPage(), // Navigate to Bookings Page
-      const NotificationPage(), // Navigate to Notifications Page
+      const ClientNotificationPage(), // Navigate to Notifications Page
       const ClientProfilePage(), // Navigate to Profile Page
     ];
   }
@@ -236,7 +240,8 @@ class ClientHomePageState extends State<ClientHomePage> {
                 child: Column(
                   children: [
                     Text(
-                      creative['businessName'] ?? 'Unknown Business', // Display business name
+                      creative['businessName'] ??
+                          'Unknown Business', // Display business name
                       style: const TextStyle(
                           fontSize: 16.0, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,

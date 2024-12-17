@@ -1,134 +1,284 @@
 import 'package:flutter/material.dart';
-import 'creative_notification_card.dart'; // Import the Creative Notification Card
-import 'creative_notificationappointment.dart'; // Ensure proper import of the appointment page
-
-// Mock data (which can later be integrated with backend)
-const List<Map<String, dynamic>> creativeNotifications = [
-  {
-    "title": "Appointment Request",
-    "message": "A new client has requested an appointment.",
-    "time": "08:31 PM",
-    "isNew": true,
-  },
-  {
-    "title": "Appointment Request",
-    "message": "A new client has requested an appointment.",
-    "time": "10:00 AM",
-    "isNew": false,
-  },
-  {
-    "title": "Appointment Request",
-    "message": "A new client has requested an appointment.",
-    "time": "Yesterday",
-    "isNew": false,
-  },
-];
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CreativeNotificationPage extends StatefulWidget {
   const CreativeNotificationPage({super.key});
 
   @override
-  CreativeNotificationPageState createState() =>
-      CreativeNotificationPageState();
+  State<CreativeNotificationPage> createState() =>
+      _CreativeNotificationPageState();
 }
 
-class CreativeNotificationPageState extends State<CreativeNotificationPage> {
-  bool _isCardVisible = false;
+class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(milliseconds: 300), () {
-      setState(() {
-        _isCardVisible = true;
-      });
-    });
+  // Fetch appointments specific to the current creative user
+  Future<List<Map<String, dynamic>>> fetchAppointments() async {
+    List<Map<String, dynamic>> appointments = [];
+
+    try {
+      // Step 1: Get the current authenticated creative's UID
+      User? currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) {
+        print("No creative user is logged in.");
+        return [];
+      }
+      String creativeId = currentUser.uid;
+
+      // Step 2: Access 'uploads' subcollection under the current creative's document
+      QuerySnapshot uploadsSnapshot = await FirebaseFirestore.instance
+          .collection('appointments')
+          .doc(creativeId) // Parent: creative's document ID
+          .collection('uploads') // Subcollection: 'uploads'
+          .get();
+
+      // Step 3: Extract appointment data
+      for (QueryDocumentSnapshot appointmentDoc in uploadsSnapshot.docs) {
+        Map<String, dynamic> appointmentData =
+            appointmentDoc.data() as Map<String, dynamic>;
+
+        // Include identifiers for clarity
+        appointmentData['creativeId'] = creativeId; // Creative's ID
+        appointmentData['appointmentId'] = appointmentDoc.id; // Document ID
+
+        appointments.add(appointmentData);
+      }
+
+      print('Fetched Appointments: ${appointments.length}');
+      return appointments;
+    } catch (e) {
+      print('Error fetching appointments: $e');
+      return [];
+    }
   }
 
-  // Function to handle dialog based on the result
-  void showActionMessage(String message) {
-    Future.delayed(Duration.zero, () {
-      showDialog(
-        // ignore: use_build_context_synchronously
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: Text(message),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close dialog
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    });
+  // Approve an appointment and create a booking in the "bookings" collection
+  Future<void> approveAppointment(String creativeId, String uploadId) async {
+    try {
+      // Reference the appointment document
+      DocumentReference appointmentRef = _firestore
+          .collection('appointments')
+          .doc(creativeId)
+          .collection('uploads')
+          .doc(uploadId);
+
+      // Fetch the appointment data
+      DocumentSnapshot appointmentSnapshot = await appointmentRef.get();
+      if (!appointmentSnapshot.exists) {
+        print("Appointment document does not exist.");
+        return;
+      }
+
+      // Safely access data with null checks and defaults
+      Map<String, dynamic> appointmentData =
+          (appointmentSnapshot.data() as Map<String, dynamic>?) ?? {};
+
+      final safeAppointmentData = {
+        'clientId': appointmentData['clientId'] ?? 'No Client ID',
+        'fullName': appointmentData['fullName'] ?? 'No Name',
+        'eventType': appointmentData['eventType'] ?? 'No Event Type',
+        'packageName': appointmentData['packageName'] ?? 'No Package',
+        'packagePrice': appointmentData['packagePrice'] ?? '₱0',
+        'address': appointmentData['address'] ?? 'No Address',
+        'date': appointmentData['date'] ?? 'N/A',
+        'time': appointmentData['time'] ?? 'N/A',
+        'totalCost': appointmentData['totalCost'] ?? 0,
+        'addOns': appointmentData['addOns'] != null
+            ? List<Map<String, dynamic>>.from(appointmentData['addOns'])
+            : [], // Ensure addOns is a list
+        'approved': true,
+        'declined': false,
+        'reason': null, // Default empty reason
+      };
+
+      // Step 1: Update the approved status
+      await appointmentRef.update({
+        'approved': true,
+        'declined': false,
+      });
+
+      // Step 2: Add the validated data to the 'bookings' collection
+      await _firestore
+          .collection('bookings')
+          .doc(creativeId) // Use creative ID as parent
+          .collection('uploads')
+          .add({
+        'bookingDetails': safeAppointmentData,
+      });
+
+      print('Booking successfully created: $safeAppointmentData');
+      setState(() {}); // Refresh UI
+    } catch (e) {
+      print('Error approving appointment: $e');
+    }
+  }
+
+  // Decline an appointment
+  Future<void> declineAppointment(
+      String creativeId, String appointmentId, String reason) async {
+    try {
+      // Reference the appointment document
+      DocumentReference appointmentRef = _firestore
+          .collection('appointments')
+          .doc(creativeId)
+          .collection('uploads')
+          .doc(appointmentId);
+
+      // Update the decline status safely
+      await appointmentRef.update({
+        'approved': false,
+        'declined': true,
+        'reason': reason.isNotEmpty ? reason : 'No reason provided',
+      });
+
+      print('Appointment declined successfully with reason: $reason');
+      setState(() {}); // Refresh UI
+    } catch (e) {
+      print('Error declining appointment: $e');
+    }
+  }
+
+  void _showDeclineDialog(String creativeId, String appointmentId) {
+    TextEditingController reasonController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Decline Appointment"),
+          content: TextField(
+            controller: reasonController,
+            decoration: const InputDecoration(
+              labelText: "Reason for Decline",
+              hintText: "Enter reason here",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                declineAppointment(
+                    creativeId, appointmentId, reasonController.text.trim());
+                Navigator.pop(context);
+              },
+              child: const Text("Submit"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
-        toolbarHeight: 80.0,
-        elevation: 0,
         title: const Text(
-          'Notifications',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          'Appointments',
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: creativeNotifications.map((notification) {
-            return AnimatedSlide(
-              offset: _isCardVisible ? const Offset(0, 0) : const Offset(0, 1),
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeOut,
-              child: CreativeNotificationCard(
-                title: notification['title'],
-                message: notification['message'],
-                time: notification['time'],
-                isNew: notification['isNew'],
-                // Navigate to appointment screen and handle result
-                onPress: () async {
-                  // ignore: unused_local_variable
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CreativeNotificationAppointment(
-                        clientName: 'Client C. User',
-                        contactNumber: '00000000000',
-                        message: "I'd like to schedule a photo session. Please let me know your availability.",
-                        eventTitle: 'Debut',
-                        eventDate: 'Fri, Dec 31, 2025',
-                        eventTime: '12:00 PM - 3:30 PM',
-                        eventLocation: 'Lumbia, Cagayan de Oro, Philippines',
-                        packageName: 'Package 1',
-                        services: [
-                          'Drone Shot',
-                          '5 more pictures',
-                          '1-minute video',
-                          '2-minutes video',
-                          '3-minutes video',
-                        ],
+      body: FutureBuilder(
+        future: fetchAppointments(),
+        builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("No appointments available."));
+          }
+
+          final appointments = snapshot.data!;
+
+          return ListView.builder(
+            itemCount: appointments.length,
+            itemBuilder: (context, index) {
+              final appointment = appointments[index];
+              final creativeId = appointment['creativeId'];
+              final uploadId = appointment['appointmentId'];
+
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                elevation: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Client: ${appointment['fullName']}',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                    ),
-                  );
-            
-                },
-              ),
-            );
-          }).toList(),
-        ),
+                      const SizedBox(height: 8),
+                      Text('Event Type: ${appointment['eventType']}'),
+                      Text('Event Date: ${appointment['date']}'),
+                      Text('Event Time: ${appointment['time']}'),
+                      Text('Location: ${appointment['address']}'),
+                      Text('Package: ${appointment['packageName']}'),
+                      const SizedBox(height: 8),
+
+                      // Add-ons
+                      if (appointment['addOns'] != null)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Add-ons:"),
+                            ...(appointment['addOns'] as List<dynamic>).map(
+                                (addon) => Text(
+                                    '• ${addon['addOn']} (₱${addon['price']})')),
+                          ],
+                        ),
+
+                      const SizedBox(height: 8),
+                      // Approve/Decline Status
+                      if (appointment['approved'] == true)
+                        const Text(
+                          "Status: Approved ✅",
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
+                        )
+                      else if (appointment['declined'] == true)
+                        Text(
+                          "Status: Declined ❌\nReason: ${appointment['reason']}",
+                          style: const TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold),
+                        )
+                      else
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () =>
+                                  approveAppointment(creativeId, uploadId),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green),
+                              child: const Text("Approve"),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () =>
+                                  _showDeclineDialog(creativeId, uploadId),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red),
+                              child: const Text("Decline"),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

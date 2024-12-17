@@ -1,20 +1,16 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        jcenter()  // You can remove jcenter() as it is deprecated, but it's fine for now
         mavenCentral()
-
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'  
-        classpath 'com.google.gms:google-services:4.3.14'
+        // Update Android Gradle Plugin version to at least 7.3.1
+        classpath 'com.android.tools.build:gradle:7.3.1'  // Updated to 7.3.1
+        classpath 'com.google.gms:google-services:4.3.14'  // Keep the latest google-services version
     }
 }
-
-
-
-
 
 allprojects {
     repositories {
