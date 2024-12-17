@@ -44,7 +44,14 @@ class FirestoreService {
     required String uid,
     required Map <String, dynamic> videoDetails,
   }) async {
-    await _firestore.collection('image').doc(uid).collection('uploads').add(videoDetails);
+    await _firestore.collection('video').doc(uid).collection('uploads').add(videoDetails);
+  }
+
+   Future<void> addPackageDetails({
+    required String uid,
+    required Map <String, dynamic> packageDetails,
+  }) async {
+    await _firestore.collection('package').doc(uid).collection('uploads').add(packageDetails);
   }
 
   // Function to fetch user type

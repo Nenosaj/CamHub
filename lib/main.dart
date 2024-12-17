@@ -9,33 +9,35 @@ import 'screens/CreativeUI/creative_ui.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //import 'package:example/screens/loadingstate.dart';
-//hey
 
-Future main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
     await dotenv.load(fileName: "firebase.env");
+  } catch (e) {
+    // ignore: avoid_print
+    print("Error loading .env file: $e");
+  }
 
   if (kIsWeb) {
-      await Firebase.initializeApp(
-        options: FirebaseOptions(
-        apiKey: dotenv.env['apiKey']!,
-        authDomain: dotenv.env['authDomain']!,
-        projectId: dotenv.env['projectId']!,
-        storageBucket: dotenv.env['storageBucket']!,
-        messagingSenderId: dotenv.env['messagingSenderId']!,
-        appId: dotenv.env['appId']!,
-        measurementId: dotenv.env['measurementId']!
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: dotenv.env['apiKey'] ?? '',
+        authDomain: dotenv.env['authDomain'] ?? '',
+        projectId: dotenv.env['projectId'] ?? '',
+        storageBucket: dotenv.env['storageBucket'] ?? '',
+        messagingSenderId: dotenv.env['messagingSenderId'] ?? '',
+        appId: dotenv.env['appId'] ?? '',
+        measurementId: dotenv.env['measurementId'] ?? '',
       ),
-
     );
   } else {
     await Firebase.initializeApp();
-  }   
+  }
 
   runApp(const MyApp());
-
-  
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
