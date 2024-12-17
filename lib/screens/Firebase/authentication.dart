@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:example/screens/SignUp/setpassword.dart';
-import 'package:example/screens/SignIn/loginscreen.dart';
+import 'package:example/screens/LogIn/loginscreen.dart';
 import 'package:example/main.dart';
 import 'package:example/screens/Firebase/firestoreservice.dart';
 

@@ -1,40 +1,47 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'screens/SignIn/loginscreen.dart';
+import 'screens/LogIn/loginscreen.dart';
 import 'screens/SignUp/signupscreen.dart';
 import 'screens/AdminUI/admin_ui.dart';
 import 'screens/ClientUI/client_ui.dart';
 import 'screens/CreativeUI/creative_ui.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'screens/SignUp/autocomplete_address/geoapify_address.dart'; // Import for API function
+
 //import 'package:example/screens/loadingstate.dart';
 //hey
 
-Future main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-    await dotenv.load(fileName: "firebase.env");
+  await dotenv.load(fileName: "firebase.env");
 
   if (kIsWeb) {
-      await Firebase.initializeApp(
-        options: FirebaseOptions(
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
         apiKey: dotenv.env['apiKey']!,
         authDomain: dotenv.env['authDomain']!,
         projectId: dotenv.env['projectId']!,
         storageBucket: dotenv.env['storageBucket']!,
         messagingSenderId: dotenv.env['messagingSenderId']!,
         appId: dotenv.env['appId']!,
-        measurementId: dotenv.env['measurementId']!
+        measurementId: dotenv.env['measurementId']!,
       ),
-
     );
   } else {
     await Firebase.initializeApp();
-  }   
+  }
+
+  // Test API Call after Firebase initialization
+  void testApiCall() async {
+    final suggestions = await fetchAddressSuggestions("Manila");
+    print("Suggestions: $suggestions");
+  }
+
+  testApiCall(); // Trigger the API call test
 
   runApp(const MyApp());
-
-  
 }
 
 class MyApp extends StatelessWidget {
