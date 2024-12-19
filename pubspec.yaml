@@ -32,6 +32,14 @@ dependencies:
 
   # Updated intl package for date formatting
   intl: ^0.17.0
+  
+
+  video_player: ^2.9.2
+  video_thumbnail: ^0.5.3
+  path_provider: ^2.1.0
+
+
+  
 
   # Replaced discontinued charts_flutter with fl_chart
   charts_flutter: ^0.12.0

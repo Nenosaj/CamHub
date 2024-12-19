@@ -46,9 +46,10 @@ class CreativeNotificationPageState extends State<CreativeNotificationPage> {
   }
 
   // Function to handle dialog based on the result
-  void _showActionMessage(String message) {
+  void showActionMessage(String message) {
     Future.delayed(Duration.zero, () {
       showDialog(
+        // ignore: use_build_context_synchronously
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -99,6 +100,7 @@ class CreativeNotificationPageState extends State<CreativeNotificationPage> {
                 isNew: notification['isNew'],
                 // Navigate to appointment screen and handle result
                 onPress: () async {
+                  // ignore: unused_local_variable
                   final result = await Navigator.push(
                     context,
                     MaterialPageRoute(

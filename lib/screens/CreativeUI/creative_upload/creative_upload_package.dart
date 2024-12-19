@@ -1,5 +1,12 @@
-import 'package:example/screens/CreativeUI/creative_upload/creative_upload_selectcategory.dart';
+import 'package:example/screens/ImagePicker/imagepickerservice.dart';
+import 'package:example/screens/Firebase/storage.dart';
+import 'package:example/screens/Firebase/firestoreservice.dart';
 import 'package:flutter/material.dart';
+import 'package:example/screens/Firebase/authentication.dart';
+import 'package:example/screens/CreativeUI/creative_upload/creative_upload_selectcategory.dart';
+
+
+import 'dart:io';
 
 class UploadPackage extends StatefulWidget {
   const UploadPackage({super.key});
@@ -9,12 +16,34 @@ class UploadPackage extends StatefulWidget {
 }
 
 class UploadPackageState extends State<UploadPackage> {
-  String? selectedCategory;
-  String? priceInput;
-  List<String> addOns = [""];
-  List<String> addOnPrices = [""];
+  final ImagePickerService _imagePickerService = ImagePickerService();
+  final FirestoreService _firestoreService = FirestoreService();
+  final Storage _storage = Storage();
+  final Authentication _authenticationService = Authentication();
 
-  // Functions to add and remove add-ons
+
+  String? _title;
+  String? _description;
+  String? _price;
+  String? selectedCategory;
+  File? _selectedImage;
+
+  List<String> addOns = [""]; // Add-ons list
+  List<String> addOnPrices = [""]; // Add-on prices list
+
+  bool _isUploading = false; // Tracks upload state
+
+  // Function to pick an image
+  Future<void> _pickImage() async {
+    File? pickedImage = await _imagePickerService.pickImageFromGallery();
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = pickedImage;
+      });
+    }
+  }
+
+  // Functions for Add-ons
   void addNewAddOn() {
     setState(() {
       addOns.add("");
@@ -31,19 +60,144 @@ class UploadPackageState extends State<UploadPackage> {
     }
   }
 
+   // Function to validate numeric input
+  String? validateNumericInput(String? input) {
+    if (input == null || input.isEmpty) return null;
+    final parsedValue = int.tryParse(input);
+    if (parsedValue == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid numeric value.')),
+      );
+      return null;
+    }
+    return input;
+  }
+
+  // Function to validate Add-Ons
+  bool _validateAddOns() {
+    for (int i = 0; i < addOns.length; i++) {
+      if (addOns[i].isEmpty || addOnPrices[i].isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Add-on ${i + 1} is incomplete.')),
+        );
+        return false;
+      }
+      if (int.tryParse(addOnPrices[i]) == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Add-on ${i + 1} price must be numeric.')),
+        );
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  // Function to upload the package
+    // Function to upload the package
+  Future<void> _uploadAndSubmit() async {
+    String? creativeUid = _authenticationService.getCurrentUser()?.uid;
+
+    if (_isUploading) return;
+
+    if (_title == null || _title!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Title is required.')),
+      );
+      return;
+    }
+    if (_description == null || _description!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Description is required.')),
+      );
+      return;
+    }
+    _price = validateNumericInput(_price); // Ensure price is numeric
+    if (_price == null) return;
+
+    if (_selectedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An image is required.')),
+      );
+      return;
+    }
+    if (!_validateAddOns()) return;
+
+    setState(() {
+      _isUploading = true;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Uploading...')),
+    );
+
+    try {
+      String createdAt = DateTime.now().millisecondsSinceEpoch.toString();
+
+      // Image Upload
+      String? imageUrl;
+      try {
+        imageUrl = await _storage.uploadFile(
+            'packages/${_selectedImage!.path.split('/').last}', _selectedImage!);
+        if (imageUrl == null) throw Exception('Image upload failed.');
+      } catch (e) {
+        throw Exception('Image upload failed: $e');
+      }
+
+      // Add-on Preparation
+      List<Map<String, String>> addOnDetails = [];
+      for (int i = 0; i < addOns.length; i++) {
+        addOnDetails.add({"addOn": addOns[i], "price": addOnPrices[i]});
+      }
+
+      // Firestore Upload
+      await _firestoreService.addPackageDetails(
+        uid: creativeUid!,
+        packageDetails: {
+          'title': _title,
+          'description': _description,
+          'category': selectedCategory ?? 'Uncategorized',
+          'price': _price,
+          'imageUrl': imageUrl,
+          'addOns': addOnDetails,
+          'createdAt': DateTime.now(),
+        },
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Upload Successful!')),
+      );
+
+      // Reset the form
+      setState(() {
+        _title = null;
+        _description = null;
+        _price = null;
+        _selectedImage = null;
+        addOns = [""];
+        addOnPrices = [""];
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Upload Failed: $e')),
+      );
+    } finally {
+      setState(() {
+        _isUploading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         title: const Text('Upload Package',
             style: TextStyle(
                 color: Color(0xFF662C2B), fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF662C2B)),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: SingleChildScrollView(
@@ -51,262 +205,128 @@ class UploadPackageState extends State<UploadPackage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title and Description Input
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8.0,
-                    spreadRadius: 1.0,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              width: double.infinity, // Full width
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8.0),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(12.0))),
-                      hintText: 'TYPE TITLE',
-                      hintStyle: TextStyle(
-                        color: Color(0xFF662C2B),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextFormField(
-                    maxLines: 3,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(12.0))),
-                      hintText: 'Type description here',
-                      hintStyle: TextStyle(
-                        color: Color(0xFF662C2B),
-                        fontStyle: FontStyle.italic,
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            // Title and Description
+            TextField(
+              decoration: const InputDecoration(labelText: 'Title'),
+              onChanged: (value) => _title = value,
             ),
-            const SizedBox(height: 16.0),
-
-            // Select Category and Price Input
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8.0,
-                    spreadRadius: 1.0,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => SelectCategory(
-                          onCategorySelected: (String category) {
-                            setState(() {
-                              selectedCategory = category;
-                            });
-                          },
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: Colors.grey.shade400),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            selectedCategory ?? 'Select Category',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                          const Icon(Icons.arrow_forward_ios),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-
-                  // Price Input
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Price',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // Handle price input
-                        },
-                        child: const Text(
-                          'Input Here..',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: Color(0xFF662C2B),
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            const SizedBox(height: 10),
+            TextField(
+              decoration: const InputDecoration(labelText: 'Description'),
+              onChanged: (value) => _description = value,
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 10),
 
-            // Upload Packages Area
-            const Text(
-              'Upload Packages Here:',
-              style: TextStyle(fontSize: 16.0),
+            // Price
+            TextField(
+              decoration: const InputDecoration(labelText: 'Price'),
+              keyboardType: TextInputType.number,
+              onChanged: (value) => _price = value,
             ),
-            const SizedBox(height: 8.0),
-            GestureDetector(
+            const SizedBox(height: 10),
+
+            // Category Selection
+            ListTile(
+              title: Text(selectedCategory ?? 'Select Category'),
+              trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
-                // Handle package upload
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => SelectCategory(
+                    onCategorySelected: (String category) {
+                      setState(() {
+                        selectedCategory = category;
+                      });
+                    },
+                  ),
+                );
               },
+            ),
+            const SizedBox(height: 10),
+
+            // Image Upload
+            GestureDetector(
+              onTap: _pickImage,
               child: Container(
-                height: 150.0,
+                height: 150,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.grey.shade200,
+                  border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(8.0),
-                  border: Border.all(color: Colors.grey.shade400),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.add_circle_outline,
-                    size: 50.0,
-                    color: Colors.grey,
-                  ),
-                ),
+                child: _selectedImage == null
+                    ? const Center(child: Icon(Icons.add_a_photo, size: 50))
+                    : Image.file(_selectedImage!, fit: BoxFit.cover),
               ),
             ),
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 20),
 
-            // Add-ons section
+            // Add-ons Section
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Add ons:',
-                  style: TextStyle(fontSize: 16.0),
-                ),
+                const Text('Add-ons', style: TextStyle(fontSize: 16.0)),
                 Row(
                   children: [
                     IconButton(
                       onPressed: addNewAddOn,
                       icon: const Icon(Icons.add_circle_outline),
-                      color: Colors.black,
                     ),
                     IconButton(
                       onPressed: removeLastAddOn,
                       icon: const Icon(Icons.remove_circle_outline),
-                      color: Colors.black,
                     ),
                   ],
                 ),
               ],
             ),
-
-            // Add-ons list
             ListView.builder(
               shrinkWrap: true,
               itemCount: addOns.length,
               itemBuilder: (context, index) {
                 return Row(
                   children: [
-                    Checkbox(
-                      value: false, // You can implement add-on logic here
-                      onChanged: (bool? value) {},
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            hintText: 'Input Here..',
-                            border: InputBorder.none,
-                          ),
-                          onChanged: (value) {
-                            addOns[index] = value;
-                          },
-                        ),
-                      ),
-                    ),
                     Expanded(
                       child: TextField(
                         decoration: const InputDecoration(
-                          hintText: 'Input Price..',
-                          border: InputBorder.none,
-                        ),
-                        onChanged: (value) {
-                          addOnPrices[index] = value;
-                        },
+                            hintText: 'Add-on Name'),
+                        onChanged: (value) => addOns[index] = value,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        decoration:
+                            const InputDecoration(hintText: 'Add-on Price'),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) => addOnPrices[index] = value,
                       ),
                     ),
                   ],
                 );
               },
             ),
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 20),
 
-            // Post Button
+            // POST Button
             Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle post action
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF662C2B),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 150.0,
-                    vertical: 15.0,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                ),
-                child: const Text(
-                  'POST',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              child: _isUploading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: _uploadAndSubmit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF662C2B),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 100, vertical: 15),
+                      ),
+                      child: const Text(
+                        'POST',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
             ),
           ],
         ),

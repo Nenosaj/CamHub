@@ -11,38 +11,35 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/SignUp/autocomplete_address/geoapify_address.dart'; // Import for API function
 
 //import 'package:example/screens/loadingstate.dart';
-//hey
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: "firebase.env");
+  try {
+    await dotenv.load(fileName: "firebase.env");
+  } catch (e) {
+    // ignore: avoid_print
+    print("Error loading .env file: $e");
+  }
 
   if (kIsWeb) {
     await Firebase.initializeApp(
       options: FirebaseOptions(
-        apiKey: dotenv.env['apiKey']!,
-        authDomain: dotenv.env['authDomain']!,
-        projectId: dotenv.env['projectId']!,
-        storageBucket: dotenv.env['storageBucket']!,
-        messagingSenderId: dotenv.env['messagingSenderId']!,
-        appId: dotenv.env['appId']!,
-        measurementId: dotenv.env['measurementId']!,
+        apiKey: dotenv.env['apiKey'] ?? '',
+        authDomain: dotenv.env['authDomain'] ?? '',
+        projectId: dotenv.env['projectId'] ?? '',
+        storageBucket: dotenv.env['storageBucket'] ?? '',
+        messagingSenderId: dotenv.env['messagingSenderId'] ?? '',
+        appId: dotenv.env['appId'] ?? '',
+        measurementId: dotenv.env['measurementId'] ?? '',
       ),
     );
   } else {
     await Firebase.initializeApp();
   }
 
-  // Test API Call after Firebase initialization
-  void testApiCall() async {
-    final suggestions = await fetchAddressSuggestions("Manila");
-    print("Suggestions: $suggestions");
-  }
-
-  testApiCall(); // Trigger the API call test
-
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
