@@ -267,7 +267,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     // Loading Indicator
                                     if (_isLoading)
-                                      const CircularProgressIndicator(),
+                                      const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
                                   ],
                                 ),
                                 SizedBox(
