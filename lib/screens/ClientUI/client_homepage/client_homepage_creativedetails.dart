@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:example/screens/Firebase/firestoreservice.dart';
-import 'package:example/screens/ClientUI/client_homepage/client_reviewsratings.dart';
 import 'package:example/screens/ClientUI/client_homepage/client_packagedetails.dart';
 
 import 'package:example/screens/VideoPlayer/video_player_widget.dart'; // Adjust the path to where you saved it

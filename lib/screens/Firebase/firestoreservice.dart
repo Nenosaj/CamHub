@@ -150,6 +150,39 @@ class FirestoreService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> fetchBookingDetails(
+      {required String creativeId}) async {
+    try {
+      // Fetch the documents from the 'uploads' subcollection in the 'bookings' collection
+      QuerySnapshot snapshot = await _firestore
+          .collection('bookings')
+          .doc(creativeId)
+          .collection('uploads')
+          .get();
+
+      List<Map<String, dynamic>> bookingDetailsList = [];
+
+      for (var doc in snapshot.docs) {
+        if (doc.data() != null) {
+          final data = doc.data() as Map<String, dynamic>;
+          if (data.containsKey('bookingDetails')) {
+            bookingDetailsList.add({
+              'id': doc.id, // Add document ID
+              ...data['bookingDetails']
+                  as Map<String, dynamic>, // Merge booking details
+            });
+          }
+        }
+      }
+
+      print("Fetched Booking Details: $bookingDetailsList");
+      return bookingDetailsList;
+    } catch (e) {
+      print('Error fetching booking details: $e');
+      return [];
+    }
+  }
+
   // Function to fetch user type
   Future<String> getUserType(String uid) async {
     DocumentSnapshot userDoc =

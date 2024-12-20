@@ -48,18 +48,16 @@ class PackageDetailsPageState extends State<PackageDetailsPage> {
         setState(() {
           packageData = data;
           // Convert addOns to a Map<String, bool>
-          addOns = Map.fromIterable(
-            (data['addOns'] as List<dynamic>?) ?? [],
-            key: (e) => e['addOn'] as String,
-            value: (_) => false, // Initial unchecked state
-          );
+          addOns = {
+            for (var e in (data['addOns'] as List<dynamic>?) ?? [])
+              e['addOn'] as String: false
+          };
 
           // Convert addOn prices
-          addOnPrices = Map.fromIterable(
-            (data['addOns'] as List<dynamic>?) ?? [],
-            key: (e) => e['addOn'] as String,
-            value: (e) => '₱${e['price']}',
-          );
+          addOnPrices = {
+            for (var e in (data['addOns'] as List<dynamic>?) ?? [])
+              e['addOn'] as String: '₱${e['price']}'
+          };
 
           isLoading = false;
         });

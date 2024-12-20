@@ -7,6 +7,7 @@ import '../../Settings/settingspage.dart';
 import '../creative_profile/creative_profile.dart';
 import 'creative_analytics.dart';
 import '../creative_upload/creative_upload.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,7 +30,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const SettingsPage()), // New route
+            MaterialPageRoute(
+                builder: (context) => const SettingsPage()), // New route
           );
         },
       ),
@@ -51,6 +53,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 class HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   Creative? currentCreative; // Store the fetched creative here
+  int totalBookings = 0; // Total booking count
 
   @override
   void initState() {
@@ -76,11 +79,31 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _fetchTotalBookings({required String creativeId}) async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('bookings')
+          .doc(creativeId)
+          .collection('uploads')
+          .get();
+
+      setState(() {
+        totalBookings = snapshot.docs.length; // Count documents
+      });
+
+      print("Total Bookings: $totalBookings");
+    } catch (e) {
+      print('Error fetching bookings: $e');
+    }
+  }
+
   // List of pages for each bottom navigation item
   List<Widget> _getPages() {
     if (currentCreative == null) {
       return [
-        const Center(child: CircularProgressIndicator()), // Show loading until creative is fetched
+        const Center(
+            child:
+                CircularProgressIndicator()), // Show loading until creative is fetched
       ];
     }
 
@@ -90,7 +113,7 @@ class HomePageState extends State<HomePage> {
         creativeName: currentCreative!.businessName,
         rating: currentCreative!.rating,
         monthlyRevenue: 0, // Placeholder for now; you will update this later
-        totalOrders: 0, // Placeholder for now
+        totalOrders: totalBookings, // Placeholder for now
         totalCustomers: 0, // Placeholder for now
         totalImpressions: 0, // Placeholder for now
       ),

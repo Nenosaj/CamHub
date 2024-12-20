@@ -67,7 +67,7 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
-                        headingRowColor: MaterialStateProperty.all(
+                        headingRowColor: WidgetStateProperty.all(
                           const Color(0xFFF4F4F4),
                         ),
                         columnSpacing: 180.0,
@@ -89,7 +89,6 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                             final userData =
                                 users[index].data() as Map<String, dynamic>;
                             final userEmail = userData['email'] ?? 'N/A';
-                       
 
                             return DataRow(cells: [
                               DataCell(
