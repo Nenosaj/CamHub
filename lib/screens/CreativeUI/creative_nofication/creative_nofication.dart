@@ -12,42 +12,31 @@ class CreativeNotificationPage extends StatefulWidget {
 
 class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Fetch appointments specific to the current creative user
   Future<List<Map<String, dynamic>>> fetchAppointments() async {
-    List<Map<String, dynamic>> appointments = [];
-
     try {
-      // Step 1: Get the current authenticated creative's UID
       User? currentUser = FirebaseAuth.instance.currentUser;
 
       if (currentUser == null) {
-        print("No creative user is logged in.");
+        print("No user authenticated.");
         return [];
       }
-      String creativeId = currentUser.uid;
 
-      // Step 2: Access 'uploads' subcollection under the current creative's document
-      QuerySnapshot uploadsSnapshot = await FirebaseFirestore.instance
+      // Query Firestore for appointments with matching creativeId
+      QuerySnapshot appointmentsSnapshot = await FirebaseFirestore.instance
           .collection('appointments')
-          .doc(creativeId) // Parent: creative's document ID
-          .collection('uploads') // Subcollection: 'uploads'
+          .where('creativeId', isEqualTo: currentUser.uid)
           .get();
 
-      // Step 3: Extract appointment data
-      for (QueryDocumentSnapshot appointmentDoc in uploadsSnapshot.docs) {
-        Map<String, dynamic> appointmentData =
-            appointmentDoc.data() as Map<String, dynamic>;
+      // Parse the documents into a list of maps
+      List<Map<String, dynamic>> appointments =
+          appointmentsSnapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data['appointmentId'] = doc.id; // Add document ID
+        return data;
+      }).toList();
 
-        // Include identifiers for clarity
-        appointmentData['creativeId'] = creativeId; // Creative's ID
-        appointmentData['appointmentId'] = appointmentDoc.id; // Document ID
-
-        appointments.add(appointmentData);
-      }
-
-      print('Fetched Appointments: ${appointments.length}');
+      print('Fetched ${appointments.length} appointments.');
       return appointments;
     } catch (e) {
       print('Error fetching appointments: $e');
@@ -55,93 +44,75 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
     }
   }
 
-  // Approve an appointment and create a booking in the "bookings" collection
-  Future<void> approveAppointment(String creativeId, String uploadId) async {
+  Future<void> approveAppointment(String appointmentId) async {
     try {
-      // Reference the appointment document
-      DocumentReference appointmentRef = _firestore
+      DocumentReference appointmentRef = FirebaseFirestore.instance
           .collection('appointments')
-          .doc(creativeId)
-          .collection('uploads')
-          .doc(uploadId);
+          .doc(appointmentId);
 
-      // Fetch the appointment data
       DocumentSnapshot appointmentSnapshot = await appointmentRef.get();
+
       if (!appointmentSnapshot.exists) {
         print("Appointment document does not exist.");
         return;
       }
 
-      // Safely access data with null checks and defaults
       Map<String, dynamic> appointmentData =
           (appointmentSnapshot.data() as Map<String, dynamic>?) ?? {};
 
-      final safeAppointmentData = {
-        'clientId': appointmentData['clientId'] ?? 'No Client ID',
-        'fullName': appointmentData['fullName'] ?? 'No Name',
-        'eventType': appointmentData['eventType'] ?? 'No Event Type',
-        'packageName': appointmentData['packageName'] ?? 'No Package',
-        'packagePrice': appointmentData['packagePrice'] ?? '₱0',
-        'address': appointmentData['address'] ?? 'No Address',
-        'date': appointmentData['date'] ?? 'N/A',
-        'time': appointmentData['time'] ?? 'N/A',
+      final bookingDetails = {
+        'appointmentId': appointmentId,
+        'clientId': appointmentData['clientId'] ?? '',
+        'creativeId': appointmentData['creativeId'] ?? '',
+        'packageId': appointmentData['packageId'] ?? '',
+        'fullName': appointmentData['fullName'] ?? '',
+        'eventType': appointmentData['eventType'] ?? '',
+        'packageName': appointmentData['packageName'] ?? '',
+        'packagePrice': appointmentData['packagePrice'] ?? 0,
+        'address': appointmentData['address'] ?? '',
+        'date': appointmentData['date'] ?? '',
+        'time': appointmentData['time'] ?? '',
         'totalCost': appointmentData['totalCost'] ?? 0,
-        'addOns': appointmentData['addOns'] != null
-            ? List<Map<String, dynamic>>.from(appointmentData['addOns'])
-            : [], // Ensure addOns is a list
+        'addOns': appointmentData['addOns'] ?? [],
         'approved': true,
         'declined': false,
-        'reason': null, // Default empty reason
+        'createdAt': appointmentData['createdAt'] ?? Timestamp.now(),
       };
 
-      // Step 1: Update the approved status
       await appointmentRef.update({
         'approved': true,
         'declined': false,
       });
 
-      // Step 2: Add the validated data to the 'bookings' collection
-      await _firestore
+      await FirebaseFirestore.instance
           .collection('bookings')
-          .doc(creativeId) // Use creative ID as parent
-          .collection('uploads')
-          .add({
-        'bookingDetails': safeAppointmentData,
-      });
+          .add(bookingDetails);
 
-      print('Booking successfully created: $safeAppointmentData');
-      setState(() {}); // Refresh UI
+      print('Appointment approved and added to bookings.');
     } catch (e) {
       print('Error approving appointment: $e');
     }
   }
 
-  // Decline an appointment
-  Future<void> declineAppointment(
-      String creativeId, String appointmentId, String reason) async {
+  Future<void> declineAppointment(String appointmentId, String reason) async {
     try {
-      // Reference the appointment document
-      DocumentReference appointmentRef = _firestore
+      DocumentReference appointmentRef = FirebaseFirestore.instance
           .collection('appointments')
-          .doc(creativeId)
-          .collection('uploads')
           .doc(appointmentId);
 
-      // Update the decline status safely
       await appointmentRef.update({
         'approved': false,
         'declined': true,
         'reason': reason.isNotEmpty ? reason : 'No reason provided',
       });
 
-      print('Appointment declined successfully with reason: $reason');
-      setState(() {}); // Refresh UI
+      print('Appointment declined with reason: $reason');
     } catch (e) {
       print('Error declining appointment: $e');
     }
   }
 
-  void _showDeclineDialog(String creativeId, String appointmentId) {
+  void _showDeclineDialog(String appointmentId) {
     TextEditingController reasonController = TextEditingController();
 
     showDialog(
@@ -163,8 +134,7 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
             ),
             TextButton(
               onPressed: () {
-                declineAppointment(
-                    creativeId, appointmentId, reasonController.text.trim());
+                declineAppointment(appointmentId, reasonController.text.trim());
                 Navigator.pop(context);
               },
               child: const Text("Submit"),
@@ -202,8 +172,7 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
             itemCount: appointments.length,
             itemBuilder: (context, index) {
               final appointment = appointments[index];
-              final creativeId = appointment['creativeId'];
-              final uploadId = appointment['appointmentId'];
+              final appointmentId = appointment['appointmentId'];
 
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -257,17 +226,23 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
                           children: [
                             ElevatedButton(
                               onPressed: () =>
-                                  approveAppointment(creativeId, uploadId),
+                                  approveAppointment(appointmentId),
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green),
+                                backgroundColor:
+                                    Colors.green, // Button background color
+                                foregroundColor: Colors.black, // Text color
+                              ),
                               child: const Text("Approve"),
                             ),
                             const SizedBox(width: 10),
                             ElevatedButton(
                               onPressed: () =>
-                                  _showDeclineDialog(creativeId, uploadId),
+                                  _showDeclineDialog(appointmentId),
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red),
+                                backgroundColor:
+                                    Colors.red, // Button background color
+                                foregroundColor: Colors.black, // Text color
+                              ),
                               child: const Text("Decline"),
                             ),
                           ],

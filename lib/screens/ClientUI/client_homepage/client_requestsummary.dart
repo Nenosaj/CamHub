@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:example/screens/ClientUI/client_homepage/client_bookingconfirmation.dart';
 
 class RequestSummary extends StatefulWidget {
+  final String creativeuid;
   final String uuid;
   final DateTime selectedDate;
   final TimeOfDay selectedTime;
@@ -17,6 +19,7 @@ class RequestSummary extends StatefulWidget {
 
   const RequestSummary({
     super.key,
+    required this.creativeuid,
     required this.uuid,
     required this.selectedDate,
     required this.selectedTime,
@@ -66,6 +69,8 @@ class _RequestSummaryState extends State<RequestSummary> {
       // Prepare data to store
       Map<String, dynamic> appointmentData = {
         'clientId': currentUser.uid, // Current user's ID
+        'packageId': widget.uuid,
+        'creativeId': widget.creativeuid,
         'packageName': widget.packageName,
         'packagePrice': widget.packagePrice,
         'eventType': widget.eventType,
@@ -82,22 +87,18 @@ class _RequestSummaryState extends State<RequestSummary> {
       };
 
       // Firestore reference for the updated structure
-      CollectionReference uploadsRef = FirebaseFirestore.instance
-          .collection('appointments') // Root collection
-          .doc(widget.uuid) // Creative's ID as the parent document
-          .collection('uploads'); // Direct 'uploads' subcollection
+      CollectionReference appointmentsRef =
+          FirebaseFirestore.instance.collection('appointments');
 
       // Add the appointment data with an auto-generated document ID
-      await uploadsRef.add(appointmentData);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Appointment successfully submitted!'),
-          backgroundColor: Colors.green,
+      DocumentReference newAppointmentRef =
+          await appointmentsRef.add(appointmentData);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const BookingConfirmation(),
         ),
-      );
-
-      Navigator.pop(context); // Navigate back after submission
+      ); // Navigate back after submission
     } catch (e) {
       print('Error saving to Firestore: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -138,6 +139,14 @@ class _RequestSummaryState extends State<RequestSummary> {
             const SizedBox(height: 20),
             _buildTotalCost(),
             const SizedBox(height: 20),
+            const Text(
+              "Information you provide will be shared with Higala Films as a message so they contact you. Furthermore, it is subject to their terms and policies, as well as CAMHUB's Data Policy.",
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+              ),
+              textAlign: TextAlign.center,
+            ),
             _buildSubmitButton(context),
           ],
         ),

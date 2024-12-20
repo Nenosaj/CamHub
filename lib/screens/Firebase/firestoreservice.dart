@@ -150,6 +150,37 @@ class FirestoreService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> fetchPackageDetail(
+      {required String uid}) async {
+    try {
+      // Fetch all documents from the 'uploads' subcollection
+      QuerySnapshot snapshot = await _firestore
+          .collection('package')
+          .doc(uid)
+          .collection('uploads')
+          .get();
+
+      List<Map<String, dynamic>> packageDetails = [];
+
+      for (var doc in snapshot.docs) {
+        if (doc.data() != null) {
+          final data = doc.data() as Map<String, dynamic>;
+          data['uuid'] = doc.id;
+
+          packageDetails.add(data); // Add the entire document data as a map
+        }
+      }
+
+      // Print fetched package details for debugging
+      print("Fetched Package Details: $packageDetails");
+      return packageDetails;
+    } catch (e) {
+      // Handle errors
+      print('Error fetching package details: $e');
+      return [];
+    }
+  }
+
   Future<List<Map<String, dynamic>>> fetchBookingDetails(
       {required String creativeId}) async {
     try {

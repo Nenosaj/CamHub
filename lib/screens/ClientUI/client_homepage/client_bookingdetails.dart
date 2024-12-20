@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:example/screens/ClientUI/client_homepage/client_requestsummary.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 
 class PackageBookingdetails extends StatefulWidget {
+  final String creativeuid;
   final String uuid;
   final String packageName;
   final String packagePrice;
@@ -11,6 +14,7 @@ class PackageBookingdetails extends StatefulWidget {
 
   const PackageBookingdetails({
     super.key,
+    required this.creativeuid,
     required this.uuid,
     required this.packageName,
     required this.packagePrice,
@@ -25,13 +29,30 @@ class PackageBookingdetails extends StatefulWidget {
 
 class _PackageBookingdetailsState extends State<PackageBookingdetails> {
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
   DateTime? selectedDate;
+  TimeOfDay? selectedTime;
 
   // Function to calculate total cost
   int _calculateTotalCost() {
     int packageCost =
         int.parse(widget.packagePrice.replaceAll(RegExp(r'[^\d]'), ''));
     return packageCost + widget.totalAddOnCost;
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked != null && picked != selectedTime) {
+      setState(() {
+        selectedTime = picked;
+        _timeController.text = picked.format(context);
+      });
+    }
   }
 
   // Function to display date picker
@@ -61,24 +82,23 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Package Info Section
             _buildPackageInfo(),
-
             const SizedBox(height: 20),
 
             // Date Selection
-            _buildDatePicker(),
-
+            _buildCalendar(),
+            const SizedBox(height: 20),
+            _buildDateTimeFields(),
             const SizedBox(height: 20),
 
             // Address Input
             _buildAddressInput(),
-
             const SizedBox(height: 20),
 
             // Add-ons Section
@@ -91,16 +111,17 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
             ),
             const SizedBox(height: 10),
             _buildAddOns(),
-
-            const Spacer(),
+            const SizedBox(height: 20),
 
             // Total Cost Section
             _buildTotalCost(),
-
             const SizedBox(height: 20),
 
             // Confirm Booking Button
             _buildConfirmButton(context),
+
+            // Add bottom padding for better scrolling experience
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -131,24 +152,71 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
   }
 
   // Widget for Date Selection
-  Widget _buildDatePicker() {
-    return GestureDetector(
-      onTap: () => _selectDate(context),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'Select Date:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            selectedDate != null
-                ? "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"
-                : 'Choose a date',
-            style: const TextStyle(fontSize: 16, color: Colors.blue),
-          ),
-        ],
+  Widget _buildCalendar() {
+    return TableCalendar(
+      firstDay: DateTime.utc(2020, 10, 16),
+      lastDay: DateTime.utc(2030, 3, 14),
+      focusedDay: selectedDate ?? DateTime.now(),
+      selectedDayPredicate: (day) => isSameDay(selectedDate, day),
+      onDaySelected: (selectedDay, focusedDay) {
+        setState(() {
+          selectedDate = selectedDay;
+          _dateController.text = DateFormat('MM-dd-yyyy').format(selectedDay);
+        });
+      },
+      calendarStyle: CalendarStyle(
+        defaultTextStyle: const TextStyle(color: Colors.black),
+        weekendTextStyle: const TextStyle(color: Colors.black),
+        selectedDecoration: BoxDecoration(
+          color: const Color(0xFF662C2B),
+          shape: BoxShape.circle,
+        ),
+        selectedTextStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
       ),
+    );
+  }
+
+  // Widget for Date-Time Picker Fields
+  Widget _buildDateTimeFields() {
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () => _selectDate(context),
+            child: AbsorbPointer(
+              child: TextFormField(
+                controller: _dateController,
+                decoration: const InputDecoration(
+                  labelText: 'Date',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: GestureDetector(
+            onTap: () => _selectTime(context),
+            child: AbsorbPointer(
+              child: TextFormField(
+                controller: _timeController,
+                decoration: const InputDecoration(
+                  labelText: 'Time',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -250,9 +318,10 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
             context,
             MaterialPageRoute(
               builder: (context) => RequestSummary(
+                creativeuid: widget.creativeuid,
                 uuid: widget.uuid,
                 selectedDate: selectedDate!, // Pass selected date
-                selectedTime: TimeOfDay.now(), // Placeholder for current time
+                selectedTime: selectedTime!, // Placeholder for current time
                 address:
                     _addressController.text.trim(), // Pass user-entered address
                 selectedAddOns: selectedAddOns, // Pass selected add-ons

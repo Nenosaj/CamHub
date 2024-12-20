@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(80),
+                            padding: const EdgeInsets.all(25),
                             decoration: const BoxDecoration(
                               color: Color(0xFF662C2B),
                               borderRadius: BorderRadius.only(
@@ -112,12 +112,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 const Text(
                                   'Welcome back!',
                                   style: TextStyle(
-                                    fontSize: 40,
+                                    fontSize: 25,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
                                 ),
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 5),
                                 const Text(
                                   'Are you ready for your pose?',
                                   style: TextStyle(
@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fontSize: 16,
                                   ),
                                 ),
-                                const SizedBox(height: 40),
+                                const SizedBox(height: 0),
                                 Stack(
                                   children: [
                                     const Positioned(

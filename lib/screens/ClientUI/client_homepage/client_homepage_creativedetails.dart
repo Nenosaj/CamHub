@@ -18,7 +18,7 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
   late TabController _tabController;
   final FirestoreService _firestoreService = FirestoreService();
 
-  List<String> packageDetails = [];
+  List<Map<String, dynamic>> packageDetails = [];
   List<String> imageDetails = [];
   List<String> videoDetails = [];
 
@@ -37,10 +37,10 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
 
   Future<void> _fetchPackages() async {
     String uid = widget.creative['uid']; // Get the creative ID
-    List<String> fetchedPackages =
-        await _firestoreService.fetchPackageDetails(uid: uid);
+    List<Map<String, dynamic>> fetchedPackages =
+        await _firestoreService.fetchPackageDetail(uid: uid);
     setState(() {
-      packageDetails = fetchedPackages;
+      packageDetails = fetchedPackages; // Store the entire package data
     });
   }
 
@@ -60,72 +60,6 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
     setState(() {
       videoDetails = fetchedVideos;
     });
-  }
-
-  Widget _buildGridView(List<String> urls, String type) {
-    if (urls.isEmpty) {
-      return Center(
-        child: Text(
-          'No $type uploaded',
-          style: const TextStyle(fontSize: 18, color: Colors.grey),
-        ),
-      );
-    }
-
-    return GridView.builder(
-      padding: const EdgeInsets.all(8),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: 4 / 5,
-      ),
-      itemCount: urls.length,
-      itemBuilder: (context, index) {
-        final url = urls[index];
-
-        // Check if it's a video (based on file extension)
-        bool isVideo = url.contains('.mp4') ||
-            url.contains('.mov') ||
-            url.contains('.avi');
-
-        return GestureDetector(
-          onTap: () {
-            if (type == 'Packages') {
-              print(
-                  "Navigating to PackageDetailsPage with UUID: ${widget.creative['uid']}");
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      PackageDetailsPage(uuid: widget.creative['uid']),
-                ),
-              );
-            } else if (isVideo) {
-              _showFullVideo(context, url); // Open video player for videos
-            } else {
-              _showFullMedia(context, url); // Open full image for photos
-            }
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: isVideo
-                ? _buildVideoThumbnail(url) // Show play icon for videos
-                : Image.network(
-                    url,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.broken_image,
-                        size: 50,
-                        color: Colors.grey,
-                      );
-                    },
-                  ),
-          ),
-        );
-      },
-    );
   }
 
   Widget _buildVideoThumbnail(String videoUrl) {
@@ -162,6 +96,195 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildImageGridView(List<String> imageUrls) {
+    if (imageUrls.isEmpty) {
+      return Center(
+        child: Text(
+          'No Images uploaded',
+          style: const TextStyle(fontSize: 18, color: Colors.grey),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 4 / 5,
+      ),
+      itemCount: imageUrls.length,
+      itemBuilder: (context, index) {
+        final url = imageUrls[index];
+        return GestureDetector(
+          onTap: () => _showFullMedia(context, url),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              url,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(
+                  Icons.broken_image,
+                  size: 50,
+                  color: Colors.grey,
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPackageGridView(List<Map<String, dynamic>> packages) {
+    if (packages.isEmpty) {
+      return Center(
+        child: Text(
+          'No Packages uploaded',
+          style: const TextStyle(fontSize: 18, color: Colors.grey),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 3 / 4,
+      ),
+      itemCount: packages.length,
+      itemBuilder: (context, index) {
+        final package = packages[index];
+        final name = package['title'] ?? 'Unknown Package';
+        final price =
+            package['price'] != null ? '\PHP${package['price']}' : 'Free';
+        final description =
+            package['description'] ?? 'No description available';
+        final imageUrl = package['package'] ?? '';
+        final uuid = package['uuid'] ?? 'unknown';
+        final creativeuid = widget.creative['uid'];
+
+        print(uuid);
+
+        return GestureDetector(
+          onTap: () {
+            // Navigate to PackageDetailsPage and pass the package details
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PackageDetailsPage(
+                  uuid: uuid,
+                  creativeuid: creativeuid, // Pass the specific package's UUID
+                ),
+              ),
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                  ),
+                  child: imageUrl.isNotEmpty
+                      ? Image.network(
+                          imageUrl,
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.broken_image,
+                                size: 50, color: Colors.grey);
+                          },
+                        )
+                      : Container(
+                          height: 150,
+                          color: Colors.grey.shade200,
+                          child: const Icon(Icons.image,
+                              size: 50, color: Colors.grey),
+                        ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        price,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        description,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildVideoGridView(List<String> videoUrls) {
+    if (videoUrls.isEmpty) {
+      return Center(
+        child: Text(
+          'No Videos uploaded',
+          style: const TextStyle(fontSize: 18, color: Colors.grey),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 4 / 5,
+      ),
+      itemCount: videoUrls.length,
+      itemBuilder: (context, index) {
+        final url = videoUrls[index];
+        return GestureDetector(
+          onTap: () => _showFullVideo(context, url),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: _buildVideoThumbnail(url),
+          ),
+        );
+      },
     );
   }
 
@@ -230,9 +353,9 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
             Expanded(
               child: TabBarView(
                 children: [
-                  _buildGridView(packageDetails, 'Packages'),
-                  _buildGridView(imageDetails, 'Photos'),
-                  _buildGridView(videoDetails, 'Videos'),
+                  _buildPackageGridView(packageDetails),
+                  _buildImageGridView(imageDetails),
+                  _buildVideoGridView(videoDetails),
                 ],
               ),
             ),

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:example/screens/Firebase/firestoreservice.dart';
 import 'package:example/screens/ClientUI/client_homepage/client_bookingdetails.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PackageDetailsPage extends StatefulWidget {
   final String uuid;
+  final String creativeuid;
 
-  const PackageDetailsPage({super.key, required this.uuid});
+  const PackageDetailsPage(
+      {super.key, required this.uuid, required this.creativeuid});
 
   @override
   PackageDetailsPageState createState() => PackageDetailsPageState();
@@ -16,53 +20,55 @@ class PackageDetailsPageState extends State<PackageDetailsPage> {
   Map<String, bool> addOns = {}; // Add-ons with selected state
   Map<String, String> addOnPrices = {}; // Add-on prices
   String uid = '';
+  String creativeuid = '';
 
   bool isLoading = true; // Loading indicator
+  final FirestoreService firestoreService =
+      FirestoreService(); // FirestoreService instance
 
   @override
   void initState() {
     super.initState();
     uid = widget.uuid; // Accessing the uuid from the widget
-    fetchPackageDetails(uid: uid); // Fetch package details on init
+    creativeuid = widget.creativeuid;
+    print("Passed UUID to PackageDetailsPage: $uid");
+    print(creativeuid);
+    print(uid);
+    fetchPackageDetails(); // Fetch package details on init
   }
 
   // Function to fetch package details from Firestore
-  Future<void> fetchPackageDetails({required String uid}) async {
+  Future<void> fetchPackageDetails() async {
     try {
-      if (uid.isEmpty) {
-        throw Exception("UID is empty");
-      }
-
-      // Query the uploads subcollection under the specific UID
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('package') // Main collection
-          .doc(uid) // Parent document UID
-          .collection('uploads') // Subcollection 'uploads'
+      // Fetch the package document using both the creative UID and the package UUID
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('package')
+          .doc(widget.creativeuid) // Use creative UID as the parent document ID
+          .collection('uploads')
+          .doc(widget.uuid) // Use package UUID as the subcollection document ID
           .get();
 
-      if (snapshot.docs.isNotEmpty) {
-        // Assume we fetch the first document for simplicity
-        Map<String, dynamic> data =
-            snapshot.docs.first.data() as Map<String, dynamic>;
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        print("Fetched Package Data: $data");
 
         setState(() {
           packageData = data;
-          // Convert addOns to a Map<String, bool>
+
           addOns = {
-            for (var e in (data['addOns'] as List<dynamic>?) ?? [])
-              e['addOn'] as String: false
+            for (var e in (packageData['addOns'] as List<dynamic>? ?? []))
+              e['addOn'] as String: false,
           };
 
-          // Convert addOn prices
           addOnPrices = {
-            for (var e in (data['addOns'] as List<dynamic>?) ?? [])
-              e['addOn'] as String: '₱${e['price']}'
+            for (var e in (packageData['addOns'] as List<dynamic>? ?? []))
+              e['addOn'] as String: '₱${e['price']}',
           };
 
           isLoading = false;
         });
       } else {
-        print('No package data found in uploads.');
+        print('No package data found for the provided UUID.');
         setState(() {
           isLoading = false;
         });
@@ -175,6 +181,7 @@ class PackageDetailsPageState extends State<PackageDetailsPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => PackageBookingdetails(
+                                    creativeuid: creativeuid,
                                     uuid: uid, // Package UUID
                                     packageName: packageData['title'] ??
                                         'N/A', // Package name
