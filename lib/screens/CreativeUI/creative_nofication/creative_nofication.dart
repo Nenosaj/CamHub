@@ -12,6 +12,7 @@ class CreativeNotificationPage extends StatefulWidget {
 
 class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  Set<String> processingAppointments = {}; // Track appointments in progress
 
   Future<List<Map<String, dynamic>>> fetchAppointments() async {
     try {
@@ -23,7 +24,7 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
       }
 
       // Query Firestore for appointments with matching creativeId
-      QuerySnapshot appointmentsSnapshot = await FirebaseFirestore.instance
+      QuerySnapshot appointmentsSnapshot = await _firestore
           .collection('appointments')
           .where('creativeId', isEqualTo: currentUser.uid)
           .get();
@@ -45,10 +46,13 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
   }
 
   Future<void> approveAppointment(String appointmentId) async {
+    setState(() {
+      processingAppointments.add(appointmentId);
+    });
+
     try {
-      DocumentReference appointmentRef = FirebaseFirestore.instance
-          .collection('appointments')
-          .doc(appointmentId);
+      DocumentReference appointmentRef =
+          _firestore.collection('appointments').doc(appointmentId);
 
       DocumentSnapshot appointmentSnapshot = await appointmentRef.get();
 
@@ -84,21 +88,45 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
         'declined': false,
       });
 
-      await FirebaseFirestore.instance
-          .collection('bookings')
-          .add(bookingDetails);
+      await _firestore.collection('bookings').add(bookingDetails);
 
       print('Appointment approved and added to bookings.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Appointment approved successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
     } catch (e) {
       print('Error approving appointment: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to approve appointment.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        processingAppointments.remove(appointmentId);
+      });
     }
   }
 
   Future<void> declineAppointment(String appointmentId, String reason) async {
+    setState(() {
+      processingAppointments.add(appointmentId);
+    });
+
     try {
-      DocumentReference appointmentRef = FirebaseFirestore.instance
-          .collection('appointments')
-          .doc(appointmentId);
+      DocumentReference appointmentRef =
+          _firestore.collection('appointments').doc(appointmentId);
+
+      DocumentSnapshot appointmentSnapshot = await appointmentRef.get();
+
+      if (!appointmentSnapshot.exists) {
+        print("Appointment document does not exist.");
+        return;
+      }
 
       await appointmentRef.update({
         'approved': false,
@@ -107,8 +135,54 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
       });
 
       print('Appointment declined with reason: $reason');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Appointment declined successfully!'),
+          backgroundColor: Colors.orange,
+        ),
+      );
     } catch (e) {
       print('Error declining appointment: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to decline appointment.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        processingAppointments.remove(appointmentId);
+      });
+    }
+  }
+
+  Future<void> deleteAppointment(String appointmentId) async {
+    setState(() {
+      processingAppointments.add(appointmentId);
+    });
+
+    try {
+      await _firestore.collection('appointments').doc(appointmentId).delete();
+      print('Appointment deleted successfully.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Appointment deleted successfully!'),
+          backgroundColor: Colors.grey,
+        ),
+      );
+      setState(() {}); // Refresh the UI
+    } catch (e) {
+      print('Error deleting appointment: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to delete appointment.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        processingAppointments.remove(appointmentId);
+      });
     }
   }
 
@@ -134,8 +208,8 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
             ),
             TextButton(
               onPressed: () {
-                declineAppointment(appointmentId, reasonController.text.trim());
                 Navigator.pop(context);
+                declineAppointment(appointmentId, reasonController.text.trim());
               },
               child: const Text("Submit"),
             ),
@@ -194,8 +268,6 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
                       Text('Location: ${appointment['address']}'),
                       Text('Package: ${appointment['packageName']}'),
                       const SizedBox(height: 8),
-
-                      // Add-ons
                       if (appointment['addOns'] != null)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,42 +278,60 @@ class _CreativeNotificationPageState extends State<CreativeNotificationPage> {
                                     '• ${addon['addOn']} (₱${addon['price']})')),
                           ],
                         ),
-
                       const SizedBox(height: 8),
-                      // Approve/Decline Status
-                      if (appointment['approved'] == true)
-                        const Text(
-                          "Status: Approved ✅",
-                          style: TextStyle(
-                              color: Colors.green, fontWeight: FontWeight.bold),
-                        )
-                      else if (appointment['declined'] == true)
-                        Text(
-                          "Status: Declined ❌\nReason: ${appointment['reason']}",
-                          style: const TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
+                      if (appointment['approved'] == true ||
+                          appointment['declined'] == true)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              appointment['approved'] == true
+                                  ? "Status: Approved ✅"
+                                  : "Status: Declined ❌\nReason: ${appointment['reason']}",
+                              style: TextStyle(
+                                color: appointment['approved'] == true
+                                    ? Colors.green
+                                    : Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              onPressed:
+                                  processingAppointments.contains(appointmentId)
+                                      ? null
+                                      : () => deleteAppointment(appointmentId),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey,
+                                foregroundColor: Colors.black,
+                              ),
+                              child: const Text("Delete"),
+                            ),
+                          ],
                         )
                       else
                         Row(
                           children: [
                             ElevatedButton(
-                              onPressed: () =>
-                                  approveAppointment(appointmentId),
+                              onPressed:
+                                  processingAppointments.contains(appointmentId)
+                                      ? null
+                                      : () => approveAppointment(appointmentId),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.green, // Button background color
-                                foregroundColor: Colors.black, // Text color
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.black,
                               ),
                               child: const Text("Approve"),
                             ),
                             const SizedBox(width: 10),
                             ElevatedButton(
-                              onPressed: () =>
-                                  _showDeclineDialog(appointmentId),
+                              onPressed:
+                                  processingAppointments.contains(appointmentId)
+                                      ? null
+                                      : () => _showDeclineDialog(appointmentId),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.red, // Button background color
-                                foregroundColor: Colors.black, // Text color
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.black,
                               ),
                               child: const Text("Decline"),
                             ),

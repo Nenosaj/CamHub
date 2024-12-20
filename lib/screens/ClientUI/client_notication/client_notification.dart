@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'client_initialpayment.dart'; // Import for payment page
+import '../../Paymongo/payment.dart'; // Import for payment page
 
 class ClientNotificationPage extends StatefulWidget {
   const ClientNotificationPage({super.key});
@@ -25,36 +25,60 @@ class _ClientNotificationPageState extends State<ClientNotificationPage> {
         _isCardVisible = true;
       });
     });
-    fetchBookings();
+    fetchBookings().then((bookings) {
+      setState(() {
+        notifications = bookings;
+      });
+    });
   }
 
   Future<List<Map<String, dynamic>>> fetchBookings() async {
-    List<Map<String, dynamic>> allBookings = [];
+    List<Map<String, dynamic>> clientBookings = [];
 
     try {
-      // Step 1: Fetch all creativeId documents in 'bookings'
-      QuerySnapshot bookingsSnapshot =
-          await _firestore.collection('bookings').get();
+      User? currentUser = _auth.currentUser;
 
-      // Step 2: Iterate through each document (each creativeId)
-      for (QueryDocumentSnapshot creativeDoc in bookingsSnapshot.docs) {
-        String creativeId = creativeDoc.id;
-
-        // Step 3: Access the data inside the creative's bookings
-        final bookingData = creativeDoc.data() as Map<String, dynamic>? ?? {};
-
-        allBookings.add({
-          'creativeId': creativeId, // Include creativeId for reference
-          'bookingDetails': bookingData['bookingDetails'] ?? {},
-          'createdAt': bookingData['createdAt'] ?? Timestamp.now(),
-        });
+      if (currentUser == null) {
+        print("No user is logged in.");
+        return [];
       }
 
-      print('Fetched ${allBookings.length} bookings.');
-      return allBookings;
+      // Query Firestore for bookings where clientId matches the current user
+      QuerySnapshot bookingsSnapshot = await _firestore
+          .collection('bookings')
+          .where('clientId', isEqualTo: currentUser.uid)
+          .get();
+
+      // Parse the documents into a list of maps
+      clientBookings = bookingsSnapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data['bookingId'] = doc.id; // Add document ID
+        return data;
+      }).toList();
+
+      print('Fetched ${clientBookings.length} bookings for the client.');
+      return clientBookings;
     } catch (e) {
       print('Error fetching bookings: $e');
       return [];
+    }
+  }
+
+  void deleteBooking(String bookingId) async {
+    try {
+      await _firestore.collection('bookings').doc(bookingId).delete();
+      setState(() {
+        notifications.removeWhere(
+            (notification) => notification['bookingId'] == bookingId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Booking deleted successfully.')),
+      );
+    } catch (e) {
+      print('Error deleting booking: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to delete booking.')),
+      );
     }
   }
 
@@ -81,6 +105,11 @@ class _ClientNotificationPageState extends State<ClientNotificationPage> {
           : SingleChildScrollView(
               child: Column(
                 children: notifications.map((notification) {
+                  final bool isApproved = notification['approved'] ?? false;
+                  final bool isDeclined = notification['declined'] ?? false;
+                  final String reason =
+                      notification['reason'] ?? 'No reason provided';
+
                   return AnimatedSlide(
                     offset: _isCardVisible
                         ? const Offset(0, 0)
@@ -89,30 +118,35 @@ class _ClientNotificationPageState extends State<ClientNotificationPage> {
                     curve: Curves.easeOut,
                     child: NotificationCard(
                       title: 'Booking',
-                      subtitle: 'Appointment Confirmation',
-                      message:
-                          'Hello Client,\nYour appointment has been confirmed. Please pay for the initial payment to proceed with the booking.',
-                      buttonText: 'Proceed to Payment',
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => InitialPayment(
-                              selectedAddOns: notification['bookingDetails']
-                                      ['addOns'] ??
-                                  {},
-                              addOnPrices: const {
-                                "Drone Shot": "₱3,000",
-                                "5 more pictures": "₱500",
-                                "1-minute video": "₱1,000",
-                              },
-                              totalCost: notification['bookingDetails']
-                                      ['totalCost'] ??
-                                  14500,
-                            ),
-                          ),
-                        );
-                      },
+                      subtitle: isApproved
+                          ? 'Status: Approved ✅'
+                          : isDeclined
+                              ? 'Status: Declined ❌'
+                              : 'Status: Pending ⏳',
+                      message: isApproved
+                          ? 'Your appointment has been approved. Please proceed to payment.'
+                          : isDeclined
+                              ? 'Your appointment was declined. Reason: $reason'
+                              : 'Your appointment is still pending. Please wait for confirmation.',
+                      buttonText: isApproved ? 'Proceed to Payment' : 'Close',
+                      reason: isDeclined ? reason : null,
+                      onPressed: isApproved
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Payment(
+                                    bookingId: notification['bookingId'],
+                                  ),
+                                ),
+                              );
+                            }
+                          : null,
+                      onDelete: isDeclined
+                          ? () {
+                              deleteBooking(notification['bookingId']);
+                            }
+                          : null,
                     ),
                   );
                 }).toList(),
@@ -127,7 +161,9 @@ class NotificationCard extends StatelessWidget {
   final String subtitle;
   final String message;
   final String buttonText;
-  final VoidCallback onPressed;
+  final String? reason;
+  final VoidCallback? onPressed;
+  final VoidCallback? onDelete;
 
   const NotificationCard({
     super.key,
@@ -135,7 +171,9 @@ class NotificationCard extends StatelessWidget {
     required this.subtitle,
     required this.message,
     required this.buttonText,
-    required this.onPressed,
+    this.reason,
+    this.onPressed,
+    this.onDelete,
   });
 
   @override
@@ -165,15 +203,37 @@ class NotificationCard extends StatelessWidget {
               message,
               style: const TextStyle(fontSize: 14, color: Colors.black87),
             ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: onPressed,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF662C2B),
-                foregroundColor: Colors.white,
+            if (reason != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  "Reason: $reason",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.redAccent,
+                  ),
+                ),
               ),
-              child: Text(buttonText),
-            ),
+            const SizedBox(height: 12),
+            if (onPressed != null)
+              ElevatedButton(
+                onPressed: onPressed,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF662C2B),
+                  foregroundColor: Colors.white,
+                ),
+                child: Text(buttonText),
+              ),
+            if (onDelete != null)
+              ElevatedButton(
+                onPressed: onDelete,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text("Delete"),
+              ),
           ],
         ),
       ),
