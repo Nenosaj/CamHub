@@ -1,6 +1,5 @@
-import 'package:example/screens/AdminUI/admin_approval/admin_reviewapproval.dart';
 import 'package:flutter/material.dart';
- // Import the ApprovalReviewPage
+import 'package:example/screens/AdminUI/admin_approval/approval_review.dart';
 
 class ApprovalPage extends StatelessWidget {
   const ApprovalPage({super.key});

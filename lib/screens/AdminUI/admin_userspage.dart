@@ -70,7 +70,8 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                         headingRowColor: WidgetStateProperty.all(
                           const Color(0xFFF4F4F4),
                         ),
-                        columnSpacing: 180.0,
+                        columnSpacing:
+                            200.0, // Adjusted spacing between columns
                         headingTextStyle: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16.0),
                         dataTextStyle: const TextStyle(
@@ -92,10 +93,16 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
 
                             return DataRow(cells: [
                               DataCell(
-                                Text('${index + 1}'),
+                                Text(
+                                  '${index + 1}',
+                                  style: const TextStyle(fontSize: 14.0),
+                                ),
                               ),
                               DataCell(
-                                Text(userEmail),
+                                Text(
+                                  userEmail,
+                                  style: const TextStyle(fontSize: 14.0),
+                                ),
                               ),
                             ]);
                           },

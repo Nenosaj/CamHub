@@ -1,10 +1,10 @@
-import 'package:example/screens/AdminUI/admin_approval/admin_approval.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/AdminUI/admin_dashboard/admin_analytics.dart';
 import 'package:example/screens/AdminUI/admin_dashboard/admin_topcreatives.dart';
 import 'package:example/screens/AdminUI/admin_settingspage.dart';
 import 'package:example/screens/AdminUI/admin_bugreport.dart';
 import 'package:example/screens/AdminUI/admin_systemupdate.dart';
+import 'package:example/screens/AdminUI/admin_approval/admin_approval.dart';
 import 'package:example/screens/AdminUI/admin_userspage.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -21,9 +21,9 @@ class _DashboardPageState extends State<DashboardPage> {
   final List<Widget> _pages = [
     const DashboardContent(),
     const SystemUpdatePage(), // Updated to reference SystemUpdatePage
-    const BugReportPage(),    // Updated to reference BugReportPage
-    const ApprovalPage(),     // Updated to reference ApprovalPage
-    const AdminUsersPage(),   // Updated to reference Users Page
+    const BugReportPage(), // Updated to reference BugReportPage
+    const ApprovalPage(), // Updated to reference ApprovalPage
+    const AdminUsersPage(), // Updated to reference Users Page
   ];
 
   @override
@@ -38,7 +38,8 @@ class _DashboardPageState extends State<DashboardPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const AdminSettingsPage()), // Settings Page
+                  builder: (context) =>
+                      const AdminSettingsPage()), // Settings Page
             );
           },
         ),
@@ -67,8 +68,7 @@ class _DashboardPageState extends State<DashboardPage> {
               icon: Icon(Icons.bug_report), label: "Bug Report"),
           BottomNavigationBarItem(
               icon: Icon(Icons.approval), label: "Approval"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.people), label: "Users"),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: "Users"),
         ],
       ),
     );

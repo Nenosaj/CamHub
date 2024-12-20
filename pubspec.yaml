@@ -12,7 +12,6 @@ environment:
 
 # Dependencies specify other packages that your package needs in order to work.
 dependencies:
-
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.4
@@ -46,6 +45,10 @@ dependencies:
   charts_flutter: ^0.12.0
   pinput: ^5.0.0
 
+  # Added for Geoapify Address Autocomplete Integration
+  http: ^1.2.1
+  flutter_typeahead: ^4.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -54,6 +57,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  # Assets section where images and other resources are specified
   assets:
     - assets/images/camhub_background.jpg
     - assets/images/camhub_logo.jpg
@@ -66,7 +70,6 @@ flutter:
     - assets/images/package4.png
     - assets/images/higala_logo1.jpg
     - assets/firebase.env
-
 
   # To add custom fonts to your application, add a fonts section here.
   # Example:

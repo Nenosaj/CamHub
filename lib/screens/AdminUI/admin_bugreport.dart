@@ -8,7 +8,8 @@ class BugReportPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
-        title: const Text("Bug Report", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text("Bug Report",
+            style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: Padding(
@@ -50,7 +51,8 @@ class BugReportPage extends StatelessWidget {
                   BugCard(
                     severityColor: Colors.red,
                     title: "App Crashes on Login",
-                    description: "App crashes after entering login credentials.",
+                    description:
+                        "App crashes after entering login credentials.",
                     status: "Open",
                     statusColor: Colors.red,
                   ),
@@ -79,11 +81,17 @@ class BugReportPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
-                  Text("[Open: 3]", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  Text("[Open: 3]",
+                      style: TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold)),
                   SizedBox(width: 20),
-                  Text("[Pending: 2]", style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold)),
+                  Text("[Pending: 2]",
+                      style: TextStyle(
+                          color: Colors.orange, fontWeight: FontWeight.bold)),
                   SizedBox(width: 20),
-                  Text("[Resolved: 1]", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                  Text("[Resolved: 1]",
+                      style: TextStyle(
+                          color: Colors.green, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -136,7 +144,9 @@ class BugCard extends StatelessWidget {
               children: [
                 CircleAvatar(radius: 8, backgroundColor: severityColor),
                 const SizedBox(width: 8.0),
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
+                Text(title,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16.0)),
               ],
             ),
             const SizedBox(height: 8.0),

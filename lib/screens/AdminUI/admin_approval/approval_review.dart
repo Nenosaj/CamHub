@@ -33,7 +33,7 @@ class ApprovalReviewPage extends StatelessWidget {
                 ),
                 const SizedBox(width: 12.0),
                 const Text(
-                  "Admin",
+                  "Higala Films",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0,
@@ -48,24 +48,24 @@ class ApprovalReviewPage extends StatelessWidget {
               "Business Information",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
             ),
-            const SizedBox(height: 20.0),
-
+            const SizedBox(height: 10.0),
             _buildInfoRow(Icons.business, "Higala Films"),
             const SizedBox(height: 5.0),
-            _buildInfoRow(Icons.location_on, "Santa Cruz I, Lapasan\nCagayan de Oro, Misamis Oriental, Philippines"),
+            _buildInfoRow(Icons.location_on,
+                "Santa Cruz I, Lapasan\nCagayan de Oro, Misamis Oriental, Philippines"),
             const SizedBox(height: 5.0),
             _buildInfoRow(Icons.email, "higala.films@gmail.com"),
             const SizedBox(height: 5.0),
             _buildInfoRow(Icons.phone, "091600008975"),
-            
 
-            const SizedBox(height: 50.0),
+            const SizedBox(height: 80.0),
 
             // Proof of Documents
             const Text(
               "Proof of Business Documents",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
             ),
+            const SizedBox(height: 20.0),
             _buildDocumentRow(context, "file.pdf"),
             _buildDocumentRow(context, "bir.pdf"),
             _buildDocumentRow(context, "ITR.png"),
@@ -102,7 +102,8 @@ class ApprovalReviewPage extends StatelessWidget {
         leading: const Icon(Icons.insert_drive_file, color: Colors.black54),
         title: Text(fileName),
         trailing: ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
+          style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 95, 95, 95)),
           onPressed: () {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Previewing $fileName")),

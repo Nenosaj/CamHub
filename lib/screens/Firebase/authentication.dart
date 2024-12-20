@@ -1,7 +1,7 @@
+import 'package:example/screens/LogIn/loginscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:example/screens/SignUp/setpassword.dart';
-import 'package:example/screens/SignIn/loginscreen.dart';
 import 'package:example/main.dart';
 import 'package:example/screens/Firebase/firestoreservice.dart';
 
@@ -34,13 +34,11 @@ class Authentication {
       String uid = userCredential.user?.uid ?? '';
 
       if (uid.isEmpty) throw Exception('User ID is empty.');
-      await _firestoreService.addUser(uid: uid, email: email, userType: 'client');
+      await _firestoreService.addUser(
+          uid: uid, email: email, userType: 'client');
 
-
-
-
-        // Add client-specific details to Firestore
-        await _firestoreService.addClientDetails(uid: uid, clientDetails: {
+      // Add client-specific details to Firestore
+      await _firestoreService.addClientDetails(uid: uid, clientDetails: {
         'firstName': firstName,
         'middleName': middleName,
         'lastName': lastName,
@@ -54,13 +52,13 @@ class Authentication {
         'phoneNumber': phoneNumber,
       });
 
-        
-        // ignore: use_build_context_synchronously
-        Navigator.push( context,
-          MaterialPageRoute(
-            builder: (context) => SetPassword(email: email),
-          ),
-        );
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SetPassword(email: email),
+        ),
+      );
     } catch (e) {
       // ignore: avoid_print
       print('Error: $e');
@@ -94,12 +92,12 @@ class Authentication {
       String uid = userCredential.user?.uid ?? '';
       if (uid.isEmpty) throw Exception("User ID is null or empty.");
 
-
       // Store general user information in the 'users' collection
-      await _firestoreService.addUser(uid: uid, email: businessEmail, userType: 'creative');
+      await _firestoreService.addUser(
+          uid: uid, email: businessEmail, userType: 'creative');
 
       // Store creative-specific information in the 'creatives' collection
-      await _firestoreService.addCreativeDetails(uid: uid, creativeDetails: {        
+      await _firestoreService.addCreativeDetails(uid: uid, creativeDetails: {
         'businessName': businessName,
         'unitNumber': unitNumber,
         'street': street,
@@ -112,15 +110,14 @@ class Authentication {
         // ignore: avoid_print
         print('Failed to add creative: $error');
       });
-      
-        Navigator.push(
-          // ignore: use_build_context_synchronously
-          context,
-          MaterialPageRoute(
-            builder: (context) => SetPassword(email: businessEmail),
-          ),
-        );
-       
+
+      Navigator.push(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(
+          builder: (context) => SetPassword(email: businessEmail),
+        ),
+      );
     } catch (e) {
       // ignore: avoid_print
       print('Error: $e');
@@ -132,7 +129,8 @@ class Authentication {
   }
 
   // Function to update the user's password
-  Future<void> registrationPassword(String newPassword, BuildContext context) async {
+  Future<void> registrationPassword(
+      String newPassword, BuildContext context) async {
     try {
       User? user = _auth.currentUser;
       if (user != null) {
@@ -144,7 +142,6 @@ class Authentication {
           MaterialPageRoute(
               builder: (context) => const LoginScreen()), // Navigating to login
         );
-
       } else {
         throw FirebaseAuthException(
             code: 'no-current-user',
@@ -218,7 +215,6 @@ class Authentication {
         );
       }
     } on FirebaseAuthException catch (e) {
-      
       // ignore: avoid_print
       print('error: ${e.code}');
       // ignore: avoid_print
@@ -229,8 +225,7 @@ class Authentication {
         errorMessage = 'No user found for that email.';
       } else if (e.code == 'invalid-email') {
         errorMessage = 'The email address is badly formatted .';
-      }
-        else {
+      } else {
         errorMessage = 'Incorrect Username or Password. Please try again.';
       }
 
@@ -238,7 +233,7 @@ class Authentication {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-                errorMessage,
+            errorMessage,
             style: TextStyle(color: Colors.white), // White text for visibility
           ),
           backgroundColor: Colors.red, // Red background for the container

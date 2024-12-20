@@ -1,12 +1,14 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'screens/SignIn/loginscreen.dart';
+import 'screens/LogIn/loginscreen.dart';
 import 'screens/SignUp/signupscreen.dart';
 import 'screens/AdminUI/admin_ui.dart';
 import 'screens/ClientUI/client_ui.dart';
 import 'screens/CreativeUI/creative_ui.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'screens/SignUp/autocomplete_address/geoapify_address.dart'; // Import for API function
 
 //import 'package:example/screens/loadingstate.dart';
 
@@ -37,7 +39,6 @@ Future<void> main() async {
 
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
