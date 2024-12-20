@@ -1,6 +1,7 @@
 import 'package:example/screens/ImagePicker/imagepickerservice.dart';
 import 'package:example/screens/Firebase/storage.dart';
 import 'package:example/screens/Firebase/firestoreservice.dart';
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/Firebase/authentication.dart';
 import 'package:example/screens/CreativeUI/creative_upload/creative_upload_selectcategory.dart';
@@ -189,6 +190,8 @@ class UploadPackageState extends State<UploadPackage> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Upload Package',

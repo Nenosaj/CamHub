@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls, prefer_const_constructors
 
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/SignUp/setpassword.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -75,6 +76,8 @@ class VerificationState extends State<Verification> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       backgroundColor: Colors.white, // Set background to plain white
       appBar: PreferredSize(

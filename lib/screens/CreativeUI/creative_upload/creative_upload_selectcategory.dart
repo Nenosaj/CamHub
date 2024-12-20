@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class SelectCategory extends StatefulWidget {
@@ -14,6 +15,8 @@ class SelectCategoryState extends State<SelectCategory> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     // Define categories and icons for each
     List<Map<String, dynamic>> categories = [
       {'label': 'Weddings', 'icon': Icons.favorite},

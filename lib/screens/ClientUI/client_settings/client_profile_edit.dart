@@ -1,14 +1,12 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // For File handling
 import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage
 import 'package:cloud_firestore/cloud_firestore.dart'; // For Firestore
 import 'package:example/screens/ClientUI/client_model/client_model.dart';
-import 'package:permission_handler/permission_handler.dart'; 
+import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth
-
-
-
 
 class ClientProfileEdit extends StatefulWidget {
   const ClientProfileEdit({super.key});
@@ -35,28 +33,29 @@ class ClientProfileEditState extends State<ClientProfileEdit> {
 
   // Fetch client data from Firestore
   Future<void> _fetchClientData() async {
-  User? currentUser = FirebaseAuth.instance.currentUser; // Get the current user
-  if (currentUser != null) {
-    String uid = currentUser.uid;
+    User? currentUser =
+        FirebaseAuth.instance.currentUser; // Get the current user
+    if (currentUser != null) {
+      String uid = currentUser.uid;
 
-    // Fetch client data from Firestore using uid
-    DocumentSnapshot userData =
-        await FirebaseFirestore.instance.collection('clients').doc(uid).get();
+      // Fetch client data from Firestore using uid
+      DocumentSnapshot userData =
+          await FirebaseFirestore.instance.collection('clients').doc(uid).get();
 
-    if (userData.exists) {
-      setState(() {
-        client = Client.fromFirestore(userData, currentUser.email ?? ''); // Pass both DocumentSnapshot and email
-        usernameController.text = '${client!.firstName} ${client!.lastName}';
-        emailController.text = client!.email;
-        dobController.text = client!.birthday;
-        addressController.text =
-            '${client!.street}, ${client!.city}, ${client!.province}';
-        phoneController.text = client!.phoneNumber;
-      });
+      if (userData.exists) {
+        setState(() {
+          client = Client.fromFirestore(userData,
+              currentUser.email ?? ''); // Pass both DocumentSnapshot and email
+          usernameController.text = '${client!.firstName} ${client!.lastName}';
+          emailController.text = client!.email;
+          dobController.text = client!.birthday;
+          addressController.text =
+              '${client!.street}, ${client!.city}, ${client!.province}';
+          phoneController.text = client!.phoneNumber;
+        });
+      }
     }
   }
-}
-
 
   // Pick image for profile picture
   Future<void> _pickImage() async {
@@ -73,67 +72,67 @@ class ClientProfileEditState extends State<ClientProfileEdit> {
       });
     } else {
       if (mounted) {
-
-          ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Storage permission is required to pick an image.')),
-      );
-
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text('Storage permission is required to pick an image.')),
+        );
       }
-    
     }
   }
+
   // Upload profile picture to Firebase Storage and get the download URL
- Future<String?> _uploadProfilePicture(String uid, File imageFile) async {
-  try {
-    Reference storageReference =
-        FirebaseStorage.instance.ref().child('profilePictures/$uid.jpg');
-    UploadTask uploadTask = storageReference.putFile(imageFile);
-    TaskSnapshot snapshot = await uploadTask;
-    return await snapshot.ref.getDownloadURL();
-  } catch (e) {
-    // ignore: avoid_print
-    print('Error uploading profile picture: $e');
-    return null;
+  Future<String?> _uploadProfilePicture(String uid, File imageFile) async {
+    try {
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child('profilePictures/$uid.jpg');
+      UploadTask uploadTask = storageReference.putFile(imageFile);
+      TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error uploading profile picture: $e');
+      return null;
+    }
   }
-}
 
   // Save changes logic (for the text fields and profile picture)
   Future<void> _saveChanges() async {
-  User? currentUser = FirebaseAuth.instance.currentUser; // Get the current user
-  if (currentUser != null) {
-    String uid = currentUser.uid;
+    User? currentUser =
+        FirebaseAuth.instance.currentUser; // Get the current user
+    if (currentUser != null) {
+      String uid = currentUser.uid;
 
-    // Check if a new profile picture was picked
-    String? profilePictureUrl;
-    if (_pickedImage != null) {
-      profilePictureUrl = await _uploadProfilePicture(uid, File(_pickedImage!.path));
+      // Check if a new profile picture was picked
+      String? profilePictureUrl;
+      if (_pickedImage != null) {
+        profilePictureUrl =
+            await _uploadProfilePicture(uid, File(_pickedImage!.path));
+      }
+
+      // Update Firestore with the new data, including profile picture URL if available
+      await FirebaseFirestore.instance.collection('clients').doc(uid).update({
+        'firstName': usernameController.text.split(' ').first,
+        'lastName': usernameController.text.split(' ').last,
+        'phoneNumber': phoneController.text,
+        'birthday': dobController.text,
+        'street': addressController.text.split(',').first,
+        'city': addressController.text.split(',').last,
+        'profilePicture': profilePictureUrl ??
+            client
+                ?.profilePictureUrl, // Use the new profile picture if available, otherwise keep the old one
+      });
+
+      // Refresh the client data to update the UI with the new profile picture
+      await _fetchClientData();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Changes saved successfully!')),
+        );
+      }
     }
-
-    // Update Firestore with the new data, including profile picture URL if available
-    await FirebaseFirestore.instance.collection('clients').doc(uid).update({
-      'firstName': usernameController.text.split(' ').first,
-      'lastName': usernameController.text.split(' ').last,
-      'phoneNumber': phoneController.text,
-      'birthday': dobController.text,
-      'street': addressController.text.split(',').first,
-      'city': addressController.text.split(',').last,
-      'profilePicture': profilePictureUrl ?? client?.profilePictureUrl, // Use the new profile picture if available, otherwise keep the old one
-    });
-
-    // Refresh the client data to update the UI with the new profile picture
-    await _fetchClientData();
-
-    if (mounted) {
-
-       ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Changes saved successfully!')),
-    );
-      
-    }
-   
   }
-}
-
 
   // Discard changes logic
   void _discardChanges() {
@@ -143,7 +142,8 @@ class ClientProfileEditState extends State<ClientProfileEdit> {
         usernameController.text = '${client!.firstName} ${client!.lastName}';
         emailController.text = client!.email;
         dobController.text = client!.birthday;
-        addressController.text = '${client!.street}, ${client!.city}, ${client!.province}';
+        addressController.text =
+            '${client!.street}, ${client!.city}, ${client!.province}';
         phoneController.text = client!.phoneNumber;
       }
       // Reset picked image
@@ -157,17 +157,20 @@ class ClientProfileEditState extends State<ClientProfileEdit> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
         title: const Text("Edit Profile"),
         elevation: 0,
         leading: IconButton(
-    icon: const Icon(Icons.arrow_back, color: Colors.white), // White arrow
-    onPressed: () {
-      Navigator.of(context).pop(); // Action to go back
-    },
-  ),
+          icon:
+              const Icon(Icons.arrow_back, color: Colors.white), // White arrow
+          onPressed: () {
+            Navigator.of(context).pop(); // Action to go back
+          },
+        ),
         actions: [
           // Save Changes button
           TextButton(
@@ -198,17 +201,18 @@ class ClientProfileEditState extends State<ClientProfileEdit> {
                 GestureDetector(
                   onTap: _pickImage,
                   child: CircleAvatar(
-                      radius: 80,
-                      backgroundImage: _pickedImage != null
-                          ? FileImage(File(_pickedImage!.path))
-                          : client?.profilePictureUrl != null
-                              ? NetworkImage(client!.profilePictureUrl!)
-                              : null, // No default image, placeholder will show
-                      child: _pickedImage == null && client?.profilePictureUrl == null
-                          ? const Icon(Icons.person, size: 40, color: Colors.white)
-                          : null,
-                    )
-                    ,
+                    radius: 80,
+                    backgroundImage: _pickedImage != null
+                        ? FileImage(File(_pickedImage!.path))
+                        : client?.profilePictureUrl != null
+                            ? NetworkImage(client!.profilePictureUrl!)
+                            : null, // No default image, placeholder will show
+                    child: _pickedImage == null &&
+                            client?.profilePictureUrl == null
+                        ? const Icon(Icons.person,
+                            size: 40, color: Colors.white)
+                        : null,
+                  ),
                 ),
               ],
             ),

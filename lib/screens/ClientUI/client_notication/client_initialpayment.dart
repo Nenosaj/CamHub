@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'client_paymentconfirmation.dart';
 import 'client_paymentselection.dart';
@@ -25,6 +26,8 @@ class InitialPaymentState extends State<InitialPayment> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     // Calculate the downpayment (20% of the total cost)
     final double downPayment = widget.totalCost * 0.2;
 

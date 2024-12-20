@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/Firebase/authentication.dart';
 
@@ -141,6 +142,8 @@ class CredentialsUploadState extends State<CredentialsUpload> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(

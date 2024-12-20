@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/Firebase/firestoreservice.dart';
 import 'package:example/screens/ClientUI/client_homepage/client_packagedetails.dart';
@@ -290,6 +291,8 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(

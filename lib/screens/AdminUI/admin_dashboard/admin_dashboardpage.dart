@@ -1,6 +1,6 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/AdminUI/admin_dashboard/admin_analytics.dart';
-import 'package:example/screens/AdminUI/admin_dashboard/admin_topcreatives.dart';
 import 'package:example/screens/AdminUI/admin_settingspage.dart';
 import 'package:example/screens/AdminUI/admin_bugreport.dart';
 import 'package:example/screens/AdminUI/admin_systemupdate.dart';
@@ -28,6 +28,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
@@ -105,14 +107,6 @@ class DashboardContent extends StatelessWidget {
           // Analytics Section
           const DashboardAnalytics(),
           const SizedBox(height: 20.0),
-
-          // Top-Selling Table
-          const Text(
-            "Top-Selling Photographer/Videographer",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-          ),
-          const SizedBox(height: 10.0),
-          const DashboardTopCreatives(),
         ],
       ),
     );

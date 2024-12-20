@@ -1,7 +1,8 @@
 import 'package:example/screens/CreativeUI/creative_message/creative_accountsmessaged.dart';
 import 'package:example/screens/CreativeUI/creative_message/creative_chatbox.dart';
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
-import 'creative_vidpicsmessage.dart';  // Importing the separated media grid logic
+import 'creative_vidpicsmessage.dart'; // Importing the separated media grid logic
 
 class CreativeMessagingScreen extends StatefulWidget {
   final String clientName;
@@ -40,7 +41,8 @@ class CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
       bool found = false;
       for (var conversation in creativeConversationList) {
         if (conversation['clientName'] == widget.clientName) {
-          conversation['messages'].add({'message': messageText, 'time': currentTime});
+          conversation['messages']
+              .add({'message': messageText, 'time': currentTime});
           found = true;
           break;
         }
@@ -50,7 +52,9 @@ class CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
         creativeConversationList.add({
           'clientName': widget.clientName,
           'clientImage': widget.clientImage, // Store the client's image
-          'messages': [{'message': messageText, 'time': currentTime}],
+          'messages': [
+            {'message': messageText, 'time': currentTime}
+          ],
         });
       }
     });
@@ -58,13 +62,16 @@ class CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
         toolbarHeight: 80,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF662C2B), size: 28),
+          icon:
+              const Icon(Icons.arrow_back, color: Color(0xFF662C2B), size: 28),
           onPressed: () {
             Navigator.pop(context); // Navigate back to the previous screen
           },
@@ -73,7 +80,8 @@ class CreativeMessagingScreenState extends State<CreativeMessagingScreen> {
           children: [
             CircleAvatar(
               radius: 24,
-              backgroundImage: AssetImage(widget.clientImage), // Show the client's image
+              backgroundImage:
+                  AssetImage(widget.clientImage), // Show the client's image
             ),
             const SizedBox(width: 12),
             Text(

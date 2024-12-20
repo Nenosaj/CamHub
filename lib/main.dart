@@ -1,3 +1,4 @@
+import 'package:example/screens/welcome_page.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => const LoginScreen(),
+        '/': (context) => const WelcomePage(),
+        '/login': (context) => const LoginScreen(),
         '/admin': (context) => const AdminUI(),
         '/client': (context) => const ClientUI(),
         '/creative': (context) => const CreativeUI(),

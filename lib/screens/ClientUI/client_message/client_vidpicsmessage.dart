@@ -1,8 +1,10 @@
 import 'package:example/screens/ClientUI/client_message/client_messagingplusbutton.dart';
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class VidPicsMessageWidget extends StatefulWidget {
-  final Function(String) onSendMessage; // Accept a callback for sending a message
+  final Function(String)
+      onSendMessage; // Accept a callback for sending a message
 
   const VidPicsMessageWidget({super.key, required this.onSendMessage});
 
@@ -31,21 +33,27 @@ class VidPicsMessageWidgetState extends State<VidPicsMessageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16, right: 8, bottom: 10), // Added padding
+          padding: const EdgeInsets.only(
+              left: 16, right: 8, bottom: 10), // Added padding
           child: Row(
             children: [
               // Plus button is now coming from ClientMessagingPlusButton.dart
-              ClientMessagingPlusButton(onPermissionGranted: _toggleGallery), // Use the plus button here
+              ClientMessagingPlusButton(
+                  onPermissionGranted:
+                      _toggleGallery), // Use the plus button here
               const SizedBox(width: 8),
               Expanded(
                 child: TextField(
                   controller: _controller,
                   decoration: InputDecoration(
                     hintText: "Type your message...",
-                    contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16), // Adjusted padding
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 18, horizontal: 16), // Adjusted padding
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
@@ -58,8 +66,10 @@ class VidPicsMessageWidgetState extends State<VidPicsMessageWidget> {
               ),
               const SizedBox(width: 8),
               IconButton(
-                icon: const Icon(Icons.send, color: Color(0xFF662C2B), size: 30),
-                onPressed: _sendMessage, // Send the message when the button is pressed
+                icon:
+                    const Icon(Icons.send, color: Color(0xFF662C2B), size: 30),
+                onPressed:
+                    _sendMessage, // Send the message when the button is pressed
               ),
             ],
           ),

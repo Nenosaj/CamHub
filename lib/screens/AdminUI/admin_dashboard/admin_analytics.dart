@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class DashboardAnalytics extends StatefulWidget {
@@ -32,6 +33,8 @@ class _DashboardAnalyticsState extends State<DashboardAnalytics> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Column(
       children: [
         IntrinsicHeight(

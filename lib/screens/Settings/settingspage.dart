@@ -1,4 +1,5 @@
 import 'package:example/screens/Firebase/authentication.dart';
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 //Client
@@ -7,8 +8,8 @@ import 'package:example/screens/ClientUI/client_profile/client_profile.dart';
 import 'package:example/screens/ClientUI/client_settings/client_profile_edit.dart';
 
 //Creative
-import 'package:example/screens/CreativeUI/creative_model/creative_model.dart'; 
-import 'package:example/screens/CreativeUI/creative_settings/creative_settings_profiledetails.dart'; 
+import 'package:example/screens/CreativeUI/creative_model/creative_model.dart';
+import 'package:example/screens/CreativeUI/creative_settings/creative_settings_profiledetails.dart';
 import 'package:example/screens/CreativeUI/creative_settings/creative_settings_profileedit.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -64,6 +65,8 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B), // Maroon color

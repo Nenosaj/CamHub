@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/CreativeUI/creative_model/creative_model.dart'; // Import Creative model
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,17 +42,21 @@ class ProfilePageState extends State<CreativeProfileDetails> {
 
   // Fetch creative data from the database
   Future<void> _fetchCreativeData() async {
-    User? currentUser = FirebaseAuth.instance.currentUser; // Get the current signed-in user
+    User? currentUser =
+        FirebaseAuth.instance.currentUser; // Get the current signed-in user
     if (currentUser != null) {
       String uid = currentUser.uid;
 
       // Fetch creative data from Firestore using uid
-      DocumentSnapshot userData =
-          await FirebaseFirestore.instance.collection('creatives').doc(uid).get();
+      DocumentSnapshot userData = await FirebaseFirestore.instance
+          .collection('creatives')
+          .doc(uid)
+          .get();
 
       if (userData.exists) {
         setState(() {
-          creative = Creative.fromFirestore(userData, currentUser.email ?? ''); // Pass the document snapshot and email
+          creative = Creative.fromFirestore(userData,
+              currentUser.email ?? ''); // Pass the document snapshot and email
           // Set the controllers to display the fetched data
           businessNameController.text = creative!.businessName;
           businessEmailController.text = creative!.businessEmail;
@@ -65,17 +70,20 @@ class ProfilePageState extends State<CreativeProfileDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
         elevation: 0,
         leading: IconButton(
-    icon: const Icon(Icons.arrow_back, color: Colors.white), // White arrow
-    onPressed: () {
-      Navigator.of(context).pop(); // Action to go back
-    },
-  ),
-      
+          icon:
+              const Icon(Icons.arrow_back, color: Colors.white), // White arrow
+          onPressed: () {
+            Navigator.of(context).pop(); // Action to go back
+          },
+        ),
+
         // Removed the leading property to get rid of the white arrow
       ),
       body: SingleChildScrollView(
@@ -198,7 +206,8 @@ class ProfilePageState extends State<CreativeProfileDetails> {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: const TextStyle(color: Colors.black87),
-            contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
             ),

@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -28,6 +29,8 @@ class BookingPageState extends State<BookingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

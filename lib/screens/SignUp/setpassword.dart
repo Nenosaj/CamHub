@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/Firebase/authentication.dart';
 //import 'package:example/screens/loadingstate.dart';
@@ -67,6 +68,8 @@ class SetPasswordState extends State<SetPassword> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       backgroundColor: Colors.white, // Set background to plain white
       appBar: PreferredSize(

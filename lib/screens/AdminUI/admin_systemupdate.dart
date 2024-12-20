@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class SystemUpdatePage extends StatelessWidget {
@@ -97,6 +98,8 @@ class SystemUpdateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Card(
       elevation: 3.0,
       shape: RoundedRectangleBorder(

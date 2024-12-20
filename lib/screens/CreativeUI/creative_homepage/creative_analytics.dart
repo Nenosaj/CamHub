@@ -1,9 +1,8 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'creative_charts.dart';
 import 'creative_servicestable.dart';
-
-
 
 class CreativeAnalytics extends StatefulWidget {
   final String creativeName;
@@ -33,6 +32,7 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
     final numberFormat = NumberFormat("#,##0");
 
     return SingleChildScrollView(
