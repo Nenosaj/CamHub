@@ -1,7 +1,8 @@
 import 'package:example/screens/ClientUI/client_message/client_accountsmessaged.dart';
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'client_chatbox.dart';
-import 'client_vidpicsmessage.dart';  // Importing the separated media grid logic
+import 'client_vidpicsmessage.dart'; // Importing the separated media grid logic
 
 class MessagingScreen extends StatefulWidget {
   final String photographerName;
@@ -40,7 +41,8 @@ class MessagingScreenState extends State<MessagingScreen> {
       bool found = false;
       for (var conversation in clientConversationList) {
         if (conversation['photographerName'] == widget.photographerName) {
-          conversation['messages'].add({'message': messageText, 'time': currentTime});
+          conversation['messages']
+              .add({'message': messageText, 'time': currentTime});
           found = true;
           break;
         }
@@ -49,8 +51,11 @@ class MessagingScreenState extends State<MessagingScreen> {
         // Add new conversation if it doesn't exist
         clientConversationList.add({
           'photographerName': widget.photographerName,
-          'photographerImage': widget.photographerImage, // Store the photographer's image
-          'messages': [{'message': messageText, 'time': currentTime}],
+          'photographerImage':
+              widget.photographerImage, // Store the photographer's image
+          'messages': [
+            {'message': messageText, 'time': currentTime}
+          ],
         });
       }
     });
@@ -58,13 +63,16 @@ class MessagingScreenState extends State<MessagingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
         toolbarHeight: 80,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF662C2B), size: 28),
+          icon:
+              const Icon(Icons.arrow_back, color: Color(0xFF662C2B), size: 28),
           onPressed: () {
             Navigator.pop(context); // Navigate back to the previous screen
           },
@@ -73,7 +81,8 @@ class MessagingScreenState extends State<MessagingScreen> {
           children: [
             CircleAvatar(
               radius: 24,
-              backgroundImage: AssetImage(widget.photographerImage), // Show the photographer's image
+              backgroundImage: AssetImage(
+                  widget.photographerImage), // Show the photographer's image
             ),
             const SizedBox(width: 12),
             Text(

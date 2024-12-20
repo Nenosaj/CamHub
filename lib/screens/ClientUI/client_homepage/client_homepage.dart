@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../client_message/client_message.dart';
@@ -20,6 +21,8 @@ class ClientHomePageBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return AppBar(
       backgroundColor: const Color(0xFF662C2B), // Maroon color for the AppBar
       toolbarHeight: 80.0, // Increased height for the AppBar

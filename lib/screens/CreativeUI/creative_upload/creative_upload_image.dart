@@ -1,6 +1,7 @@
 import 'package:example/screens/Firebase/firestoreservice.dart';
 import 'package:example/screens/ImagePicker/imagepickerservice.dart';
 import 'package:example/screens/Firebase/storage.dart';
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/CreativeUI/creative_upload/creative_upload_selectcategory.dart';
 import 'package:example/screens/Firebase/authentication.dart';
@@ -18,7 +19,7 @@ class UploadImageState extends State<UploadImage> {
   String? selectedCategory;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-    final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
   final FirestoreService _firestoreService = FirestoreService();
   final ImagePickerService _imagePickerService = ImagePickerService();
   final Storage _storage = Storage();
@@ -49,13 +50,21 @@ class UploadImageState extends State<UploadImage> {
     String description = _descriptionController.text.trim();
     String? category = selectedCategory;
     String location = _locationController.text.trim();
-    String? creativeUid = _authenticationService.getCurrentUser()?.uid; // Replace this with the actual creative's UID
+    String? creativeUid = _authenticationService
+        .getCurrentUser()
+        ?.uid; // Replace this with the actual creative's UID
 
     //print(creativeUid);
 
-    if (title.isEmpty || description.isEmpty || category == null || location.isEmpty || _selectedImages.isEmpty) {
+    if (title.isEmpty ||
+        description.isEmpty ||
+        category == null ||
+        location.isEmpty ||
+        _selectedImages.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields and select at least one image.')),
+        const SnackBar(
+            content:
+                Text('Please fill all fields and select at least one image.')),
       );
       return;
     }
@@ -65,18 +74,19 @@ class UploadImageState extends State<UploadImage> {
     List<String> imageUrls = [];
 
     // Upload each selected image to Firebase Storage
-      List<File> imagesToUpload = List.from(_selectedImages);
+    List<File> imagesToUpload = List.from(_selectedImages);
 
-      for (var image in imagesToUpload) {
-        String? downloadUrl = await _storage.uploadFile(
-            'images/$creativeUid/$createdAt/${image.path.split('/').last}', image);
-        if (downloadUrl != null) {
-          imageUrls.add(downloadUrl);
-        }
+    for (var image in imagesToUpload) {
+      String? downloadUrl = await _storage.uploadFile(
+          'images/$creativeUid/$createdAt/${image.path.split('/').last}',
+          image);
+      if (downloadUrl != null) {
+        imageUrls.add(downloadUrl);
       }
+    }
 
     // Save the data to Firestore
-        await _firestoreService.addImageDetails(
+    await _firestoreService.addImageDetails(
       uid: creativeUid!,
       imageDetails: {
         'title': title,
@@ -87,7 +97,6 @@ class UploadImageState extends State<UploadImage> {
         'images': imageUrls, // List of image URLs
       },
     );
-
 
     // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
@@ -106,6 +115,8 @@ class UploadImageState extends State<UploadImage> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -235,21 +246,21 @@ class UploadImageState extends State<UploadImage> {
                   const SizedBox(height: 8.0),
 
                   // Location Selection
-                    TextFormField(
-                       controller: _locationController,  // Attach the controller
-                      decoration: const InputDecoration(
-                        labelText: 'Location',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                        ),
-                        hintText: 'Type location here',
-                        hintStyle: TextStyle(
-                          color: Color(0xFF662C2B),
-                          fontStyle: FontStyle.italic,
-                          fontSize: 16.0,
-                        ),
+                  TextFormField(
+                    controller: _locationController, // Attach the controller
+                    decoration: const InputDecoration(
+                      labelText: 'Location',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                      ),
+                      hintText: 'Type location here',
+                      hintStyle: TextStyle(
+                        color: Color(0xFF662C2B),
+                        fontStyle: FontStyle.italic,
+                        fontSize: 16.0,
                       ),
                     ),
+                  ),
                 ],
               ),
             ),

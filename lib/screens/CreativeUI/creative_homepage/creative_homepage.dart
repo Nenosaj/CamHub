@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:example/screens/CreativeUI/creative_model/creative_model.dart';
@@ -21,6 +22,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return AppBar(
       backgroundColor: const Color(0xFF662C2B), // Maroon color for the AppBar
       toolbarHeight: 80.0, // Increased height for the AppBar

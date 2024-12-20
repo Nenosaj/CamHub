@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -264,6 +265,8 @@ class ProfilePages extends State<CreativeProfilePage>
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80.0,

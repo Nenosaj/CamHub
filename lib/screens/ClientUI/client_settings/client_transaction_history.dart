@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
@@ -28,6 +29,8 @@ class TransactionHistoryPageState extends State<TransactionHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transaction History'),

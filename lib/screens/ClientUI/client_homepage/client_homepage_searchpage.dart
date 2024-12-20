@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatelessWidget {
@@ -5,11 +6,14 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B), // Maroon color for the AppBar
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back arrow
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // White back arrow
           onPressed: () {
             Navigator.pop(context); // Go back when pressed
           },

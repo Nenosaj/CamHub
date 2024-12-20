@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class LoadingState {
@@ -53,6 +54,8 @@ class CameraLoadingIndicatorState extends State<CameraLoadingIndicator>
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {

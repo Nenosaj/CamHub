@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class ClientChatBox extends StatelessWidget {
@@ -8,15 +9,20 @@ class ClientChatBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       child: Align(
         alignment: Alignment.centerRight, // Aligns the chat box to the left
         child: Container(
-          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8), // Makes the chat box wider
+          constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width *
+                  0.8), // Makes the chat box wider
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 233, 153, 152), // Lighter maroon shade
+            color: const Color.fromARGB(
+                255, 233, 153, 152), // Lighter maroon shade
             borderRadius: BorderRadius.circular(24),
           ),
           child: Column(

@@ -1,6 +1,7 @@
 import 'package:example/screens/CreativeUI/creative_upload/creative_upload_image.dart';
 import 'package:example/screens/CreativeUI/creative_upload/creative_upload_package.dart';
 import 'package:example/screens/CreativeUI/creative_upload/creative_upload_video.dart';
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class CreativeUploadButton extends StatelessWidget {
@@ -8,6 +9,8 @@ class CreativeUploadButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),

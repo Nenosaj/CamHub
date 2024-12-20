@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class PaymentMethodSelection extends StatelessWidget {
@@ -10,6 +11,8 @@ class PaymentMethodSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.all(16.0),

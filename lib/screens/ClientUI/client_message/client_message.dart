@@ -1,6 +1,7 @@
 import 'package:example/screens/ClientUI/client_message/client_accountsmessaged.dart';
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
-import 'client_message_searchbar.dart';  // Import the search bar logic
+import 'client_message_searchbar.dart'; // Import the search bar logic
 
 void main() {
   runApp(const MyApp());
@@ -12,13 +13,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: ChatScreen(photographerName: '', messages: [],),
+      home: ChatScreen(
+        photographerName: '',
+        messages: [],
+      ),
     );
   }
 }
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key, required String photographerName, required List messages});
+  const ChatScreen(
+      {super.key, required String photographerName, required List messages});
 
   @override
   ChatScreenState createState() => ChatScreenState();
@@ -29,6 +34,8 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(220), // Keep the original height
@@ -73,7 +80,9 @@ class ChatScreenState extends State<ChatScreen> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        searchText = value.trim().toLowerCase(); // Update search text dynamically
+                        searchText = value
+                            .trim()
+                            .toLowerCase(); // Update search text dynamically
                       });
                     },
                   ),
@@ -96,13 +105,16 @@ class ChatScreenState extends State<ChatScreen> {
                     borderRadius: BorderRadius.circular(10.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white, // White background for the search results
+                        color: Colors
+                            .white, // White background for the search results
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       constraints: BoxConstraints(
-                        maxHeight: _getDropdownHeight(), // Dynamically adjust based on content
+                        maxHeight:
+                            _getDropdownHeight(), // Dynamically adjust based on content
                       ),
-                      child: SearchUserResults(searchText: searchText), // Use the search bar logic
+                      child: SearchUserResults(
+                          searchText: searchText), // Use the search bar logic
                     ),
                   ),
                 ),
@@ -113,7 +125,9 @@ class ChatScreenState extends State<ChatScreen> {
 
   // Dynamically calculate the dropdown height based on the number of results
   double _getDropdownHeight() {
-    int resultsCount = SearchUserResults(searchText: searchText).getResultsCount();
-    return (resultsCount * 60.0).clamp(0.0, 300.0); // Each item is ~60px, limit to 300px
+    int resultsCount =
+        SearchUserResults(searchText: searchText).getResultsCount();
+    return (resultsCount * 60.0)
+        .clamp(0.0, 300.0); // Each item is ~60px, limit to 300px
   }
 }

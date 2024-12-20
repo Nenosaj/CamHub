@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 //import 'package:example/screens/registration/verification.dart';
 import 'package:intl/intl.dart'; // For formatting the date
@@ -162,6 +163,8 @@ class FillUpPageClientState extends State<FillUpPageClient> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight), // AppBar height

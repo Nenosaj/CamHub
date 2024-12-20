@@ -1,4 +1,5 @@
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 // Data model for Sales and Returns
@@ -19,6 +20,8 @@ class SalesReturnsChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return AnimatedSwitcher(
       // Wrap the chart in AnimatedSwitcher
       duration: const Duration(milliseconds: 500),

@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'client_reviewspagecard.dart'; // Import the ReviewPageCard class
 
@@ -6,6 +7,8 @@ class ReviewsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,

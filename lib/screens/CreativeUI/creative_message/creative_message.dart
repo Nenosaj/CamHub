@@ -1,4 +1,5 @@
 import 'package:example/screens/CreativeUI/creative_message/creative_accountsmessaged.dart';
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'creative_messagesearchbar.dart'; // Import the search bar logic
 
@@ -11,6 +12,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return const MaterialApp(
       home: CreativeChatScreen(clientName: '', messages: []),
     );
@@ -33,6 +36,8 @@ class CreativeChatScreenState extends State<CreativeChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(220), // Keep the original height

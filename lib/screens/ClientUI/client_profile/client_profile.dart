@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/ClientUI/client_model/client_model.dart';
 
@@ -48,7 +49,8 @@ class ProfilePageState extends State<ClientProfilePage> {
         usernameController.text = '${client!.firstName} ${client!.lastName}';
         emailController.text = client!.email; // Assuming phone is the email
         dobController.text = client!.birthday;
-        addressController.text = '${client!.street}, ${client!.city}, ${client!.province}';
+        addressController.text =
+            '${client!.street}, ${client!.city}, ${client!.province}';
         phoneController.text = client!.phoneNumber;
       });
     }
@@ -56,16 +58,19 @@ class ProfilePageState extends State<ClientProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
         elevation: 0,
         leading: IconButton(
-    icon: const Icon(Icons.arrow_back, color: Colors.white), // White arrow
-    onPressed: () {
-      Navigator.of(context).pop(); // Action to go back
-    },
-  ),
+          icon:
+              const Icon(Icons.arrow_back, color: Colors.white), // White arrow
+          onPressed: () {
+            Navigator.of(context).pop(); // Action to go back
+          },
+        ),
         // Removed the leading property to get rid of the white arrow
       ),
       body: SingleChildScrollView(
@@ -194,7 +199,8 @@ class ProfilePageState extends State<ClientProfilePage> {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: const TextStyle(color: Colors.black87),
-            contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
             ),

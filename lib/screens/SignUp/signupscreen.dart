@@ -99,7 +99,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                           height: 150,
                           decoration: BoxDecoration(
                             color: selectedRole == 'Creatives'
-                                ? const Color.fromARGB(255, 230, 230, 230)
+                                ? const Color.fromARGB(255, 255, 255, 255)
                                 : const Color.fromARGB(255, 255, 255, 255),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [

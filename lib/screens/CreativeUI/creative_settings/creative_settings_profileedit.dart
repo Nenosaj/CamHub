@@ -4,8 +4,10 @@ import 'dart:io'; // For File handling
 import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage
 import 'package:cloud_firestore/cloud_firestore.dart'; // For Firestore
 import 'package:example/screens/CreativeUI/creative_model/creative_model.dart'; // Use the Creative model
-import 'package:permission_handler/permission_handler.dart'; 
-import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth
+import 'package:permission_handler/permission_handler.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../../responsive_helper.dart'; // Firebase Auth
 
 void main() => runApp(const MyApp());
 
@@ -45,17 +47,21 @@ class CreativeProfileEditState extends State<CreativeProfileEdit> {
 
   // Fetch creative data from Firestore
   Future<void> _fetchCreativeData() async {
-    User? currentUser = FirebaseAuth.instance.currentUser; // Get the current user
+    User? currentUser =
+        FirebaseAuth.instance.currentUser; // Get the current user
     if (currentUser != null) {
       String uid = currentUser.uid;
 
       // Fetch creative data from Firestore using uid
-      DocumentSnapshot userData =
-          await FirebaseFirestore.instance.collection('creatives').doc(uid).get();
+      DocumentSnapshot userData = await FirebaseFirestore.instance
+          .collection('creatives')
+          .doc(uid)
+          .get();
 
       if (userData.exists) {
         setState(() {
-          creative = Creative.fromFirestore(userData, currentUser.email ?? ''); // Pass both DocumentSnapshot and email
+          creative = Creative.fromFirestore(userData,
+              currentUser.email ?? ''); // Pass both DocumentSnapshot and email
           businessNameController.text = creative!.businessName;
           businessEmailController.text = creative!.businessEmail;
           phoneController.text = creative!.businessPhoneNumber;
@@ -81,11 +87,12 @@ class CreativeProfileEditState extends State<CreativeProfileEdit> {
       });
     } else {
       if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Storage permission is required to pick an image.')),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text('Storage permission is required to pick an image.')),
+        );
       }
-    
     }
   }
 
@@ -106,14 +113,16 @@ class CreativeProfileEditState extends State<CreativeProfileEdit> {
 
   // Save changes logic (for the text fields and profile picture)
   Future<void> _saveChanges() async {
-    User? currentUser = FirebaseAuth.instance.currentUser; // Get the current user
+    User? currentUser =
+        FirebaseAuth.instance.currentUser; // Get the current user
     if (currentUser != null) {
       String uid = currentUser.uid;
 
       // Check if a new profile picture was picked
       String? profilePictureUrl;
       if (_pickedImage != null) {
-        profilePictureUrl = await _uploadProfilePicture(uid, File(_pickedImage!.path));
+        profilePictureUrl =
+            await _uploadProfilePicture(uid, File(_pickedImage!.path));
       }
 
       // Update Firestore with the new data, including profile picture URL if available
@@ -124,7 +133,9 @@ class CreativeProfileEditState extends State<CreativeProfileEdit> {
         'street': addressController.text.split(',').first,
         'city': addressController.text.split(',')[1],
         'province': addressController.text.split(',').last,
-        'profilePicture': profilePictureUrl ?? creative?.profilePictureUrl, // Use the new profile picture if available, otherwise keep the old one
+        'profilePicture': profilePictureUrl ??
+            creative
+                ?.profilePictureUrl, // Use the new profile picture if available, otherwise keep the old one
       });
 
       // Refresh the creative data to update the UI with the new profile picture
@@ -132,11 +143,9 @@ class CreativeProfileEditState extends State<CreativeProfileEdit> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Changes saved successfully!')),
-      );
-
+          const SnackBar(content: Text('Changes saved successfully!')),
+        );
       }
-
     }
   }
 
@@ -148,7 +157,8 @@ class CreativeProfileEditState extends State<CreativeProfileEdit> {
         businessNameController.text = creative!.businessName;
         businessEmailController.text = creative!.businessEmail;
         phoneController.text = creative!.businessPhoneNumber;
-        addressController.text = '${creative!.street}, ${creative!.city}, ${creative!.province}';
+        addressController.text =
+            '${creative!.street}, ${creative!.city}, ${creative!.province}';
       }
       // Reset picked image
       _pickedImage = null;
@@ -161,17 +171,20 @@ class CreativeProfileEditState extends State<CreativeProfileEdit> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
         title: const Text("Edit Profile"),
         elevation: 0,
         leading: IconButton(
-    icon: const Icon(Icons.arrow_back, color: Colors.white), // White arrow
-    onPressed: () {
-      Navigator.of(context).pop(); // Action to go back
-    },
-  ),
+          icon:
+              const Icon(Icons.arrow_back, color: Colors.white), // White arrow
+          onPressed: () {
+            Navigator.of(context).pop(); // Action to go back
+          },
+        ),
         actions: [
           // Save Changes button
           TextButton(
@@ -202,16 +215,18 @@ class CreativeProfileEditState extends State<CreativeProfileEdit> {
                 GestureDetector(
                   onTap: _pickImage,
                   child: CircleAvatar(
-                      radius: 80,
-                      backgroundImage: _pickedImage != null
-                          ? FileImage(File(_pickedImage!.path))
-                          : creative?.profilePictureUrl != null
-                              ? NetworkImage(creative!.profilePictureUrl!)
-                              : null, // No default image, placeholder will show
-                      child: _pickedImage == null && creative?.profilePictureUrl == null
-                          ? const Icon(Icons.person, size: 40, color: Colors.white)
-                          : null,
-                    ),
+                    radius: 80,
+                    backgroundImage: _pickedImage != null
+                        ? FileImage(File(_pickedImage!.path))
+                        : creative?.profilePictureUrl != null
+                            ? NetworkImage(creative!.profilePictureUrl!)
+                            : null, // No default image, placeholder will show
+                    child: _pickedImage == null &&
+                            creative?.profilePictureUrl == null
+                        ? const Icon(Icons.person,
+                            size: 40, color: Colors.white)
+                        : null,
+                  ),
                 ),
               ],
             ),

@@ -1,12 +1,15 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class ClientMessagingPlusButton extends StatefulWidget {
   final VoidCallback onPermissionGranted; // Callback when permission is granted
 
-  const ClientMessagingPlusButton({super.key, required this.onPermissionGranted});
+  const ClientMessagingPlusButton(
+      {super.key, required this.onPermissionGranted});
 
   @override
-  ClientMessagingPlusButtonState createState() => ClientMessagingPlusButtonState();
+  ClientMessagingPlusButtonState createState() =>
+      ClientMessagingPlusButtonState();
 }
 
 class ClientMessagingPlusButtonState extends State<ClientMessagingPlusButton> {
@@ -15,17 +18,21 @@ class ClientMessagingPlusButtonState extends State<ClientMessagingPlusButton> {
   // Show permission dialog only if permission is not yet granted
   void _showPermissionDialog() {
     if (_permissionGranted) {
-      widget.onPermissionGranted(); // Directly toggle the media grid if permission already granted
+      widget
+          .onPermissionGranted(); // Directly toggle the media grid if permission already granted
       return;
     }
 
     showDialog(
       context: context,
-      barrierDismissible: false, // Prevent dismissing the dialog by tapping outside
+      barrierDismissible:
+          false, // Prevent dismissing the dialog by tapping outside
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          title: const Text("Allow CamHub to access photos and media on your device?"),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          title: const Text(
+              "Allow CamHub to access photos and media on your device?"),
           actions: [
             TextButton(
               child: const Text(
@@ -33,7 +40,8 @@ class ClientMessagingPlusButtonState extends State<ClientMessagingPlusButton> {
                 style: TextStyle(color: Color(0xFF662C2B)),
               ),
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog without showing the media grid
+                Navigator.of(context)
+                    .pop(); // Close the dialog without showing the media grid
               },
             ),
             TextButton(
@@ -46,7 +54,8 @@ class ClientMessagingPlusButtonState extends State<ClientMessagingPlusButton> {
                 setState(() {
                   _permissionGranted = true; // Mark permission as granted
                 });
-                widget.onPermissionGranted(); // Proceed with showing the media grid
+                widget
+                    .onPermissionGranted(); // Proceed with showing the media grid
               },
             ),
           ],
@@ -57,8 +66,11 @@ class ClientMessagingPlusButtonState extends State<ClientMessagingPlusButton> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return GestureDetector(
-      onTap: _showPermissionDialog, // Show the dialog on tapping the plus button
+      onTap:
+          _showPermissionDialog, // Show the dialog on tapping the plus button
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: const BoxDecoration(

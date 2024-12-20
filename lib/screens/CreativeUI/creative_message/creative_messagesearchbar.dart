@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'creative_messaging.dart'; // Import MessagingScreen for navigation
 
@@ -17,6 +18,8 @@ class CreativeSearchUserResults extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     // Filter the clients based on search text
     List<Map<String, String>> filteredClients = clients
         .where((client) => client['name']!

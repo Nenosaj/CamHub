@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class ServiceData {
@@ -64,6 +65,7 @@ class ServicePercentageTableState extends State<ServicePercentageTable> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
     List<ServiceData> serviceData = getServiceDataForMonth(selectedMonth);
 
     return Center(

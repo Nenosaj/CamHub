@@ -2,8 +2,6 @@ import 'package:example/screens/Firebase/authentication.dart';
 import 'package:flutter/material.dart';
 import '../SignUp/signupscreen.dart';
 
-//import 'package:example/screens/loadingstate.dart';
-
 void main() {
   runApp(const MyApp2());
 }
@@ -47,9 +45,12 @@ class _LoginScreenState extends State<LoginScreen> {
       resizeToAvoidBottomInset: true,
       body: LayoutBuilder(
         builder: (context, constraints) {
+          final screenWidth = constraints.maxWidth;
+          final screenHeight = constraints.maxHeight;
+
           return SingleChildScrollView(
             child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              constraints: BoxConstraints(minHeight: screenHeight),
               child: IntrinsicHeight(
                 child: Stack(
                   children: [
@@ -65,11 +66,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     // Positioned Logo
                     Positioned(
-                      left: 90,
-                      top: 80,
+                      left: screenWidth * 0.2, // Adjusted dynamically
+                      top: screenHeight * 0.1, // Adjusted dynamically
                       child: Container(
-                        width: 250,
-                        height: 250,
+                        width: screenWidth * 0.6, // Adjusted dynamically
+                        height: screenWidth * 0.6, // Keeping it square
                         decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
@@ -78,28 +79,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                       0.4), // Shadow color with opacity
                               spreadRadius: 1, // How wide the shadow spreads
                               blurRadius: 20, // How soft the shadow is
-                              offset: const Offset(2,
-                                  1), // Horizontal and vertical offset of the shadow
+                              offset: const Offset(
+                                  2, 1), // Horizontal and vertical offset
                             ),
                           ],
                         ),
                         child: Image.asset(
                           'assets/images/camhub_logo.jpg',
-                          width: 250,
-                          height: 250,
+                          width: screenWidth * 0.6,
+                          height: screenWidth * 0.6,
                         ),
                       ),
                     ),
                     Positioned(
                       top: MediaQuery.of(context).viewInsets.bottom > 0
-                          ? constraints.maxHeight * 0.25
-                          : constraints.maxHeight * 0.50,
+                          ? screenHeight * 0.25
+                          : screenHeight * 0.50, // Adjusted dynamically
                       left: 0,
                       right: 0,
                       child: Column(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(25),
+                            padding: EdgeInsets.all(
+                                screenWidth * 0.06), // Adjusted dynamically
                             decoration: const BoxDecoration(
                               color: Color(0xFF662C2B),
                               borderRadius: BorderRadius.only(
@@ -117,7 +119,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Colors.white,
                                   ),
                                 ),
-                                const SizedBox(height: 5),
+                                SizedBox(
+                                    height: screenHeight *
+                                        0.01), // Adjusted dynamically
                                 const Text(
                                   'Are you ready for your pose?',
                                   style: TextStyle(
@@ -125,7 +129,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fontSize: 16,
                                   ),
                                 ),
-                                const SizedBox(height: 0),
+                                SizedBox(
+                                    height: screenHeight *
+                                        0.02), // Adjusted dynamically
                                 Stack(
                                   children: [
                                     const Positioned(
@@ -140,7 +146,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 25.0),
+                                      padding: EdgeInsets.only(
+                                          top: screenHeight * 0.03),
                                       child: TextField(
                                         controller: emailController,
                                         decoration: InputDecoration(
@@ -159,7 +166,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 0),
+                                SizedBox(
+                                    height: screenHeight *
+                                        0.02), // Adjusted dynamically
                                 Stack(
                                   children: [
                                     const Positioned(
@@ -174,7 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 25.0),
+                                      padding: EdgeInsets.only(
+                                          top: screenHeight * 0.03),
                                       child: TextField(
                                         controller: passwordController,
                                         obscureText: !_isPasswordVisible,
@@ -209,7 +219,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 15),
+                                SizedBox(
+                                    height: screenHeight *
+                                        0.03), // Adjusted dynamically
                                 Stack(
                                   alignment: Alignment.center,
                                   children: [
@@ -220,8 +232,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                           foregroundColor:
                                               const Color(0xFF662C2B),
                                           backgroundColor: Colors.white,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 120, vertical: 15),
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: screenWidth * 0.3,
+                                            vertical: screenHeight * 0.02,
+                                          ),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -253,10 +267,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     // Loading Indicator
                                     if (_isLoading)
-                                      const CircularProgressIndicator(),
+                                      const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
                                   ],
                                 ),
-                                const SizedBox(height: 0),
+                                SizedBox(
+                                    height: screenHeight *
+                                        0.02), // Adjusted dynamically
                                 TextButton(
                                   onPressed: () {
                                     Navigator.push(

@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -32,6 +33,8 @@ class _FullScreenVideoPlayerState extends State<FullScreenVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(

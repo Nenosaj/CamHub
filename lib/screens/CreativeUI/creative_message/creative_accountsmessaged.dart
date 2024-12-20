@@ -1,14 +1,18 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'creative_messaging.dart'; // Import MessagingScreen for navigation
 
 // Declare creativeConversationList globally to store the conversations and messages
-List<Map<String, dynamic>> creativeConversationList = []; // Now holds clientName, messages, and clientImage
+List<Map<String, dynamic>> creativeConversationList =
+    []; // Now holds clientName, messages, and clientImage
 
 class CreativeAccountsMessaged extends StatelessWidget {
   const CreativeAccountsMessaged({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return creativeConversationList.isEmpty
         ? const EmptyChatScreen() // Show "No messages" when empty
         : ListView.builder(
@@ -16,14 +20,17 @@ class CreativeAccountsMessaged extends StatelessWidget {
             itemBuilder: (context, index) {
               final conversation = creativeConversationList[index];
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(10), // Rounded corners for rectangle shape
+                    borderRadius: BorderRadius.circular(
+                        10), // Rounded corners for rectangle shape
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.3), // Subtle shadow effect
+                        color: Colors.grey
+                            .withOpacity(0.3), // Subtle shadow effect
                         spreadRadius: 1,
                         blurRadius: 5,
                         offset: const Offset(0, 2), // Shadow position
@@ -34,7 +41,8 @@ class CreativeAccountsMessaged extends StatelessWidget {
                     contentPadding: const EdgeInsets.all(16.0),
                     leading: CircleAvatar(
                       radius: 24, // Keep profile picture size consistent
-                      backgroundImage: AssetImage(conversation['clientImage']), // Display the client's image
+                      backgroundImage: AssetImage(conversation[
+                          'clientImage']), // Display the client's image
                     ),
                     title: Text(
                       conversation['clientName']!,
@@ -58,8 +66,10 @@ class CreativeAccountsMessaged extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => CreativeMessagingScreen(
                             clientName: conversation['clientName']!,
-                            clientImage: conversation['clientImage'], // Pass the image
-                            existingMessages: _getExistingMessages(conversation['clientName']!), // Pass the existing messages
+                            clientImage:
+                                conversation['clientImage'], // Pass the image
+                            existingMessages: _getExistingMessages(conversation[
+                                'clientName']!), // Pass the existing messages
                           ),
                         ),
                       );

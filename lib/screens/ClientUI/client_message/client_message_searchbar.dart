@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'client_messaging.dart'; // Import MessagingScreen for navigation
 
@@ -17,6 +18,8 @@ class SearchUserResults extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     // Filter the photographers based on search text
     List<Map<String, String>> filteredPhotographers = photographers
         .where((photographer) => photographer['name']!

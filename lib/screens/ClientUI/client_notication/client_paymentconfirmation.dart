@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/ClientUI/client_homepage/client_homepage.dart';
 
@@ -6,6 +7,8 @@ class PaymentConfirmation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

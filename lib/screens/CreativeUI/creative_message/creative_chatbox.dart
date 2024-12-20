@@ -1,3 +1,4 @@
+import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class CreativeChatBox extends StatelessWidget {
@@ -8,12 +9,16 @@ class CreativeChatBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       child: Align(
-        alignment: Alignment.centerRight, 
+        alignment: Alignment.centerRight,
         child: Container(
-          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8), // Makes the chat box wider
+          constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width *
+                  0.8), // Makes the chat box wider
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: const Color(0xFFF1D1D1), // Lighter maroon shade
