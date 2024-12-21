@@ -7,8 +7,6 @@ class PayMongoService {
       "sk_test_4VAEtfCEfXXyU2iqEM73gjtj"; // Replace with your PayMongo API key
   static const String _baseUrl = "https://api.paymongo.com/v1";
   static const String _paymentLinksUrl = "$_baseUrl/links";
-  static const String _paymentIntentsUrl = "$_baseUrl/payment_intents";
-  static const String _paymentsUrl = "$_baseUrl/v1/payments";
 
   /// Creates a payment link with the given amount and description (package name).
   /// Returns the payment link URL if successful or `null` if there’s an error.
@@ -56,73 +54,12 @@ class PayMongoService {
     }
   }
 
-  /// Verifies the payment status using the payment intent ID.
-  /// Returns `true` if the payment is successful, otherwise `false`.
-  static Future<bool> verifyPaymentStatus(String paymentIntentId) async {
-    final url = Uri.parse('$_paymentIntentsUrl/$paymentIntentId');
-
+  static Future<Map<String, dynamic>?> fetchLinkByReferenceNumber(
+      String referenceNumber) async {
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Basic ${base64Encode(utf8.encode(_apiKey))}',
-          'Content-Type': 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        final paymentStatus = responseData['data']['attributes']['status'];
-        return paymentStatus == 'succeeded'; // Return true if payment succeeded
-      } else {
-        debugPrint('Failed to verify payment status: ${response.body}');
-        return false;
-      }
-    } catch (e) {
-      debugPrint('Error verifying payment status: $e');
-      return false;
-    }
-  }
-
-  Future<void> retrievePaymentLink(String linkId) async {
-    final String apiKey = _apiKey; // Replace with your actual PayMongo API Key
-
-    final String url =
-        'https://api.paymongo.com/v1/payment_links/$linkId'; // Endpoint to retrieve a link
-
-    try {
+      final url = '$_baseUrl/links?reference_number=$referenceNumber';
       final response = await http.get(
         Uri.parse(url),
-        headers: {
-          'Authorization': 'Basic ' + base64Encode(utf8.encode('$apiKey:')),
-          'Content-Type': 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final String remark =
-            data['data']['metadata']?['remark'] ?? 'No remark available';
-
-        print('Remark: $remark'); // Print or use the remark as needed
-
-        // Optionally, print the full response if you need more details
-        print('Full Response: ${data['data']}');
-      } else {
-        print('Failed to retrieve payment link: ${response.statusCode}');
-        print('Error: ${response.body}');
-      }
-    } catch (e) {
-      print('Error fetching payment link: $e');
-    }
-  }
-
-  /// Lists all payments made in the PayMongo account.
-  /// Returns a list of payments or `null` if there’s an error.
-  static Future<Map<String, dynamic>> fetchPayments() async {
-    try {
-      final response = await http.get(
-        Uri.parse(_paymentsUrl),
         headers: {
           'Authorization': 'Basic ${base64Encode(utf8.encode("$_apiKey:"))}',
           'Content-Type': 'application/json',
@@ -131,29 +68,27 @@ class PayMongoService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
-        final List<dynamic> paymentsList = data['data'];
-        double totalRevenue = 0;
+        final List<dynamic> links = data['data'];
 
-        final List<Map<String, dynamic>> payments = paymentsList.map((payment) {
-          final attributes = payment['attributes'] as Map<String, dynamic>;
-          final amount = attributes['amount'] ?? 0;
-          final fee = attributes['fee'] ?? 0;
-          final netAmount = (amount - fee) / 100; // Convert to currency unit
-          totalRevenue += netAmount; // Accumulate revenue
-          attributes['net_amount'] = netAmount; // Add net amount to attributes
-          return attributes;
-        }).toList();
-
-        return {
-          'payments': payments,
-          'totalRevenue': totalRevenue,
-        };
+        if (links.isNotEmpty) {
+          // Return the first matching link's data
+          return {
+            'id': links.first['id'],
+            'url': links.first['attributes']['checkout_url'],
+            'reference_number': links.first['attributes']['reference_number'],
+            'status': links.first['attributes']['status'],
+          };
+        } else {
+          return null; // No matching links found
+        }
       } else {
-        throw Exception(
-            'Failed to fetch payments. Status Code: ${response.statusCode}');
+        print(
+            'Failed to fetch payment link. Status Code: ${response.statusCode}');
+        return null;
       }
     } catch (e) {
-      throw Exception('Error fetching payments: $e');
+      print('Error fetching payment link: $e');
+      return null;
     }
   }
 }

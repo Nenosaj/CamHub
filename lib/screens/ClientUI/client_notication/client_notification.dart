@@ -50,12 +50,27 @@ class _ClientNotificationPageState extends State<ClientNotificationPage> {
           .where('clientId', isEqualTo: currentUser.uid)
           .get();
 
-      // Parse the documents into a list of maps
-      clientBookings = bookingsSnapshot.docs.map((doc) {
+      for (var doc in bookingsSnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         data['bookingId'] = doc.id; // Add document ID
-        return data;
-      }).toList();
+
+        // Fetch payment subcollection for this booking
+        QuerySnapshot paymentSnapshot = await _firestore
+            .collection('bookings')
+            .doc(doc.id)
+            .collection('payment')
+            .get();
+
+        // Check if any payment document has `paid` set to true
+        bool isPaid = paymentSnapshot.docs.any((paymentDoc) {
+          Map<String, dynamic> paymentData =
+              paymentDoc.data() as Map<String, dynamic>;
+          return paymentData['paid'] == true;
+        });
+
+        data['isPaid'] = isPaid; // Add payment status to the booking data
+        clientBookings.add(data);
+      }
 
       print('Fetched ${clientBookings.length} bookings for the client.');
       return clientBookings;
@@ -110,6 +125,7 @@ class _ClientNotificationPageState extends State<ClientNotificationPage> {
                 children: notifications.map((notification) {
                   final bool isApproved = notification['approved'] ?? false;
                   final bool isDeclined = notification['declined'] ?? false;
+                  final bool isPaid = notification['isPaid'] ?? false;
                   final String reason =
                       notification['reason'] ?? 'No reason provided';
 
@@ -127,13 +143,17 @@ class _ClientNotificationPageState extends State<ClientNotificationPage> {
                               ? 'Status: Declined ❌'
                               : 'Status: Pending ⏳',
                       message: isApproved
-                          ? 'Your appointment has been approved. Please proceed to payment.'
+                          ? (isPaid
+                              ? 'Your appointment has been paid.'
+                              : 'Your appointment has been approved. Please proceed to payment.')
                           : isDeclined
                               ? 'Your appointment was declined. Reason: $reason'
                               : 'Your appointment is still pending. Please wait for confirmation.',
-                      buttonText: isApproved ? 'Proceed to Payment' : 'Close',
+                      buttonText: isApproved
+                          ? (isPaid ? 'PAID' : 'Proceed to Payment')
+                          : 'Close',
                       reason: isDeclined ? reason : null,
-                      onPressed: isApproved
+                      onPressed: isApproved && !isPaid
                           ? () {
                               Navigator.push(
                                 context,
@@ -145,7 +165,7 @@ class _ClientNotificationPageState extends State<ClientNotificationPage> {
                               );
                             }
                           : null,
-                      onDelete: isDeclined
+                      onDelete: isPaid
                           ? () {
                               deleteBooking(notification['bookingId']);
                             }
@@ -182,61 +202,89 @@ class NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 3,
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: const TextStyle(fontSize: 16, color: Colors.black54),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
-            ),
-            if (reason != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  "Reason: $reason",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.redAccent,
+            // Left Side: Text Information
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      color: Colors.black54,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    message,
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 14,
+                    ),
+                  ),
+                  if (reason != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Reason: $reason',
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                ],
               ),
-            const SizedBox(height: 12),
-            if (onPressed != null)
-              ElevatedButton(
-                onPressed: onPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF662C2B),
-                  foregroundColor: Colors.white,
-                ),
-                child: Text(buttonText),
-              ),
-            if (onDelete != null)
-              ElevatedButton(
-                onPressed: onDelete,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text("Delete"),
-              ),
+            ),
+            // Right Side: Buttons
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (onPressed != null)
+                  ElevatedButton(
+                    onPressed: onPressed,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: onPressed != null
+                          ? const Color(0xFF662C2B)
+                          : Colors.grey,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: Text(
+                      buttonText,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                if (onDelete != null)
+                  TextButton(
+                    onPressed: onDelete,
+                    child: const Text(
+                      'Delete',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+              ],
+            ),
           ],
         ),
       ),
