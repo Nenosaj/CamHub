@@ -29,6 +29,7 @@ class UploadVideosState extends State<UploadVideos> {
   final Authentication _authenticationService = Authentication();
 
   final List<File> _selectedVideos = [];
+  bool isUploading = false; // Added loading state
 
   // Placeholder function for video selection
   Future<void> pickVideo() async {
@@ -115,6 +116,10 @@ class UploadVideosState extends State<UploadVideos> {
 
   // Function to handle image upload and data submission
   Future<void> _uploadAndSubmit() async {
+    setState(() {
+      isUploading = true; // Show loading state
+    });
+
     String title = _titleController.text.trim();
     String description = _descriptionController.text.trim();
     String? category = selectedCategory;
@@ -122,8 +127,6 @@ class UploadVideosState extends State<UploadVideos> {
     String? creativeUid = _authenticationService
         .getCurrentUser()
         ?.uid; // Replace this with the actual creative's UID
-
-    //print(creativeUid);
 
     if (title.isEmpty ||
         description.isEmpty ||
@@ -135,6 +138,9 @@ class UploadVideosState extends State<UploadVideos> {
             content:
                 Text('Please fill all fields and select at least one video.')),
       );
+      setState(() {
+        isUploading = false; // Hide loading state
+      });
       return;
     }
 
@@ -172,8 +178,8 @@ class UploadVideosState extends State<UploadVideos> {
       const SnackBar(content: Text('Upload Successful')),
     );
 
-    // Clear the form after submission
     setState(() {
+      isUploading = false; // Hide loading state
       _titleController.clear();
       _descriptionController.clear();
       selectedCategory = null;
@@ -365,7 +371,7 @@ class UploadVideosState extends State<UploadVideos> {
             // Post Button
             Center(
               child: ElevatedButton(
-                onPressed: _uploadAndSubmit,
+                onPressed: isUploading ? null : _uploadAndSubmit,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF662C2B),
                   padding: const EdgeInsets.symmetric(
@@ -376,14 +382,22 @@ class UploadVideosState extends State<UploadVideos> {
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
-                child: const Text(
-                  'POST',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: isUploading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.white),
+                        ),
+                      )
+                    : const Text(
+                        'POST',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
           ],

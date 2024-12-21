@@ -1,9 +1,28 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:example/screens/LogIn/loginscreen.dart';
 import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
 class AdminSettingsPage extends StatelessWidget {
   const AdminSettingsPage({super.key});
+
+  Future<void> signOut(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(), // Redirects to LoginScreen
+        ),
+        (Route<dynamic> route) => false, // Removes all routes
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error signing out: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,17 +113,7 @@ class AdminSettingsPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Center(
                 child: TextButton(
-                  onPressed: () {
-                    // Navigate to LoginScreen on Log Out
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ),
-                      (Route<dynamic> route) =>
-                          false, // Clears all previous routes
-                    );
-                  },
+                  onPressed: () => signOut(context), // Calls the signOut method
                   child: const Text(
                     'Log Out',
                     style: TextStyle(
