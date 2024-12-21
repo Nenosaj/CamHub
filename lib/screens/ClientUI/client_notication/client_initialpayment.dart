@@ -1,4 +1,4 @@
-import 'package:example/screens/responsive_helper.dart';
+/*import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'client_paymentconfirmation.dart';
 import 'client_paymentselection.dart';
@@ -290,3 +290,4 @@ class InitialPaymentState extends State<InitialPayment> {
     );
   }
 }
+*/
