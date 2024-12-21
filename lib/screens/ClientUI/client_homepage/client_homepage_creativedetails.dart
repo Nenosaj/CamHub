@@ -376,6 +376,26 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/MessagingScreen');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF662C2B),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text(
+                  'Chat with us',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            ),
           ],
         ),
       ),
