@@ -1,7 +1,6 @@
 import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
-//import 'package:example/screens/registration/verification.dart';
-import 'package:intl/intl.dart'; // For formatting the date
+import 'package:intl/intl.dart';
 import 'package:example/screens/Firebase/authentication.dart';
 
 class FillUpPageClient extends StatefulWidget {
@@ -14,12 +13,11 @@ class FillUpPageClient extends StatefulWidget {
 class FillUpPageClientState extends State<FillUpPageClient> {
   final Authentication authController = Authentication();
 
-  bool isPrivacyChecked = false; // For first checkbox
-  bool isTermsChecked = false; // For second checkbox
-  bool showError =
-      false; // Flag to show error message if checkboxes are not ticked
+  bool isPrivacyChecked = false;
+  bool isTermsChecked = false;
+  bool showError = false;
 
-  // Variables to store form values
+  // Form variables
   String firstName = '';
   String middleName = '';
   String lastName = '';
@@ -33,7 +31,22 @@ class FillUpPageClientState extends State<FillUpPageClient> {
   String email = '';
   String phoneNumber = '';
 
-  // TextEditingControllers for the text fields
+  // Error messages
+  String firstNameError = '';
+  String middleNameError = '';
+  String lastNameError = '';
+  String birthdayError = '';
+  String emailError = '';
+  String phoneNumberError = '';
+
+  // Track user interaction
+  bool isFirstNameTouched = false;
+  bool isMiddleNameTouched = false;
+  bool isLastNameTouched = false;
+  bool isBirthdayTouched = false;
+  bool isEmailTouched = false;
+  bool isPhoneNumberTouched = false;
+
   TextEditingController firstNameController = TextEditingController();
   TextEditingController middleNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
@@ -47,118 +60,95 @@ class FillUpPageClientState extends State<FillUpPageClient> {
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
 
-  // To keep track if all fields are filled
-  bool allFieldsFilled = false;
-
   @override
   void initState() {
     super.initState();
-
-    // Adding listeners to the TextEditingControllers
-    firstNameController
-        .addListener(() => _updateField('firstName', firstNameController.text));
-    middleNameController.addListener(
-        () => _updateField('middleName', middleNameController.text));
-    lastNameController
-        .addListener(() => _updateField('lastName', lastNameController.text));
-    birthdayController
-        .addListener(() => _updateField('birthday', birthdayController.text));
-    unitNumberController.addListener(
-        () => _updateField('unitNumber', unitNumberController.text));
-    streetController
-        .addListener(() => _updateField('street', streetController.text));
-    villageController
-        .addListener(() => _updateField('village', villageController.text));
-    barangayController
-        .addListener(() => _updateField('barangay', barangayController.text));
-    cityController.addListener(() => _updateField('city', cityController.text));
-    provinceController
-        .addListener(() => _updateField('province', provinceController.text));
-    emailController
-        .addListener(() => _updateField('email', emailController.text));
-    phoneNumberController.addListener(
-        () => _updateField('phoneNumber', phoneNumberController.text));
   }
 
-  // Method to update the corresponding variable when text changes
-  void _updateField(String field, String value) {
+  void _validateFirstName() {
     setState(() {
-      switch (field) {
-        case 'firstName':
-          firstName = value;
-          break;
-        case 'middleName':
-          middleName = value;
-          break;
-        case 'lastName':
-          lastName = value;
-          break;
-        case 'birthday':
-          birthday = value;
-          break;
-        case 'unitNumber':
-          unitNumber = value;
-          break;
-        case 'street':
-          street = value;
-          break;
-        case 'village':
-          village = value;
-          break;
-        case 'barangay':
-          barangay = value;
-          break;
-        case 'city':
-          city = value;
-          break;
-        case 'province':
-          province = value;
-          break;
-        case 'email':
-          email = value;
-          break;
-        case 'phoneNumber':
-          phoneNumber = value;
-          break;
+      if (isFirstNameTouched) {
+        firstName = firstNameController.text;
+        firstNameError = firstName.isEmpty
+            ? ''
+            : RegExp(r'^[a-zA-Z ]+$').hasMatch(firstName)
+                ? ''
+                : 'Invalid first name. No special characters allowed.';
       }
-      _checkFieldsFilled();
     });
   }
 
-  void _checkFieldsFilled() {
+  void _validateMiddleName() {
     setState(() {
-      allFieldsFilled = firstName.isNotEmpty &&
-          middleName.isNotEmpty &&
-          lastName.isNotEmpty &&
-          birthday.isNotEmpty &&
-          unitNumber.isNotEmpty &&
-          street.isNotEmpty &&
-          village.isNotEmpty &&
-          barangay.isNotEmpty &&
-          city.isNotEmpty &&
-          province.isNotEmpty &&
-          email.isNotEmpty &&
-          phoneNumber.isNotEmpty;
+      if (isMiddleNameTouched) {
+        middleName = middleNameController.text;
+        middleNameError = middleName.isEmpty
+            ? ''
+            : RegExp(r'^[a-zA-Z ]+$').hasMatch(middleName)
+                ? ''
+                : 'Invalid middle name. No special characters allowed.';
+      }
     });
   }
 
-  // Method to show date picker and set selected date to the TextField
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime? selectedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900), // Earliest date the user can pick
-      lastDate: DateTime.now(), // Latest date is today
-    );
+  void _validateLastName() {
+    setState(() {
+      if (isLastNameTouched) {
+        lastName = lastNameController.text;
+        lastNameError = lastName.isEmpty
+            ? ''
+            : RegExp(r'^[a-zA-Z ]+$').hasMatch(lastName)
+                ? ''
+                : 'Invalid last name. No special characters allowed.';
+      }
+    });
+  }
 
-    if (selectedDate != null) {
-      String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-      setState(() {
-        birthdayController.text =
-            formattedDate; // Set selected date to the controller
-        birthday = formattedDate; // Update the birthday variable
-      });
-    }
+  void _validateBirthday() {
+    setState(() {
+      if (isBirthdayTouched) {
+        birthday = birthdayController.text;
+        if (birthday.isNotEmpty) {
+          DateTime? birthDate = DateTime.tryParse(birthday);
+          if (birthDate == null ||
+              birthDate.isAfter(
+                  DateTime.now().subtract(const Duration(days: 6570)))) {
+            birthdayError = 'Invalid date. You must be at least 18 years old.';
+          } else {
+            birthdayError = '';
+          }
+        } else {
+          birthdayError = '';
+        }
+      }
+    });
+  }
+
+  void _validateEmail() {
+    setState(() {
+      if (isEmailTouched) {
+        email = emailController.text;
+        emailError = email.isEmpty
+            ? ''
+            : RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+                    .hasMatch(email)
+                ? ''
+                : 'Invalid email address. Please enter a valid email.';
+      }
+    });
+  }
+
+  void _validatePhoneNumber() {
+    setState(() {
+      if (isPhoneNumberTouched) {
+        phoneNumber = phoneNumberController.text;
+        phoneNumberError = phoneNumber.isEmpty
+            ? ''
+            : RegExp(r'^09\d{9}$').hasMatch(phoneNumber)
+                ? ''
+                : 'Invalid phone number. It must start with 09 and be 11 digits long.';
+      }
+    });
   }
 
   @override
@@ -167,63 +157,87 @@ class FillUpPageClientState extends State<FillUpPageClient> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight), // AppBar height
+        preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: const BoxDecoration(
-            color: Color(0xFF662C2B), // Maroon color as background
+            color: Color(0xFF662C2B),
             borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(20), // Bottom left radius
-              bottomRight: Radius.circular(20), // Bottom right radius
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
             ),
           ),
           child: AppBar(
-            title: const Text(
-              'Create New Account',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white, // Set the text color to white
-              ),
-            ),
+            title: const Text('Create New Account',
+                style: TextStyle(fontSize: 20, color: Colors.white)),
             centerTitle: true,
-            backgroundColor:
-                Colors.transparent, // Make AppBar background transparent
-            elevation: 0, // Remove AppBar shadow
+            backgroundColor: Colors.transparent,
+            elevation: 0,
             leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.white, // Set the back button color to white
-              ),
-              onPressed: () {
-                Navigator.pop(context); // Back navigation functionality
-              },
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
             ),
           ),
         ),
       ),
       body: Container(
-        color: Colors.white, // Set the background color to plain white
+        color: Colors.white,
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                buildTextField('First Name', firstNameController),
-                buildTextField('Middle Name', middleNameController),
-                buildTextField('Last Name', lastNameController),
-                buildTextField('Birthday', birthdayController,
-                    isDateField: true),
                 buildTextField(
-                    'Unit No./House No./Building Number', unitNumberController),
-                buildTextField('Street', streetController),
-                buildTextField('Village/Subdivision', villageController),
-                buildTextField('Barangay', barangayController),
-                buildTextField('City', cityController),
-                buildTextField('Province', provinceController),
-                buildTextField('Email', emailController),
-                buildTextField('Phone Number', phoneNumberController),
+                    'First Name', firstNameController, firstNameError, () {
+                  setState(() {
+                    isFirstNameTouched = true;
+                  });
+                  _validateFirstName();
+                }),
+                buildTextField(
+                    'Middle Name', middleNameController, middleNameError, () {
+                  setState(() {
+                    isMiddleNameTouched = true;
+                  });
+                  _validateMiddleName();
+                }),
+                buildTextField('Last Name', lastNameController, lastNameError,
+                    () {
+                  setState(() {
+                    isLastNameTouched = true;
+                  });
+                  _validateLastName();
+                }),
+                buildTextField('Birthday', birthdayController, birthdayError,
+                    () {
+                  setState(() {
+                    isBirthdayTouched = true;
+                  });
+                  _validateBirthday();
+                }, isDateField: true),
+                buildTextField('Unit No./House No./Building Number',
+                    unitNumberController, '', () {}),
+                buildTextField('Street', streetController, '', () {}),
+                buildTextField(
+                    'Village/Subdivision', villageController, '', () {}),
+                buildTextField('Barangay', barangayController, '', () {}),
+                buildTextField('City', cityController, '', () {}),
+                buildTextField('Province', provinceController, '', () {}),
+                buildTextField('Email', emailController, emailError, () {
+                  setState(() {
+                    isEmailTouched = true;
+                  });
+                  _validateEmail();
+                }),
+                buildTextField(
+                    'Phone Number', phoneNumberController, phoneNumberError,
+                    () {
+                  setState(() {
+                    isPhoneNumberTouched = true;
+                  });
+                  _validatePhoneNumber();
+                }),
                 const SizedBox(height: 20),
-                // Privacy Checkbox
                 buildCheckbox(
                   context,
                   'I agree to the collection and use of data that I have provided to CamHUB through this application. I understand that the collection and use of this data, which may include personal information and sensitive personal information, shall be in accordance with the ',
@@ -236,7 +250,6 @@ class FillUpPageClientState extends State<FillUpPageClient> {
                   },
                 ),
                 const SizedBox(height: 5),
-                // Terms Checkbox
                 buildCheckbox(
                   context,
                   'I agree to the ',
@@ -262,7 +275,12 @@ class FillUpPageClientState extends State<FillUpPageClient> {
                     decoration: BoxDecoration(
                       color: (isPrivacyChecked &&
                               isTermsChecked &&
-                              allFieldsFilled)
+                              firstNameError.isEmpty &&
+                              middleNameError.isEmpty &&
+                              lastNameError.isEmpty &&
+                              birthdayError.isEmpty &&
+                              emailError.isEmpty &&
+                              phoneNumberError.isEmpty)
                           ? const Color(0xFF662C2B)
                           : Colors.grey,
                       borderRadius: BorderRadius.circular(8),
@@ -271,17 +289,21 @@ class FillUpPageClientState extends State<FillUpPageClient> {
                           color: Colors.black.withOpacity(0.2),
                           spreadRadius: 2,
                           blurRadius: 6,
-                          offset: const Offset(0, 4), // Shadow position
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
                     child: ElevatedButton(
                       onPressed: (isPrivacyChecked &&
                               isTermsChecked &&
-                              allFieldsFilled)
+                              firstNameError.isEmpty &&
+                              middleNameError.isEmpty &&
+                              lastNameError.isEmpty &&
+                              birthdayError.isEmpty &&
+                              emailError.isEmpty &&
+                              phoneNumberError.isEmpty)
                           ? () async {
                               try {
-                                // Call the registerClient function from the Authentication controller
                                 await authController.registerClient(
                                     emailController.text,
                                     firstNameController.text,
@@ -297,21 +319,17 @@ class FillUpPageClientState extends State<FillUpPageClient> {
                                     phoneNumberController.text,
                                     context);
                               } catch (e) {
-                                // ignore: avoid_print
                                 print('Error during registration: $e');
                               }
                             }
-                          : null, // Disable button if conditions are not met
+                          : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors
-                            .transparent, // Make the button background transparent
-                        shadowColor: Colors
-                            .transparent, // Remove default shadow of ElevatedButton
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 140, vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(8), // Rounded edges
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       child: const Text(
@@ -329,41 +347,62 @@ class FillUpPageClientState extends State<FillUpPageClient> {
     );
   }
 
-  // Helper method to create a TextField with the label and controller
   Widget buildTextField(String label, TextEditingController controller,
+      String error, Function()? onFocusLost,
       {bool isDateField = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
+          Text(label,
+              style:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 5),
-          TextField(
-            controller: controller,
-            readOnly: isDateField, // Makes it readonly if it's a date field
-            onTap: isDateField ? () => _selectDate(context) : null,
-            decoration: InputDecoration(
-              hintText: isDateField ? 'Choose Date' : 'Enter Here',
-              suffixIcon: isDateField
-                  ? const Icon(Icons.calendar_today, color: Colors.grey)
-                  : null,
-              filled: true,
-              fillColor: Colors.grey.shade200,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+          Focus(
+            onFocusChange: (hasFocus) {
+              if (!hasFocus && onFocusLost != null) {
+                onFocusLost();
+              }
+            },
+            child: TextField(
+              controller: controller,
+              onChanged: (value) {
+                if (label == 'First Name') _validateFirstName();
+                if (label == 'Middle Name') _validateMiddleName();
+                if (label == 'Last Name') _validateLastName();
+                if (label == 'Email') _validateEmail();
+                if (label == 'Phone Number') _validatePhoneNumber();
+              },
+              readOnly: isDateField,
+              onTap: isDateField ? () => _selectDate(context) : null,
+              decoration: InputDecoration(
+                hintText: isDateField ? 'Choose Date' : 'Enter Here',
+                suffixIcon: isDateField
+                    ? const Icon(Icons.calendar_today, color: Colors.grey)
+                    : null,
+                filled: true,
+                fillColor: Colors.grey.shade200,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
+              keyboardType: label == 'Phone Number'
+                  ? TextInputType.number
+                  : TextInputType.text,
             ),
           ),
+          if (error.isNotEmpty && controller.text.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Text(error,
+                  style: const TextStyle(color: Colors.red, fontSize: 12)),
+            ),
         ],
       ),
     );
   }
 
-  // Helper method to create a checkbox with text and a link
   Widget buildCheckbox(BuildContext context, String text, String linkText,
       bool isChecked, Function(bool?) onChanged) {
     return Padding(
@@ -392,5 +431,23 @@ class FillUpPageClientState extends State<FillUpPageClient> {
         ],
       ),
     );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2005),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2005),
+    );
+
+    if (selectedDate != null) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+      setState(() {
+        birthdayController.text = formattedDate;
+        birthday = formattedDate;
+        _validateBirthday();
+      });
+    }
   }
 }
