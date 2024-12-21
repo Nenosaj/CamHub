@@ -110,10 +110,6 @@ class BookingPageState extends State<BookingPage> {
                 : Colors.grey[400]!, // Outline for the selected tab
             width: 1.5,
           ),
-          color: isSelected
-              ? const Color(0xFF662C2B).withOpacity(0.1)
-              : Colors.grey[200],
-          borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
           category,
@@ -121,7 +117,6 @@ class BookingPageState extends State<BookingPage> {
             color: isSelected
                 ? const Color(0xFF7B3A3F)
                 : Colors.black54, // Darker text for the selected tab
-            color: isSelected ? const Color(0xFF662C2B) : Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
