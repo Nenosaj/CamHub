@@ -212,7 +212,7 @@ class ClientHomePageState extends State<ClientHomePage> {
               BoxShadow(
                 color: Colors.grey.withOpacity(0.3),
                 blurRadius: 5.0,
-                offset: const Offset(0, 3),
+                offset: const Offset(2, 3),
               ),
             ],
           ),

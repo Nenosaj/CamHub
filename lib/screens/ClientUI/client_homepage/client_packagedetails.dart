@@ -100,12 +100,15 @@ class PackageDetailsPageState extends State<PackageDetailsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
+        backgroundColor: const Color(0xFF662C2B),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF662C2B)),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // Back button icon
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
         ),
+        elevation: 1,
         title: const Text(
           'Package',
           style: TextStyle(color: Color(0xFF662C2B)),
