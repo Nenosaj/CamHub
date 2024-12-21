@@ -70,7 +70,7 @@ class _DashboardAnalyticsState extends State<DashboardAnalytics> {
             return attributes;
           }).toList();
 
-          totalRevenue = calculatedRevenue;
+          totalRevenue = calculatedRevenue * 0.2;
           isLoading = false;
         });
       } else {
@@ -115,13 +115,6 @@ class _DashboardAnalyticsState extends State<DashboardAnalytics> {
                       ),
                     ),
                     const SizedBox(width: 10.0),
-                    Expanded(
-                      child: _buildStatCard(
-                        "0",
-                        "Total Impressions",
-                        Icons.remove_red_eye,
-                      ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 10.0),
