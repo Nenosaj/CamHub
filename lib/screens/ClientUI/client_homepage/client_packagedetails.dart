@@ -32,8 +32,11 @@ class PackageDetailsPageState extends State<PackageDetailsPage> {
     super.initState();
     uid = widget.uuid; // Accessing the uuid from the widget
     creativeuid = widget.creativeuid;
+    // ignore: avoid_print
     print("Passed UUID to PackageDetailsPage: $uid");
+    // ignore: avoid_print
     print(creativeuid);
+    // ignore: avoid_print
     print(uid);
     fetchPackageDetails(); // Fetch package details on init
   }
@@ -51,6 +54,7 @@ class PackageDetailsPageState extends State<PackageDetailsPage> {
 
       if (snapshot.exists) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        // ignore: avoid_print
         print("Fetched Package Data: $data");
 
         setState(() {
@@ -69,6 +73,7 @@ class PackageDetailsPageState extends State<PackageDetailsPage> {
           isLoading = false;
         });
       } else {
+        // ignore: avoid_print
         print('No package data found for the provided UUID.');
         setState(() {
           isLoading = false;
@@ -78,6 +83,7 @@ class PackageDetailsPageState extends State<PackageDetailsPage> {
       setState(() {
         isLoading = false;
       });
+      // ignore: avoid_print
       print('Error fetching package details: $e');
     }
   }
@@ -95,6 +101,7 @@ class PackageDetailsPageState extends State<PackageDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final responsive = Responsive(context);
 
     return Scaffold(

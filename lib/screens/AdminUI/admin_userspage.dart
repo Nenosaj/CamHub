@@ -17,6 +17,7 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final responsive = Responsive(context);
 
     return Scaffold(

@@ -131,6 +131,7 @@ class BugCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final responsive = Responsive(context);
 
     return Card(

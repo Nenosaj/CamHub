@@ -28,6 +28,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final responsive = Responsive(context);
 
     return Scaffold(
@@ -105,8 +106,13 @@ class DashboardContent extends StatelessWidget {
           const SizedBox(height: 20.0),
 
           // Analytics Section
-          const DashboardAnalytics(),
-          const SizedBox(height: 20.0),
+          Container(
+            constraints: BoxConstraints(
+              maxHeight:
+                  MediaQuery.of(context).size.height * 0.5, // Constrain height
+            ),
+            child: const DashboardAnalytics(),
+          ),
         ],
       ),
     );
