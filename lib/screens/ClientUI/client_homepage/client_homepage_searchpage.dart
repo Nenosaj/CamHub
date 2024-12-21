@@ -1,33 +1,81 @@
-import 'package:example/screens/responsive_helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:example/screens/responsive_helper.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
   @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  final TextEditingController _searchController = TextEditingController();
+  List<Map<String, dynamic>> _creatives = [];
+  List<Map<String, dynamic>> _filteredCreatives = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCreatives();
+  }
+
+  // Fetch creatives from Firestore
+  Future<void> _fetchCreatives() async {
+    try {
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('creatives').get();
+
+      setState(() {
+        _creatives = snapshot.docs
+            .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+            .toList();
+        _filteredCreatives = _creatives; // Initially show all creatives
+      });
+    } catch (e) {
+      print('Error fetching creatives: $e');
+    }
+  }
+
+  // Filter creatives based on search input
+  void _filterCreatives(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        _filteredCreatives = _creatives;
+      });
+    } else {
+      setState(() {
+        _filteredCreatives = _creatives.where((creative) {
+          final name = (creative['businessName'] ?? '').toLowerCase();
+          return name.contains(query.toLowerCase());
+        }).toList();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
     final responsive = Responsive(context);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B), // Maroon color for the AppBar
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: Colors.white), // White back arrow
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Go back when pressed
+            Navigator.pop(context);
           },
         ),
         title: SizedBox(
           height: 40,
           child: TextField(
+            controller: _searchController,
+            onChanged: _filterCreatives,
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.search, color: Colors.grey),
-              hintText: 'Search',
+              hintText: 'Search creatives',
               hintStyle: const TextStyle(color: Colors.grey),
-              contentPadding: const EdgeInsets.symmetric(
-                  vertical: 10.0), // Aligns the search text
+              contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30.0),
               ),
@@ -37,61 +85,85 @@ class SearchPage extends StatelessWidget {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const Text(
-              'Select Categories',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF662C2B), // Maroon color
+      body: _filteredCreatives.isEmpty
+          ? const Center(
+              child: Text(
+                'No creatives found',
+                style: TextStyle(fontSize: 18, color: Color(0xFF662C2B)),
               ),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildCategoryItem(Icons.cake, 'Anniversary'),
-                  _buildCategoryItem(Icons.favorite, 'Weddings'),
-                  _buildCategoryItem(Icons.cake, 'Birthdays'),
-                  _buildCategoryItem(Icons.child_care, 'Christening'),
-                  _buildCategoryItem(Icons.favorite, 'Engagement'),
-                  _buildCategoryItem(Icons.school, 'Graduation'),
-                  _buildCategoryItem(Icons.sports_basketball, 'Sports'),
-                ],
+            )
+          : GridView.builder(
+              padding: const EdgeInsets.all(10),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 3 / 4,
               ),
-            ),
-            TextButton(
-              onPressed: () {
-                // Add functionality for 'See More'
+              itemCount: _filteredCreatives.length,
+              itemBuilder: (context, index) {
+                final creative = _filteredCreatives[index];
+                return Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(10)),
+                          child: creative['profilePictureUrl'] != null
+                              ? Image.network(
+                                  creative['profilePictureUrl'],
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.broken_image,
+                                      color: Colors.grey,
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  color: Colors.grey[300],
+                                  child: const Icon(
+                                    Icons.person,
+                                    size: 50,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          creative['businessName'] ?? 'Unknown Name',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text(
+                          creative['city'] ?? 'Unknown Location',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               },
-              child: const Text(
-                'See More',
-                style: TextStyle(
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Helper function to build each category item
-  Widget _buildCategoryItem(IconData icon, String label) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.black),
-        title: Text(label),
-        onTap: () {
-          // Add onTap functionality to navigate or filter by category
-        },
-      ),
     );
   }
 }

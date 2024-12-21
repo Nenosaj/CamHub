@@ -75,7 +75,7 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                           const Color(0xFFF4F4F4),
                         ),
                         columnSpacing:
-                            200.0, // Adjusted spacing between columns
+                            100.0, // Adjusted spacing between columns
                         headingTextStyle: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16.0),
                         dataTextStyle: const TextStyle(

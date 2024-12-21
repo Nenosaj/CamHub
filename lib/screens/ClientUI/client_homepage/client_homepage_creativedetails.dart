@@ -11,13 +11,11 @@ class CreativesDetailPage extends StatefulWidget {
   const CreativesDetailPage({super.key, required this.creative});
 
   @override
-  // ignore: library_private_types_in_public_api
   _CreativesDetailPageState createState() => _CreativesDetailPageState();
 }
 
 class _CreativesDetailPageState extends State<CreativesDetailPage>
     with SingleTickerProviderStateMixin {
-  // ignore: unused_field
   late TabController _tabController;
   final FirestoreService _firestoreService = FirestoreService();
 
@@ -29,9 +27,6 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-
-    // ignore: avoid_print
-    print("Passed Creative UID: ${widget.creative['uid']}");
 
     _fetchPackages();
     _fetchImages();
@@ -174,12 +169,8 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
         final uuid = package['uuid'] ?? 'unknown';
         final creativeuid = widget.creative['uid'];
 
-        // ignore: avoid_print
-        print(uuid);
-
         return GestureDetector(
           onTap: () {
-            // Navigate to PackageDetailsPage and pass the package details
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -294,9 +285,6 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
-    final responsive = Responsive(context);
-
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -336,8 +324,7 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: Image.network(
-                      widget.creative['profilePicture'] ??
-                          'https://via.placeholder.com/150',
+                      widget.creative['profilePicture'] ?? '',
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover,
@@ -348,11 +335,33 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.creative['businessName'] ?? 'Business Name',
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text(
+                          widget.creative['businessName'] ?? 'Business Name',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.chat, color: Color(0xFF662C2B)),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/MessagingScreen');
+                        },
+                      ),
+                      const Text(
+                        'Chat with Us',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Color(0xFF662C2B),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

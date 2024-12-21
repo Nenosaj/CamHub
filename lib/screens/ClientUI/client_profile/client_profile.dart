@@ -64,7 +64,6 @@ class ProfilePageState extends State<ClientProfilePage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
         elevation: 0,
-        // Removed the leading property to get rid of the white arrow
       ),
       body: SingleChildScrollView(
         child: Column(

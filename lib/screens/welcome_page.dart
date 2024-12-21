@@ -78,7 +78,7 @@ class _WelcomePageState extends State<WelcomePage>
                 const SizedBox(height: 20),
                 // Welcome Text
                 const Text(
-                  "Welcome to CamHub",
+                  "Welcome to CamHUB",
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,

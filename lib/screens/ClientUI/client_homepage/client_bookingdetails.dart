@@ -42,6 +42,7 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
     return packageCost + widget.totalAddOnCost;
   }
 
+  // Function to display time picker
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -62,27 +63,26 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      lastDate: DateTime(3000),
     );
 
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
+        _dateController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
     final responsive = Responsive(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: Colors.white), // Back button icon
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous screen
+            Navigator.pop(context);
           },
         ),
         backgroundColor: const Color(0xFF662C2B),
@@ -97,40 +97,24 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Package Info Section
             _buildPackageInfo(),
             const SizedBox(height: 20),
-
-            // Date Selection
-            _buildCalendar(),
+            _buildCalendarContainer(),
             const SizedBox(height: 20),
-            _buildDateTimeFields(),
+            _buildDateTimeInputContainer(),
             const SizedBox(height: 20),
-
-            // Address Input
             _buildAddressInput(),
             const SizedBox(height: 20),
-
-            // Add-ons Section
             const Text(
               'Selected Add-ons:',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             _buildAddOns(),
             const SizedBox(height: 20),
-
-            // Total Cost Section
             _buildTotalCost(),
             const SizedBox(height: 20),
-
-            // Confirm Booking Button
             _buildConfirmButton(context),
-
-            // Add bottom padding for better scrolling experience
             const SizedBox(height: 20),
           ],
         ),
@@ -138,7 +122,6 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
     );
   }
 
-  // Widget for Package Information
   Widget _buildPackageInfo() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,76 +144,141 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
     );
   }
 
-  // Widget for Date Selection
-  Widget _buildCalendar() {
-    return TableCalendar(
-      firstDay: DateTime.utc(2020, 10, 16),
-      lastDay: DateTime.utc(2030, 3, 14),
-      focusedDay: selectedDate ?? DateTime.now(),
-      selectedDayPredicate: (day) => isSameDay(selectedDate, day),
-      onDaySelected: (selectedDay, focusedDay) {
-        setState(() {
-          selectedDate = selectedDay;
-          _dateController.text = DateFormat('MM-dd-yyyy').format(selectedDay);
-        });
-      },
-      calendarStyle: CalendarStyle(
-        defaultTextStyle: const TextStyle(color: Colors.black),
-        weekendTextStyle: const TextStyle(color: Colors.black),
-        selectedDecoration: BoxDecoration(
-          color: const Color(0xFF662C2B),
-          shape: BoxShape.circle,
+  Widget _buildCalendarContainer() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF662C2B), // Container color
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TableCalendar(
+        firstDay: DateTime.now(),
+        lastDay: DateTime.now().add(const Duration(days: 365)),
+        focusedDay: selectedDate ?? DateTime.now(),
+        selectedDayPredicate: (day) => isSameDay(selectedDate, day),
+        onDaySelected: (selectedDay, focusedDay) {
+          setState(() {
+            selectedDate = selectedDay;
+            _dateController.text = DateFormat('MM-dd-yyyy').format(selectedDay);
+          });
+        },
+        calendarStyle: CalendarStyle(
+          defaultTextStyle: const TextStyle(color: Colors.white), // White text
+          weekendTextStyle: const TextStyle(color: Colors.white),
+          outsideDaysVisible: false, // Hide outside days
+          selectedDecoration: BoxDecoration(
+            color: Colors.white, // Highlighted selected day
+            shape: BoxShape.circle,
+          ),
+          selectedTextStyle: const TextStyle(
+            color: Color(0xFF662C2B), // Text color of the selected day
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        selectedTextStyle: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+        headerStyle: HeaderStyle(
+          titleCentered: true,
+          titleTextStyle: const TextStyle(
+            color: Colors.white, // White month and year
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+          leftChevronIcon: const Icon(
+            Icons.chevron_left,
+            color: Colors.white, // White arrows
+          ),
+          rightChevronIcon: const Icon(
+            Icons.chevron_right,
+            color: Colors.white, // White arrows
+          ),
+          formatButtonVisible: false, // Hide the format toggle button
+        ),
+        daysOfWeekStyle: DaysOfWeekStyle(
+          weekdayStyle: const TextStyle(color: Colors.white), // White weekdays
+          weekendStyle: const TextStyle(color: Colors.white), // White weekends
         ),
       ),
     );
   }
 
-  // Widget for Date-Time Picker Fields
-  Widget _buildDateTimeFields() {
-    return Row(
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: () => _selectDate(context),
-            child: AbsorbPointer(
-              child: TextFormField(
-                controller: _dateController,
-                decoration: const InputDecoration(
-                  labelText: 'Date',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(),
+  Widget _buildDateTimeInputContainer() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF662C2B), // Container color
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _selectDate(context),
+              child: AbsorbPointer(
+                child: TextFormField(
+                  controller: _dateController,
+                  style:
+                      const TextStyle(color: Color(0xFF662C2B)), // White text
+                  decoration: const InputDecoration(
+                    labelText: 'Date',
+                    labelStyle:
+                        TextStyle(color: Color(0xFF662C2B)), // White label
+                    filled: true,
+                    fillColor: Color.fromARGB(
+                        255, 253, 253, 253), // Same color as container
+                    border: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color(0xFF662C2B)), // White border
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: GestureDetector(
-            onTap: () => _selectTime(context),
-            child: AbsorbPointer(
-              child: TextFormField(
-                controller: _timeController,
-                decoration: const InputDecoration(
-                  labelText: 'Time',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(),
+          const SizedBox(width: 10),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _selectTime(context),
+              child: AbsorbPointer(
+                child: TextFormField(
+                  controller: _timeController,
+                  style:
+                      const TextStyle(color: Color(0xFF662C2B)), // White text
+                  decoration: const InputDecoration(
+                    labelText: 'Time',
+                    labelStyle:
+                        TextStyle(color: Color(0xFF662C2B)), // White label
+                    filled: true,
+                    fillColor: Color.fromARGB(
+                        255, 255, 255, 255), // Same color as container
+                    border: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color(0xFF662C2B)), // White border
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  // Widget for Address Input
   Widget _buildAddressInput() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,6 +290,8 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
         const SizedBox(height: 8),
         TextField(
           controller: _addressController,
+          style:
+              const TextStyle(color: Colors.black), // Black text for contrast
           decoration: const InputDecoration(
             hintText: 'Enter your full address',
             border: OutlineInputBorder(),
@@ -254,7 +304,6 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
     );
   }
 
-  // Widget for displaying selected Add-ons
   Widget _buildAddOns() {
     final selectedAddOns = widget.addOns.entries.where((e) => e.value).toList();
 
@@ -287,7 +336,6 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
     );
   }
 
-  // Widget for displaying Total Cost
   Widget _buildTotalCost() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -308,7 +356,6 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
     );
   }
 
-  // Widget for Confirm Booking Button
   Widget _buildConfirmButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
@@ -320,7 +367,6 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
             ),
           );
         } else {
-          // Prepare selected add-ons
           Map<String, bool> selectedAddOns = widget.addOns
             ..removeWhere((key, value) => !value);
 
@@ -330,16 +376,15 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
               builder: (context) => RequestSummary(
                 creativeuid: widget.creativeuid,
                 uuid: widget.uuid,
-                selectedDate: selectedDate!, // Pass selected date
-                selectedTime: selectedTime!, // Placeholder for current time
-                address:
-                    _addressController.text.trim(), // Pass user-entered address
-                selectedAddOns: selectedAddOns, // Pass selected add-ons
-                addOnPrices: widget.addOnPrices, // Pass add-on prices
-                totalCost: _calculateTotalCost(), // Pass total cost
-                eventType: widget.packageName, // Use package name as event type
-                packageName: widget.packageName, // Pass package name
-                packagePrice: widget.packagePrice, // Pass package price
+                selectedDate: selectedDate!,
+                selectedTime: selectedTime!,
+                address: _addressController.text.trim(),
+                selectedAddOns: selectedAddOns,
+                addOnPrices: widget.addOnPrices,
+                totalCost: _calculateTotalCost(),
+                eventType: widget.packageName,
+                packageName: widget.packageName,
+                packagePrice: widget.packagePrice,
               ),
             ),
           );
