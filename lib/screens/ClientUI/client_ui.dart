@@ -1,4 +1,5 @@
 import 'package:example/screens/ClientUI/client_message/client_message.dart';
+import 'package:example/screens/ClientUI/client_message/client_userlistscreen.dart';
 import 'package:flutter/material.dart';
 import 'client_homepage/client_homepage.dart';
 import 'client_booking/client_booking.dart';
@@ -27,10 +28,8 @@ class ClientUI extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const ClientHomePage(),
-        '/chat': (context) => const ChatScreen(
-              photographerName: '',
-              messages: [],
-            ),
+        '/chat': (context) =>
+            const UserListScreen(), // Use default values or dynamic fetching within ChatScreen,
         '/bookings': (context) => const BookingPage(),
         '/notifications': (context) => const ClientNotificationPage(),
         '/profile': (context) => const ClientProfilePage(),

@@ -1,135 +1,216 @@
-import 'package:example/screens/CreativeUI/creative_message/creative_accountsmessaged.dart';
-import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
-import 'creative_messagesearchbar.dart'; // Import the search bar logic
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+class Message {
+  final String recipientClientId;
+  final String senderCreativeId;
+  final String message;
+  final DateTime createdAt;
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  Message({
+    required this.recipientClientId,
+    required this.senderCreativeId,
+    required this.message,
+    required this.createdAt,
+  });
 
-  @override
-  Widget build(BuildContext context) {
-    final responsive = Responsive(context);
+  Map<String, dynamic> toMap() {
+    return {
+      'recipientClientId': recipientClientId,
+      'senderCreativeId': senderCreativeId,
+      'message': message,
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
 
-    return const MaterialApp(
-      home: CreativeChatScreen(clientName: '', messages: []),
+  factory Message.fromMap(Map<String, dynamic> data) {
+    return Message(
+      recipientClientId: data['recipientClientId'] ?? '',
+      senderCreativeId: data['senderCreativeId'] ?? '',
+      message: data['message'] ?? '',
+      createdAt: DateTime.parse(data['createdAt']),
     );
   }
 }
 
-class CreativeChatScreen extends StatefulWidget {
-  final String clientName;
-  final List messages;
+class ChatScreenCreative extends StatefulWidget {
+  final String clientFirstName;
+  final String clientLastName;
+  final String recipientClientId;
+  final String senderCreativeId;
 
-  const CreativeChatScreen(
-      {super.key, required this.clientName, required this.messages});
+  const ChatScreenCreative({
+    super.key,
+    required this.clientFirstName,
+    required this.clientLastName,
+    required this.recipientClientId,
+    required this.senderCreativeId,
+  });
 
   @override
-  CreativeChatScreenState createState() => CreativeChatScreenState();
+  ChatScreenCreativeState createState() => ChatScreenCreativeState();
 }
 
-class CreativeChatScreenState extends State<CreativeChatScreen> {
-  String searchText = ""; // Track the search input
+class ChatScreenCreativeState extends State<ChatScreenCreative> {
+  final TextEditingController _messageController = TextEditingController();
+  List<Message> _messages = [];
+  bool _isFetching = false;
+
+  Future<void> _fetchMessages() async {
+    setState(() {
+      _isFetching = true;
+    });
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('messages')
+          .orderBy('createdAt', descending: false)
+          .get();
+
+      setState(() {
+        _messages = querySnapshot.docs
+            .map((doc) => Message.fromMap(doc.data()))
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching messages: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch messages: $e')),
+      );
+    } finally {
+      setState(() {
+        _isFetching = false;
+      });
+    }
+  }
 
   @override
-  Widget build(BuildContext context) {
-    final responsive = Responsive(context);
+  void initState() {
+    super.initState();
+    _fetchMessages();
+  }
 
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(220), // Keep the original height
-        child: AppBar(
-          backgroundColor: const Color(0xFF662C2B), // Keep the AppBar design
-          title: const Padding(
-            padding: EdgeInsets.only(top: 30.0),
+  Widget _buildMessage(Message message, bool isSender) {
+    return Align(
+      alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment:
+            isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+            padding: const EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+              color:
+                  isSender ? const Color(0xFF662C2B) : const Color(0xFFB3E5FC),
+              borderRadius: BorderRadius.circular(15.0),
+            ),
             child: Text(
-              'Chat',
+              message.message,
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 25,
+                color: isSender ? Colors.white : Colors.black,
               ),
             ),
           ),
-          centerTitle: true,
-          elevation: 0,
-          flexibleSpace: Padding(
-            padding: const EdgeInsets.fromLTRB(50, 100.0, 50, 50),
-            child: Column(
-              children: [
-                Container(
-                  height: 50, // Keep the search bar size
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 5,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      hintText: 'Search',
-                      hintStyle: TextStyle(fontSize: 18),
-                      prefixIcon: Icon(Icons.search, size: 18),
-                      contentPadding: EdgeInsets.symmetric(vertical: 8.0),
-                      border: InputBorder.none,
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        searchText = value
-                            .trim()
-                            .toLowerCase(); // Update search text dynamically
-                      });
-                    },
-                  ),
-                ),
-              ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Text(
+              "${message.createdAt.hour.toString().padLeft(2, '0')}:${message.createdAt.minute.toString().padLeft(2, '0')}",
+              style: const TextStyle(
+                fontSize: 10,
+                color: Colors.grey,
+              ),
             ),
           ),
-        ),
-      ),
-      body: Stack(
-        children: [
-          searchText.isEmpty
-              ? const CreativeAccountsMessaged() // Show the full conversation list when no search query
-              : Positioned(
-                  top: 0, // Bring the dropdown right below the search bar
-                  left: 15, // Align the search results with the search bar
-                  right: 15, // Ensure the search results stay within bounds
-                  child: Material(
-                    elevation: 2.0, // Add slight shadow for the dropdown
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors
-                            .white, // White background for the search results
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      constraints: BoxConstraints(
-                        maxHeight:
-                            _getDropdownHeight(), // Dynamically adjust based on content
-                      ),
-                      child: CreativeSearchUserResults(
-                          searchText: searchText), // Use the search bar logic
-                    ),
-                  ),
-                ),
         ],
       ),
     );
   }
 
-  // Dynamically calculate the dropdown height based on the number of results
-  double _getDropdownHeight() {
-    int resultsCount =
-        CreativeSearchUserResults(searchText: searchText).getResultsCount();
-    return (resultsCount * 60.0)
-        .clamp(0.0, 300.0); // Each item is ~60px, limit to 300px
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF662C2B),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Chat with ${widget.clientFirstName} ${widget.clientLastName}',
+              style: const TextStyle(color: Colors.white),
+            ),
+            IconButton(
+              icon: _isFetching
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Icon(Icons.refresh, color: Colors.white),
+              onPressed: _fetchMessages,
+            ),
+          ],
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: _messages.isEmpty
+                ? const Center(child: Text('No messages yet.'))
+                : ListView.builder(
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) {
+                      final message = _messages[index];
+                      final isSender =
+                          message.senderCreativeId == widget.senderCreativeId;
+                      return _buildMessage(message, isSender);
+                    },
+                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      hintText: 'Type a message',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send, color: Colors.black),
+                  color: const Color(0xFF662C2B),
+                  onPressed: _sendMessage,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _sendMessage() {
+    final messageText = _messageController.text.trim();
+    if (messageText.isNotEmpty) {
+      final newMessage = Message(
+        recipientClientId: widget.recipientClientId,
+        senderCreativeId: widget.senderCreativeId,
+        message: messageText,
+        createdAt: DateTime.now(),
+      );
+
+      FirebaseFirestore.instance.collection('messages').add(newMessage.toMap());
+
+      _messageController.clear();
+      _fetchMessages();
+    }
   }
 }

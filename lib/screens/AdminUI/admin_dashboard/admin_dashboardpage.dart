@@ -19,10 +19,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // List of pages for navigation
   final List<Widget> _pages = [
-    const DashboardContent(),
-    const SystemUpdatePage(), // Updated to reference SystemUpdatePage
-    const BugReportPage(), // Updated to reference BugReportPage
-    const ApprovalPage(), // Updated to reference ApprovalPage
+    const DashboardContent(), // Updated to reference ApprovalPage
     const AdminUsersPage(), // Updated to reference Users Page
   ];
 
@@ -65,12 +62,6 @@ class _DashboardPageState extends State<DashboardPage> {
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.dashboard), label: "Dashboard"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.system_update), label: "System Update"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.bug_report), label: "Bug Report"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.approval), label: "Approval"),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: "Users"),
         ],
       ),

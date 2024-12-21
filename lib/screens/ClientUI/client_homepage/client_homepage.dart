@@ -1,7 +1,7 @@
 import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../client_message/client_message.dart';
+import '../client_message/client_userlistscreen.dart';
 import '../client_booking/client_booking.dart';
 import '../client_notication/client_notification.dart';
 import '../client_profile/client_profile.dart';
@@ -144,10 +144,7 @@ class ClientHomePageState extends State<ClientHomePage> {
           ],
         ),
       ),
-      const ChatScreen(
-        photographerName: '',
-        messages: [],
-      ), // Navigate to Chat Page
+      const UserListScreen(), // Use default values or dynamic fetching within ChatScreen
       const BookingPage(), // Navigate to Bookings Page
       const ClientNotificationPage(), // Navigate to Notifications Page
       const ClientProfilePage(), // Navigate to Profile Page

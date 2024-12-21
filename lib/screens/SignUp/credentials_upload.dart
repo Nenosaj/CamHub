@@ -1,6 +1,7 @@
 import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/Firebase/authentication.dart';
+import 'package:example/screens/FilePicker/filepicker.dart';
 
 class CredentialsUpload extends StatefulWidget {
   const CredentialsUpload({super.key});
@@ -46,11 +47,7 @@ class CredentialsUploadState extends State<CredentialsUpload> {
   TextEditingController businessPhoneNumberController = TextEditingController();
 
   // List to store uploaded files
-  List<Map<String, String>> files = [
-    {'name': 'file.pdf', 'type': 'PDF'},
-    {'name': 'bir.pdf', 'type': 'PDF'},
-    {'name': 'ITR.png', 'type': 'PNG'}
-  ]; // Example files for upload
+  List<Map<String, String>> files = []; // Example files for upload
 
   @override
   void initState() {
@@ -260,8 +257,16 @@ class CredentialsUploadState extends State<CredentialsUpload> {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Logic to upload files can be added here
+                      onPressed: () async {
+                        String? filePath = await pickPdfFile();
+                        if (filePath != null) {
+                          setState(() {
+                            files.add({
+                              'name': filePath.split('/').last,
+                              'type': 'PDF'
+                            });
+                          });
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
