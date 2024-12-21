@@ -18,6 +18,7 @@ class CredentialsUploadState extends State<CredentialsUpload> {
       false; // Flag to show error message if checkboxes are not ticked
 
   bool allFieldsFilled = false;
+  bool isLoading = false; // Loading state
 
   bool isSmallBusinessChecked = false; // Checkbox for Small Business
   bool isLargeBusinessChecked = false; // Checkbox for Large Business
@@ -392,60 +393,71 @@ class CredentialsUploadState extends State<CredentialsUpload> {
               const SizedBox(height: 30),
 
               Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color:
-                        (isPrivacyChecked && isTermsChecked && allFieldsFilled)
-                            ? const Color(0xFF662C2B)
-                            : Colors.grey,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 2,
-                        blurRadius: 6,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: ElevatedButton(
-                    onPressed:
-                        (isPrivacyChecked && isTermsChecked && allFieldsFilled)
-                            ? () async {
-                                try {
-                                  // Call the registerClient function from the Authentication controller
-                                  await authController.registerCreative(
-                                      businessEmailController.text,
-                                      businessNameController.text,
-                                      unitNumberController.text,
-                                      streetController.text,
-                                      villageController.text,
-                                      barangayController.text,
-                                      cityController.text,
-                                      provinceController.text,
-                                      businessPhoneNumberController.text,
-                                      context);
-                                } catch (e) {
-                                  // ignore: avoid_print
-                                  print('Error during registration: $e');
+                child: isLoading
+                    ? const CircularProgressIndicator() // Show loading spinner
+                    : Container(
+                        decoration: BoxDecoration(
+                          color: (isPrivacyChecked &&
+                                  isTermsChecked &&
+                                  allFieldsFilled)
+                              ? const Color(0xFF662C2B)
+                              : Colors.grey,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 6,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: (isPrivacyChecked &&
+                                  isTermsChecked &&
+                                  allFieldsFilled)
+                              ? () async {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  try {
+                                    // Call the registerClient function from the Authentication controller
+                                    await authController.registerCreative(
+                                        businessEmailController.text,
+                                        businessNameController.text,
+                                        unitNumberController.text,
+                                        streetController.text,
+                                        villageController.text,
+                                        barangayController.text,
+                                        cityController.text,
+                                        provinceController.text,
+                                        businessPhoneNumberController.text,
+                                        context);
+                                  } catch (e) {
+                                    // ignore: avoid_print
+                                    print('Error during registration: $e');
+                                  } finally {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  }
                                 }
-                              }
-                            : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 140, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 140, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Next',
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          ),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
-                  ),
-                ),
               ),
             ],
           ),

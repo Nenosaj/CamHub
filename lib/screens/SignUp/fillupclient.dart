@@ -16,6 +16,7 @@ class FillUpPageClientState extends State<FillUpPageClient> {
   bool isPrivacyChecked = false;
   bool isTermsChecked = false;
   bool showError = false;
+  bool isLoading = false; // Loading state
 
   // Form variables
   String firstName = '';
@@ -71,7 +72,7 @@ class FillUpPageClientState extends State<FillUpPageClient> {
         firstName = firstNameController.text;
         firstNameError = firstName.isEmpty
             ? ''
-            : RegExp(r'^[a-zA-Z ]+$').hasMatch(firstName)
+            : RegExp(r'^[a-zA-Z ]+\$').hasMatch(firstName)
                 ? ''
                 : 'Invalid first name. No special characters allowed.';
       }
@@ -84,7 +85,7 @@ class FillUpPageClientState extends State<FillUpPageClient> {
         middleName = middleNameController.text;
         middleNameError = middleName.isEmpty
             ? ''
-            : RegExp(r'^[a-zA-Z ]+$').hasMatch(middleName)
+            : RegExp(r'^[a-zA-Z ]+\$').hasMatch(middleName)
                 ? ''
                 : 'Invalid middle name. No special characters allowed.';
       }
@@ -97,7 +98,7 @@ class FillUpPageClientState extends State<FillUpPageClient> {
         lastName = lastNameController.text;
         lastNameError = lastName.isEmpty
             ? ''
-            : RegExp(r'^[a-zA-Z ]+$').hasMatch(lastName)
+            : RegExp(r'^[a-zA-Z ]+\$').hasMatch(lastName)
                 ? ''
                 : 'Invalid last name. No special characters allowed.';
       }
@@ -130,7 +131,7 @@ class FillUpPageClientState extends State<FillUpPageClient> {
         email = emailController.text;
         emailError = email.isEmpty
             ? ''
-            : RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+            : RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\$')
                     .hasMatch(email)
                 ? ''
                 : 'Invalid email address. Please enter a valid email.';
@@ -144,7 +145,7 @@ class FillUpPageClientState extends State<FillUpPageClient> {
         phoneNumber = phoneNumberController.text;
         phoneNumberError = phoneNumber.isEmpty
             ? ''
-            : RegExp(r'^09\d{9}$').hasMatch(phoneNumber)
+            : RegExp(r'^09\d{9}\$').hasMatch(phoneNumber)
                 ? ''
                 : 'Invalid phone number. It must start with 09 and be 11 digits long.';
       }
@@ -271,73 +272,83 @@ class FillUpPageClientState extends State<FillUpPageClient> {
                   ),
                 const SizedBox(height: 30),
                 Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: (isPrivacyChecked &&
-                              isTermsChecked &&
-                              firstNameError.isEmpty &&
-                              middleNameError.isEmpty &&
-                              lastNameError.isEmpty &&
-                              birthdayError.isEmpty &&
-                              emailError.isEmpty &&
-                              phoneNumberError.isEmpty)
-                          ? const Color(0xFF662C2B)
-                          : Colors.grey,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 2,
-                          blurRadius: 6,
-                          offset: const Offset(0, 4),
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : Container(
+                          decoration: BoxDecoration(
+                            color: (isPrivacyChecked &&
+                                    isTermsChecked &&
+                                    firstNameError.isEmpty &&
+                                    middleNameError.isEmpty &&
+                                    lastNameError.isEmpty &&
+                                    birthdayError.isEmpty &&
+                                    emailError.isEmpty &&
+                                    phoneNumberError.isEmpty)
+                                ? const Color(0xFF662C2B)
+                                : Colors.grey,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 6,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: (isPrivacyChecked &&
+                                    isTermsChecked &&
+                                    firstNameError.isEmpty &&
+                                    middleNameError.isEmpty &&
+                                    lastNameError.isEmpty &&
+                                    birthdayError.isEmpty &&
+                                    emailError.isEmpty &&
+                                    phoneNumberError.isEmpty)
+                                ? () async {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    try {
+                                      await authController.registerClient(
+                                          emailController.text,
+                                          firstNameController.text,
+                                          middleNameController.text,
+                                          lastNameController.text,
+                                          birthdayController.text,
+                                          unitNumberController.text,
+                                          streetController.text,
+                                          villageController.text,
+                                          barangayController.text,
+                                          cityController.text,
+                                          provinceController.text,
+                                          phoneNumberController.text,
+                                          context);
+                                    } catch (e) {
+                                      print('Error during registration: \$e');
+                                    } finally {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    }
+                                  }
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 140, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Next',
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: (isPrivacyChecked &&
-                              isTermsChecked &&
-                              firstNameError.isEmpty &&
-                              middleNameError.isEmpty &&
-                              lastNameError.isEmpty &&
-                              birthdayError.isEmpty &&
-                              emailError.isEmpty &&
-                              phoneNumberError.isEmpty)
-                          ? () async {
-                              try {
-                                await authController.registerClient(
-                                    emailController.text,
-                                    firstNameController.text,
-                                    middleNameController.text,
-                                    lastNameController.text,
-                                    birthdayController.text,
-                                    unitNumberController.text,
-                                    streetController.text,
-                                    villageController.text,
-                                    barangayController.text,
-                                    cityController.text,
-                                    provinceController.text,
-                                    phoneNumberController.text,
-                                    context);
-                              } catch (e) {
-                                print('Error during registration: $e');
-                              }
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 140, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text(
-                        'Next',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),

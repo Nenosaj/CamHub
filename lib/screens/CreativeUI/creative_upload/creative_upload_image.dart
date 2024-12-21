@@ -26,6 +26,7 @@ class UploadImageState extends State<UploadImage> {
   final Authentication _authenticationService = Authentication();
 
   final List<File> _selectedImages = [];
+  bool _isUploading = false; // Tracks upload state
 
   // Placeholder function for image selection
   Future<void> _pickImage() async {
@@ -37,7 +38,6 @@ class UploadImageState extends State<UploadImage> {
         });
       }
     } else {
-      // Display a message if the user tries to add more than 5 images
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('You can only select up to 5 images.')),
       );
@@ -46,15 +46,17 @@ class UploadImageState extends State<UploadImage> {
 
   // Function to handle image upload and data submission
   Future<void> _uploadAndSubmit() async {
+    if (_isUploading) return;
+
+    setState(() {
+      _isUploading = true;
+    });
+
     String title = _titleController.text.trim();
     String description = _descriptionController.text.trim();
     String? category = selectedCategory;
     String location = _locationController.text.trim();
-    String? creativeUid = _authenticationService
-        .getCurrentUser()
-        ?.uid; // Replace this with the actual creative's UID
-
-    //print(creativeUid);
+    String? creativeUid = _authenticationService.getCurrentUser()?.uid;
 
     if (title.isEmpty ||
         description.isEmpty ||
@@ -66,51 +68,57 @@ class UploadImageState extends State<UploadImage> {
             content:
                 Text('Please fill all fields and select at least one image.')),
       );
+      setState(() {
+        _isUploading = false;
+      });
       return;
     }
 
-    // Generate unique timestamp for this upload to use in storage paths
-    String createdAt = DateTime.now().millisecondsSinceEpoch.toString();
-    List<String> imageUrls = [];
+    try {
+      String createdAt = DateTime.now().millisecondsSinceEpoch.toString();
+      List<String> imageUrls = [];
 
-    // Upload each selected image to Firebase Storage
-    List<File> imagesToUpload = List.from(_selectedImages);
-
-    for (var image in imagesToUpload) {
-      String? downloadUrl = await _storage.uploadFile(
-          'images/$creativeUid/$createdAt/${image.path.split('/').last}',
-          image);
-      if (downloadUrl != null) {
-        imageUrls.add(downloadUrl);
+      for (var image in _selectedImages) {
+        String? downloadUrl = await _storage.uploadFile(
+            'images/$creativeUid/$createdAt/${image.path.split('/').last}',
+            image);
+        if (downloadUrl != null) {
+          imageUrls.add(downloadUrl);
+        }
       }
+
+      await _firestoreService.addImageDetails(
+        uid: creativeUid!,
+        imageDetails: {
+          'title': title,
+          'description': description,
+          'category': category,
+          'location': location,
+          'createdAt': DateTime.now(),
+          'images': imageUrls,
+        },
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Upload Successful')),
+      );
+
+      setState(() {
+        _titleController.clear();
+        _descriptionController.clear();
+        selectedCategory = null;
+        _locationController.clear();
+        _selectedImages.clear();
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Upload Failed: $e')),
+      );
+    } finally {
+      setState(() {
+        _isUploading = false;
+      });
     }
-
-    // Save the data to Firestore
-    await _firestoreService.addImageDetails(
-      uid: creativeUid!,
-      imageDetails: {
-        'title': title,
-        'description': description,
-        'category': category,
-        'location': location,
-        'createdAt': DateTime.now(),
-        'images': imageUrls, // List of image URLs
-      },
-    );
-
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Upload Successful')),
-    );
-
-    // Clear the form after submission
-    setState(() {
-      _titleController.clear();
-      _descriptionController.clear();
-      selectedCategory = null;
-      _locationController.clear();
-      _selectedImages.clear();
-    });
   }
 
   @override
@@ -135,7 +143,6 @@ class UploadImageState extends State<UploadImage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title and Description Input
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
@@ -150,11 +157,8 @@ class UploadImageState extends State<UploadImage> {
                   ),
                 ],
               ),
-              width: double.infinity,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 8.0),
                   TextFormField(
                     controller: _titleController,
                     decoration: const InputDecoration(
@@ -189,8 +193,6 @@ class UploadImageState extends State<UploadImage> {
               ),
             ),
             const SizedBox(height: 16.0),
-
-            // Select Category and Location inside a white box
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
@@ -207,7 +209,6 @@ class UploadImageState extends State<UploadImage> {
               ),
               child: Column(
                 children: [
-                  // Select Category
                   GestureDetector(
                     onTap: () {
                       showModalBottomSheet(
@@ -244,10 +245,8 @@ class UploadImageState extends State<UploadImage> {
                     ),
                   ),
                   const SizedBox(height: 8.0),
-
-                  // Location Selection
                   TextFormField(
-                    controller: _locationController, // Attach the controller
+                    controller: _locationController,
                     decoration: const InputDecoration(
                       labelText: 'Location',
                       border: OutlineInputBorder(
@@ -265,8 +264,6 @@ class UploadImageState extends State<UploadImage> {
               ),
             ),
             const SizedBox(height: 40.0),
-
-            // Upload Images Area with clickable plus button
             const Text(
               'Upload Images Here:',
               style: TextStyle(fontSize: 16.0),
@@ -299,30 +296,30 @@ class UploadImageState extends State<UploadImage> {
               ),
             ),
             const SizedBox(height: 20.0),
-
-            // Post Button
             Center(
-              child: ElevatedButton(
-                onPressed: _uploadAndSubmit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF662C2B),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 150.0,
-                    vertical: 15.0,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                ),
-                child: const Text(
-                  'POST',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              child: _isUploading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: _uploadAndSubmit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF662C2B),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 150.0,
+                          vertical: 15.0,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                      child: const Text(
+                        'POST',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
             ),
           ],
         ),

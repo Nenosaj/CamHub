@@ -29,6 +29,7 @@ class SettingsPageState extends State<SettingsPage> {
   String? profilePictureUrl; // For storing the profile picture URL
   bool isClient =
       false; // Flag to determine if the user is a client or creative
+  bool isLoading = true; // Loading state
 
   @override
   void initState() {
@@ -38,30 +39,36 @@ class SettingsPageState extends State<SettingsPage> {
 
   // Fetch user data based on the current user's role
   Future<void> _fetchUserData() async {
-    // Fetch user UID from FirebaseAuth
-    final user = authController.getCurrentUser();
-    if (user != null) {
-      //String uid = user.uid;
-
-      // Try fetching client data first
-      Client? fetchedClient = await Client.fetchCurrentClient();
-      if (fetchedClient != null) {
-        setState(() {
-          isClient = true;
-          client = fetchedClient;
-          profilePictureUrl = client?.profilePictureUrl;
-        });
-      } else {
-        // If no client data found, try fetching creative data
-        Creative? fetchedCreative = await Creative.fetchCurrentCreative();
-        if (fetchedCreative != null) {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final user = authController.getCurrentUser();
+      if (user != null) {
+        // Try fetching client data first
+        Client? fetchedClient = await Client.fetchCurrentClient();
+        if (fetchedClient != null) {
           setState(() {
-            isClient = false; // Not a client, so it's a creative
-            creative = fetchedCreative;
-            profilePictureUrl = creative?.profilePictureUrl;
+            isClient = true;
+            client = fetchedClient;
+            profilePictureUrl = client?.profilePictureUrl;
           });
+        } else {
+          // If no client data found, try fetching creative data
+          Creative? fetchedCreative = await Creative.fetchCurrentCreative();
+          if (fetchedCreative != null) {
+            setState(() {
+              isClient = false; // Not a client, so it's a creative
+              creative = fetchedCreative;
+              profilePictureUrl = creative?.profilePictureUrl;
+            });
+          }
         }
       }
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -80,131 +87,130 @@ class SettingsPageState extends State<SettingsPage> {
           },
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          // User Info Section
-          ListTile(
-            leading: CircleAvatar(
-              radius: 25,
-              backgroundImage: profilePictureUrl != null
-                  ? NetworkImage(profilePictureUrl!)
-                  : null, // Load the profile picture if available
-              backgroundColor: Colors.grey,
-              child: profilePictureUrl == null
-                  ? Icon(Icons.person, color: Colors.white)
-                  : null, // Show icon if no profile picture is available
-            ),
-            title: Text(isClient
-                ? '${client?.firstName} ${client?.lastName}' // Display client info if logged in as a client
-                : creative?.businessName ??
-                    'Loading...'), // Display creative info if logged in as a creative
-            subtitle: const Text('View Profile Details'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => isClient
-                      ? const ClientProfilePage() // Navigate to Client Profile
-                      : const CreativeProfileDetails(), // Navigate to Creative Profile
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                // User Info Section
+                ListTile(
+                  leading: CircleAvatar(
+                    radius: 25,
+                    backgroundImage: profilePictureUrl != null
+                        ? NetworkImage(profilePictureUrl!)
+                        : null, // Load the profile picture if available
+                    backgroundColor: Colors.grey,
+                    child: profilePictureUrl == null
+                        ? Icon(Icons.person, color: Colors.white)
+                        : null, // Show icon if no profile picture is available
+                  ),
+                  title: Text(isClient
+                      ? '${client?.firstName} ${client?.lastName}' // Display client info if logged in as a client
+                      : creative?.businessName ??
+                          'Loading...'), // Display creative info if logged in as a creative
+                  subtitle: const Text('View Profile Details'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => isClient
+                            ? const ClientProfilePage() // Navigate to Client Profile
+                            : const CreativeProfileDetails(), // Navigate to Creative Profile
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-          const Divider(),
-          // Account Settings Section
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(
-              'Account Settings',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.edit),
-            title: const Text('Edit Profile'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => isClient
-                      ? const ClientProfileEdit() // Edit Client Profile
-                      : const CreativeProfileEdit(), // Edit Creative Profile (you'll need to create this)
-                ),
-              );
-            },
-          ),
-          // New Change Password Option
-          ListTile(
-            leading: const Icon(Icons.lock),
-            title: const Text('Change Password'),
-            onTap: () {
-              // Navigate to Change Password screen
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.history),
-            title: const Text('Transaction History'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TransactionHistory(
-                    isClient: isClient, // Pass the user's role
+                const Divider(),
+                // Account Settings Section
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    'Account Settings',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.grey),
                   ),
                 ),
-              );
-            },
-          ),
-          const Divider(),
-          // More Section
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(
-              'More',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+                ListTile(
+                  leading: const Icon(Icons.edit),
+                  title: const Text('Edit Profile'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => isClient
+                            ? const ClientProfileEdit() // Edit Client Profile
+                            : const CreativeProfileEdit(), // Edit Creative Profile
+                      ),
+                    );
+                  },
+                ),
+                // New Change Password Option
+                ListTile(
+                  leading: const Icon(Icons.lock),
+                  title: const Text('Change Password'),
+                  onTap: () {
+                    // Navigate to Change Password screen
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.history),
+                  title: const Text('Transaction History'),
+                  onTap: () {
+                    // Navigate to Transaction History
+                  },
+                ),
+                const Divider(),
+                // More Section
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    'More',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.grey),
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.info),
+                  title: const Text('About us'),
+                  onTap: () {
+                    // Navigate to About us
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.privacy_tip),
+                  title: const Text('Privacy Policy'),
+                  onTap: () {
+                    // Navigate to Privacy Policy
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.article),
+                  title: const Text('Terms and Conditions'),
+                  onTap: () {
+                    // Navigate to Terms and Conditions
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.help_outline),
+                  title: const Text('Help'),
+                  onTap: () {
+                    // Navigate to Help
+                  },
+                ),
+                const SizedBox(
+                    height: 50), // Spacer to push the logout option down
+                ListTile(
+                  title: TextButton(
+                    onPressed: () async {
+                      // Call signOut method from Authentication class
+                      await authController.signOut(context);
+                    },
+                    child: const Text('Log Out',
+                        style: TextStyle(color: Colors.red)),
+                  ),
+                ),
+              ],
             ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.info),
-            title: const Text('About us'),
-            onTap: () {
-              // Navigate to About us
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip),
-            title: const Text('Privacy Policy'),
-            onTap: () {
-              // Navigate to Privacy Policy
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.article),
-            title: const Text('Terms and Conditions'),
-            onTap: () {
-              // Navigate to Terms and Conditions
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.help_outline),
-            title: const Text('Help'),
-            onTap: () {
-              // Navigate to Help
-            },
-          ),
-          const SizedBox(height: 50), // Spacer to push the logout option down
-          ListTile(
-            title: TextButton(
-              onPressed: () async {
-                // Call signOut method from Authentication class
-                await authController.signOut(context);
-              },
-              child: const Text('Log Out', style: TextStyle(color: Colors.red)),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

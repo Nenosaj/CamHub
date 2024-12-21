@@ -4,8 +4,21 @@ import 'package:example/screens/CreativeUI/creative_upload/creative_upload_video
 import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
-class CreativeUploadButton extends StatelessWidget {
+class CreativeUploadButton extends StatefulWidget {
   const CreativeUploadButton({super.key});
+
+  @override
+  _CreativeUploadButtonState createState() => _CreativeUploadButtonState();
+}
+
+class _CreativeUploadButtonState extends State<CreativeUploadButton> {
+  bool isLoading = false;
+
+  void _setLoadingState(bool state) {
+    setState(() {
+      isLoading = state;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,50 +56,61 @@ class CreativeUploadButton extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildOptionButton(
-                  context,
-                  icon: Icons.photo_camera,
-                  label: 'PHOTOS',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UploadImage(),
-                      ),
-                    );
-                  },
-                ),
-                _buildOptionButton(
-                  context,
-                  icon: Icons.local_shipping,
-                  label: 'PACKAGE',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UploadPackage(),
-                      ),
-                    );
-                  },
-                ),
-                _buildOptionButton(
-                  context,
-                  icon: Icons.video_library,
-                  label: 'VIDEOS',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UploadVideos(),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
+            if (isLoading)
+              const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              )
+            else
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildOptionButton(
+                    context,
+                    icon: Icons.photo_camera,
+                    label: 'PHOTOS',
+                    onTap: () async {
+                      _setLoadingState(true);
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UploadImage(),
+                        ),
+                      );
+                      _setLoadingState(false);
+                    },
+                  ),
+                  _buildOptionButton(
+                    context,
+                    icon: Icons.local_shipping,
+                    label: 'PACKAGE',
+                    onTap: () async {
+                      _setLoadingState(true);
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UploadPackage(),
+                        ),
+                      );
+                      _setLoadingState(false);
+                    },
+                  ),
+                  _buildOptionButton(
+                    context,
+                    icon: Icons.video_library,
+                    label: 'VIDEOS',
+                    onTap: () async {
+                      _setLoadingState(true);
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UploadVideos(),
+                        ),
+                      );
+                      _setLoadingState(false);
+                    },
+                  ),
+                ],
+              ),
           ],
         ),
       ),

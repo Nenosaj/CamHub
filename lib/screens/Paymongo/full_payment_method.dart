@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 
-class FullPaymentMethod extends StatelessWidget {
+class FullPaymentMethod extends StatefulWidget {
   final String bookingId;
 
   const FullPaymentMethod({super.key, required this.bookingId});
+
+  @override
+  _FullPaymentMethodState createState() => _FullPaymentMethodState();
+}
+
+class _FullPaymentMethodState extends State<FullPaymentMethod> {
+  bool isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +53,7 @@ class FullPaymentMethod extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Booking ID: $bookingId',
+                    'Booking ID: ${widget.bookingId}',
                     style: const TextStyle(fontSize: 14, color: Colors.black54),
                   ),
                 ],
@@ -69,12 +76,25 @@ class FullPaymentMethod extends StatelessWidget {
             // Pay Now Button
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  // Handle payment process
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Proceeding to payment...')),
-                  );
-                },
+                onPressed: isProcessing
+                    ? null
+                    : () async {
+                        setState(() {
+                          isProcessing = true;
+                        });
+
+                        await Future.delayed(const Duration(
+                            seconds: 2)); // Simulate payment process
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Proceeding to payment...')),
+                        );
+
+                        setState(() {
+                          isProcessing = false;
+                        });
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF662C2B),
                   padding: const EdgeInsets.symmetric(
@@ -85,21 +105,30 @@ class FullPaymentMethod extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(Icons.payment, color: Colors.white),
-                    SizedBox(width: 10),
-                    Text(
-                      'Pay Now',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                child: isProcessing
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.white),
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.payment, color: Colors.white),
+                          SizedBox(width: 10),
+                          Text(
+                            'Pay Now',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
               ),
             ),
           ],

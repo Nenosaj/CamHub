@@ -1,7 +1,6 @@
 import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:example/screens/Firebase/authentication.dart';
-//import 'package:example/screens/loadingstate.dart';
 
 class SetPassword extends StatefulWidget {
   final String email;
@@ -23,6 +22,7 @@ class SetPasswordState extends State<SetPassword> {
   bool _obscureConfirmPassword = true;
   bool isPasswordValid = false;
   bool doPasswordsMatch = false;
+  bool isLoading = false; // Loading state
 
   // Variables to store password values
   String password = '';
@@ -225,43 +225,56 @@ class SetPasswordState extends State<SetPassword> {
 
               // Sign Up Button
               Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isPasswordValid && doPasswordsMatch
-                        ? const Color(0xFF662C2B)
-                        : Colors.grey, // Disable if password is invalid
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 2,
-                        blurRadius: 6,
-                        offset: const Offset(0, 4),
+                child: isLoading
+                    ? const CircularProgressIndicator()
+                    : Container(
+                        decoration: BoxDecoration(
+                          color: isPasswordValid && doPasswordsMatch
+                              ? const Color(0xFF662C2B)
+                              : Colors.grey, // Disable if password is invalid
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 6,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: isPasswordValid && doPasswordsMatch
+                              ? () async {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  try {
+                                    await authController.registrationPassword(
+                                        _passwordController.text, context);
+                                  } catch (e) {
+                                    print('Error during password set: \$e');
+                                  } finally {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  }
+                                }
+                              : null, // Disable button if password is invalid
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 140, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Set Password',
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                  child: ElevatedButton(
-                    onPressed: isPasswordValid && doPasswordsMatch
-                        ? () async {
-                            await authController.registrationPassword(
-                                _passwordController.text, context);
-                          }
-                        : null, // Disable button if password is invalid
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 140, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'Set Password',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
-                  ),
-                ),
               ),
             ],
           ),

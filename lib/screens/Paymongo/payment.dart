@@ -17,6 +17,7 @@ class PaymentState extends State<Payment> {
   Map<String, dynamic>? bookingDetails;
   Map<String, dynamic>? creativeDetails;
   bool isLoading = true;
+  bool isPaymentProcessing = false; // Added state for button loading
 
   @override
   void initState() {
@@ -51,7 +52,6 @@ class PaymentState extends State<Payment> {
               ? creativeSnapshot.data() as Map<String, dynamic>
               : null;
 
-          // Check each payment in the subcollection
           for (final doc in paymentSnapshot.docs) {
             final paymentData = doc.data();
             if (!(paymentData['paid'] as bool)) {
@@ -81,23 +81,17 @@ class PaymentState extends State<Payment> {
 
   Future<void> updatePaymentStatus(String referenceNumber) async {
     try {
-      // Fetch payment details from PayMongo using the reference number
-      print(referenceNumber);
       final paymentDetails =
           await PayMongoService.fetchLinkByReferenceNumber(referenceNumber);
-
-      print(paymentDetails);
 
       if (paymentDetails != null) {
         final isPaid = paymentDetails['status'] == 'paid';
 
-        // Update the `paid` status in Firestore
         final paymentRef = FirebaseFirestore.instance
             .collection('bookings')
             .doc(widget.bookingId)
             .collection('payment');
 
-        // Find the payment document with the matching `referenceNumber`
         final querySnapshot = await paymentRef
             .where('referenceNumber', isEqualTo: referenceNumber)
             .get();
@@ -105,18 +99,14 @@ class PaymentState extends State<Payment> {
         if (querySnapshot.docs.isNotEmpty) {
           final paymentDoc = querySnapshot.docs.first;
 
-          // Update the `paid` status in Firestore
           await paymentDoc.reference.update({
             'paid': isPaid,
           });
-
-          print(isPaid);
 
           if (isPaid) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Payment marked as paid.')),
             );
-            // Check if all payments are paid
             await checkIfAllPaymentsArePaid();
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -148,14 +138,12 @@ class PaymentState extends State<Payment> {
           .collection('payment')
           .get();
 
-      // Check if all payments have `paid` set to `true`
       final allPaid = paymentSnapshot.docs.every((doc) {
         final paymentData = doc.data();
         return paymentData['paid'] == true;
       });
 
       if (allPaid) {
-        // Show thank-you dialog
         await navigateToConfirmationScreen();
       }
     } catch (e) {
@@ -167,10 +155,10 @@ class PaymentState extends State<Payment> {
 
   Future<void> _refreshDetails() async {
     setState(() {
-      isLoading = true; // Show the loading indicator
+      isLoading = true;
     });
 
-    await fetchDetails(); // Reload the booking and payment details
+    await fetchDetails();
   }
 
   Future<void> navigateToConfirmationScreen() async {
@@ -185,13 +173,11 @@ class PaymentState extends State<Payment> {
   Future<void> _createPaymentSubcollection(
       double totalCost, String referenceNumber, String paymentLink) async {
     try {
-      // Create a reference to the payment subcollection
       final paymentRef = FirebaseFirestore.instance
           .collection('bookings')
           .doc(widget.bookingId)
           .collection('payment');
 
-      // Data to be added in the payment subcollection
       final paymentData = {
         'bookingId': widget.bookingId,
         'clientId': bookingDetails?['clientId'],
@@ -206,10 +192,8 @@ class PaymentState extends State<Payment> {
         'timestamp': FieldValue.serverTimestamp(),
       };
 
-      // Add the payment data to the Firestore subcollection
       await paymentRef.add(paymentData);
 
-      // Notify the user about the successful creation
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Payment initialized successfully.')),
       );
@@ -221,8 +205,11 @@ class PaymentState extends State<Payment> {
   }
 
   Future<void> _proceedToPayMongo(double amount, String description) async {
+    setState(() {
+      isPaymentProcessing = true;
+    });
+
     try {
-      // Check if there is already a payment link for this booking
       final paymentSnapshot = await FirebaseFirestore.instance
           .collection('bookings')
           .doc(widget.bookingId)
@@ -233,7 +220,6 @@ class PaymentState extends State<Payment> {
         for (var doc in paymentSnapshot.docs) {
           final paymentData = doc.data();
           if (paymentData['referenceNumber'] != null) {
-            // If a reference number already exists, reuse the link
             final existingLink = paymentData['paymentLink'];
             final referenceNumber = paymentData['referenceNumber'];
 
@@ -241,7 +227,6 @@ class PaymentState extends State<Payment> {
               SnackBar(content: Text('Reusing existing payment link.')),
             );
 
-            // Open the existing payment link
             final Uri url = Uri.parse(existingLink);
             if (await canLaunchUrl(url)) {
               await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -250,25 +235,22 @@ class PaymentState extends State<Payment> {
                 SnackBar(content: Text('Cannot open the link: $existingLink')),
               );
             }
-            return; // Exit the method since we're reusing the link
+            return;
           }
         }
       }
 
-      // If no payment link exists, create a new one
       final paymentLink = await PayMongoService.createPaymentLink(
         amount: amount,
         description: widget.bookingId,
-        remarks: '', // Include any remark if needed
+        remarks: '',
       );
 
       if (paymentLink != null) {
         final referenceNumber = extractReferenceFromLink(paymentLink);
 
-        // Save the new payment link in Firestore
         await _createPaymentSubcollection(amount, referenceNumber, paymentLink);
 
-        // Open the new payment link
         final Uri url = Uri.parse(paymentLink);
         if (await canLaunchUrl(url)) {
           await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -286,17 +268,19 @@ class PaymentState extends State<Payment> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error handling payment link: $e')),
       );
+    } finally {
+      setState(() {
+        isPaymentProcessing = false;
+      });
     }
   }
 
   String extractReferenceFromLink(String link) {
     try {
       final uri = Uri.parse(link);
-      // Split the path into segments and extract the last segment
       final segments = uri.pathSegments;
       return segments.isNotEmpty ? segments.last : '';
     } catch (e) {
-      print('Error extracting reference from link: $e');
       return '';
     }
   }
@@ -322,7 +306,7 @@ class PaymentState extends State<Payment> {
         body: const Center(child: Text('No booking details found.')),
         floatingActionButton: FloatingActionButton(
           backgroundColor: const Color(0xFF662C2B),
-          onPressed: _refreshDetails, // Call the refresh function
+          onPressed: _refreshDetails,
           child: const Icon(Icons.refresh, color: Colors.white),
         ),
       );
@@ -347,7 +331,6 @@ class PaymentState extends State<Payment> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Creative Profile Section
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16.0),
@@ -400,8 +383,6 @@ class PaymentState extends State<Payment> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Booking Summary Section
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16.0),
@@ -444,14 +425,14 @@ class PaymentState extends State<Payment> {
               ),
             ),
             const SizedBox(height: 30),
-
-            // Payment Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () async {
-                  await _proceedToPayMongo(totalCost, packageName);
-                },
+                onPressed: isPaymentProcessing
+                    ? null
+                    : () async {
+                        await _proceedToPayMongo(totalCost, packageName);
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF662C2B),
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -459,14 +440,23 @@ class PaymentState extends State<Payment> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: const Text(
-                  'Proceed to Payment',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: isPaymentProcessing
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.white),
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        'Proceed to Payment',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
           ],
@@ -474,7 +464,7 @@ class PaymentState extends State<Payment> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF662C2B),
-        onPressed: _refreshDetails, // Call the refresh function
+        onPressed: _refreshDetails,
         child: const Icon(Icons.refresh, color: Colors.white),
       ),
     );
