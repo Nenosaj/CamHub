@@ -254,6 +254,54 @@ class FirestoreService {
     }
   }
 
+  Future<void> removePackage(
+      {required String uid, required String documentId}) async {
+    try {
+      await _firestore
+          .collection('package')
+          .doc(uid)
+          .collection('uploads')
+          .doc(documentId)
+          .delete();
+
+      print('Package with ID $documentId removed successfully.');
+    } catch (e) {
+      print('Error removing package: $e');
+    }
+  }
+
+  Future<void> removeImage(
+      {required String uid, required String documentId}) async {
+    try {
+      await _firestore
+          .collection('images')
+          .doc(uid)
+          .collection('uploads')
+          .doc(documentId)
+          .delete();
+
+      print('Image with ID $documentId removed successfully.');
+    } catch (e) {
+      print('Error removing image: $e');
+    }
+  }
+
+  Future<void> removeVideo(
+      {required String uid, required String documentId}) async {
+    try {
+      await _firestore
+          .collection('videos')
+          .doc(uid)
+          .collection('uploads')
+          .doc(documentId)
+          .delete();
+
+      print('Video with ID $documentId removed successfully.');
+    } catch (e) {
+      print('Error removing video: $e');
+    }
+  }
+
   // Fetch a single appointment by UUID
   Future<Map<String, dynamic>?> fetchAppointmentById(String uuid) async {
     try {

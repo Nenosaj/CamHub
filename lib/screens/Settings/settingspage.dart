@@ -12,6 +12,8 @@ import 'package:example/screens/CreativeUI/creative_model/creative_model.dart';
 import 'package:example/screens/CreativeUI/creative_settings/creative_settings_profiledetails.dart';
 import 'package:example/screens/CreativeUI/creative_settings/creative_settings_profileedit.dart';
 
+import 'package:example/screens/Settings/transactionhistory.dart';
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -144,7 +146,14 @@ class SettingsPageState extends State<SettingsPage> {
             leading: const Icon(Icons.history),
             title: const Text('Transaction History'),
             onTap: () {
-              // Navigate to Transaction History
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TransactionHistory(
+                    isClient: isClient, // Pass the user's role
+                  ),
+                ),
+              );
             },
           ),
           const Divider(),

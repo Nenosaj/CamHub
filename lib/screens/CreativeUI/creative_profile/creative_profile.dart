@@ -178,49 +178,88 @@ class ProfilePages extends State<CreativeProfilePage>
   Widget _buildGridView(List<String> urls, String type) {
     if (urls.isEmpty) {
       return Center(
-        child: Text('No $type uploaded',
-            style: const TextStyle(fontSize: 18, color: Colors.grey)),
+        child: Text(
+          'No $type uploaded',
+          style: const TextStyle(fontSize: 18, color: Colors.grey),
+        ),
       );
     }
 
     return GridView.builder(
       padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: 2, // Number of items per row
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
-        childAspectRatio: 4 / 5,
+        childAspectRatio: 3 / 4, // Adjust aspect ratio for better visuals
       ),
       itemCount: urls.length,
       itemBuilder: (context, index) {
         final url = urls[index];
+        final documentId = _extractDocumentId(url);
 
-        // Check if it's a video (based on file extension)
         bool isVideo = url.contains('.mp4') ||
             url.contains('.mov') ||
             url.contains('.avi');
 
-        return GestureDetector(
-          onTap: () {
-            if (isVideo) {
-              _showFullVideo(context, url); // Open full video
-            } else {
-              _showFullMedia(context, url); // Open full image
-            }
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: isVideo
-                ? _buildVideoThumbnail(url) // Show play icon for videos
-                : Image.network(
-                    url,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.broken_image,
-                          size: 50, color: Colors.grey);
-                    },
+        return Stack(
+          children: [
+            GestureDetector(
+              onTap: () {
+                if (isVideo) {
+                  _showFullVideo(context, url); // Open full video
+                } else {
+                  _showFullMedia(context, url); // Open full image
+                }
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey[300]!,
+                      width: 1.0,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-          ),
+                  child: isVideo
+                      ? _buildVideoThumbnail(url) // Show play icon for videos
+                      : Image.network(
+                          url,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.broken_image,
+                                size: 50, color: Colors.grey);
+                          },
+                        ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: GestureDetector(
+                onTap: () => _confirmAndDelete(context, documentId, type),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        blurRadius: 3,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(4.0),
+                    child: Icon(Icons.delete, color: Colors.red, size: 24),
+                  ),
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -261,6 +300,71 @@ class ProfilePages extends State<CreativeProfilePage>
         ),
       ),
     );
+  }
+
+  Future<void> _confirmAndDelete(
+      BuildContext context, String documentId, String type) async {
+    final uid =
+        FirebaseAuth.instance.currentUser!.uid; // Get the current user's UID
+
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Delete $type'),
+          content: Text('Are you sure you want to delete this $type?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete == true) {
+      try {
+        if (type == 'Image') {
+          await _firestoreService.removeImage(uid: uid, documentId: documentId);
+          setState(() {
+            imageDetails.removeWhere(
+                (image) => _extractDocumentId(image) == documentId);
+          });
+        } else if (type == 'Video') {
+          await _firestoreService.removeVideo(uid: uid, documentId: documentId);
+          setState(() {
+            videoDetails.removeWhere(
+                (video) => _extractDocumentId(video) == documentId);
+          });
+        } else if (type == 'Package') {
+          await _firestoreService.removePackage(
+              uid: uid, documentId: documentId);
+          setState(() {
+            packageDetails.removeWhere(
+                (package) => _extractDocumentId(package) == documentId);
+          });
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$type removed successfully.')),
+        );
+      } catch (e) {
+        print('Error removing $type: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to remove $type.')),
+        );
+      }
+    }
+  }
+
+  String _extractDocumentId(String url) {
+    // Assuming the document ID is part of the URL structure
+    final uri = Uri.parse(url);
+    return uri.pathSegments.last.split('.').first; // Example: "docId.extension"
   }
 
   @override
@@ -327,13 +431,6 @@ class ProfilePages extends State<CreativeProfilePage>
                               color: Colors.grey[600], size: 16),
                           Text(creative?.city ?? 'Location',
                               style: TextStyle(color: Colors.grey[600])),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const Text('Rating: '),
-                          Icon(Icons.star, color: Colors.orange, size: 16),
-                          Text(creative?.rating.toString() ?? '0.0'),
                         ],
                       ),
                     ],

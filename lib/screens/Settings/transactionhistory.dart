@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class TransactionHistory extends StatefulWidget {
-  const TransactionHistory({super.key});
+  final bool isClient; // True if the user is a client, false if creative
+
+  const TransactionHistory({super.key, required this.isClient});
 
   @override
   State<TransactionHistory> createState() => _TransactionHistoryState();
@@ -31,50 +33,43 @@ class _TransactionHistoryState extends State<TransactionHistory> {
     }
 
     try {
-      // Determine the user's role (e.g., client or creative)
       String userId = currentUser!.uid;
+      QuerySnapshot snapshot;
 
-      // Fetch transactions where the user is either the client or creative
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('transactions')
-          .where('clientId', isEqualTo: userId)
-          .get();
+      if (widget.isClient) {
+        // Fetch transactions where the user is the client
+        snapshot = await FirebaseFirestore.instance
+            .collection('transactions')
+            .where('clientId', isEqualTo: userId)
+            .get();
+      } else {
+        // Fetch transactions where the user is the creative
+        snapshot = await FirebaseFirestore.instance
+            .collection('transactions')
+            .where('creativeId', isEqualTo: userId)
+            .get();
+      }
 
-      // Fetch creative transactions
-      QuerySnapshot creativeSnapshot = await FirebaseFirestore.instance
-          .collection('transactions')
-          .where('creativeId', isEqualTo: userId)
-          .get();
-
-      List<Map<String, dynamic>> transactionData = [];
-
-      // Process client transactions
-      for (var doc in snapshot.docs) {
+      List<Map<String, dynamic>> transactionData = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-        transactionData.add({
+
+        Timestamp? timestamp = data['timestamp'] as Timestamp?;
+        String formattedDate = timestamp != null
+            ? DateTime.fromMillisecondsSinceEpoch(
+                    timestamp.millisecondsSinceEpoch)
+                .toLocal()
+                .toString()
+            : 'N/A';
+        return {
           'transactionId': doc.id,
           'bookingId': data['bookingId'] ?? 'N/A',
           'packageId': data['packageId'] ?? 'N/A',
           'clientId': data['clientId'] ?? 'N/A',
           'amount': data['totalAmount'] ?? 0.0,
           'status': data['status'] ?? 'N/A',
-          'date': data['date'] ?? 'N/A',
-        });
-      }
-
-      // Process creative transactions
-      for (var doc in creativeSnapshot.docs) {
-        final data = doc.data() as Map<String, dynamic>;
-        transactionData.add({
-          'transactionId': doc.id,
-          'bookingId': data['bookingId'] ?? 'N/A',
-          'packageId': data['packageId'] ?? 'N/A',
-          'creativeId': data['creativeId'] ?? 'N/A',
-          'amount': data['totalAmount'] ?? 0.0,
-          'status': data['status'] ?? 'N/A',
-          'date': data['date'] ?? 'N/A',
-        });
-      }
+          'date': formattedDate,
+        };
+      }).toList();
 
       setState(() {
         transactions = transactionData;
@@ -92,7 +87,9 @@ class _TransactionHistoryState extends State<TransactionHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Transaction History'),
+        title: Text(widget.isClient
+            ? 'Client Transaction History'
+            : 'Creative Transaction History'),
         backgroundColor: const Color(0xFF662C2B),
       ),
       body: isLoading
@@ -104,10 +101,12 @@ class _TransactionHistoryState extends State<TransactionHistory> {
               : SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
-                    columns: const [
+                    columns: [
                       DataColumn(label: Text('Transaction ID')),
                       DataColumn(label: Text('Booking ID')),
-                      DataColumn(label: Text('Client ID')),
+                      if (!widget.isClient)
+                        DataColumn(
+                            label: Text('Client ID')), // Only for creatives
                       DataColumn(label: Text('Package ID')),
                       DataColumn(label: Text('Amount')),
                       DataColumn(label: Text('Status')),
@@ -117,7 +116,9 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                       return DataRow(cells: [
                         DataCell(Text(transaction['transactionId'])),
                         DataCell(Text(transaction['bookingId'])),
-                        DataCell(Text(transaction['clientId'])),
+                        if (!widget.isClient)
+                          DataCell(Text(
+                              transaction['clientId'])), // Only for creatives
                         DataCell(Text(transaction['packageId'])),
                         DataCell(Text(
                             '₱${transaction['amount'].toStringAsFixed(2)}')),
