@@ -302,17 +302,27 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          backgroundColor: const Color(0xFF662C2B),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back,
+                color: Colors.white), // Back button icon
+            onPressed: () {
+              Navigator.pop(context); // Navigate back to the previous screen
+            },
+          ),
           title: Text(
             widget.creative['businessName'] ?? 'Creative Details',
-            style: const TextStyle(color: Color(0xFF302D2C)),
+            style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.favorite_border, color: Color(0xFF662C2B)),
+              icon: const Icon(Icons.favorite_border,
+                  color: Color.fromARGB(255, 255, 255, 255)),
               onPressed: () {},
             ),
             IconButton(
-              icon: const Icon(Icons.share, color: Color(0xFF662C2B)),
+              icon: const Icon(Icons.share,
+                  color: Color.fromARGB(255, 255, 255, 255)),
               onPressed: () {},
             ),
           ],

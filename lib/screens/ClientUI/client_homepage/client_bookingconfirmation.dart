@@ -12,10 +12,10 @@ class BookingConfirmation extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF662C2B),
         elevation: 1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF662C2B)),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),

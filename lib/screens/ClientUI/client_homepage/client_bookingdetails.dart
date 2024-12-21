@@ -78,6 +78,13 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
     final responsive = Responsive(context);
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // Back button icon
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
         backgroundColor: const Color(0xFF662C2B),
         title: const Text(
           'Booking',
