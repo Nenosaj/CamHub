@@ -251,25 +251,6 @@ class ClientHomePageState extends State<ClientHomePage> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 5.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.star, color: Colors.amber, size: 16.0),
-                        const Icon(Icons.star, color: Colors.amber, size: 16.0),
-                        const Icon(Icons.star, color: Colors.amber, size: 16.0),
-                        const Icon(Icons.star, color: Colors.amber, size: 16.0),
-                        const Icon(Icons.star_half,
-                            color: Colors.amber, size: 16.0),
-                        const SizedBox(width: 5.0),
-                        Text(
-                          (creative['rating']?.toStringAsFixed(1) ?? '0.0'),
-                          style: const TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -339,7 +320,7 @@ class ClientHomePageState extends State<ClientHomePage> {
         ),
         backgroundColor: Colors.grey[300], // Light grey background
         padding: const EdgeInsets.symmetric(
-            horizontal: 20.0, vertical: 10.0), // Padding for size
+            horizontal: 20.0, vertical: 12.0), // Padding for size
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0), // Rounded corners
         ),

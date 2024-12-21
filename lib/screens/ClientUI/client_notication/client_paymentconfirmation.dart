@@ -80,6 +80,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
             .get();
 
         List<Map<String, dynamic>> paymentDetails = [];
+        bool allPaid = true; // Assume all payments are paid initially
 
         for (var paymentDoc in paymentSnapshot.docs) {
           final paymentData = paymentDoc.data();
@@ -90,7 +91,15 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
             'paid': paymentData['paid'],
             'refund': paymentData['refund'],
           });
+
+          // If any payment is not paid, mark allPaid as false
+          if (paymentData['paid'] != true) {
+            allPaid = false;
+          }
         }
+
+        // Initialize the status as 'Pending'
+        String status = 'Ongoing';
 
         // Create a new transaction document in Firestore
         await FirebaseFirestore.instance.collection('transactions').add({
@@ -100,11 +109,14 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
           'packageId': bookingData['packageId'],
           'totalAmount': bookingData['totalCost'],
           'paymentDetails': paymentDetails, // Add payment details
+          'status': status, // Add initial status
           'timestamp': FieldValue.serverTimestamp(),
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Transaction successfully created.')),
+          SnackBar(
+              content: Text(
+                  'Transaction successfully created with status: $status')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

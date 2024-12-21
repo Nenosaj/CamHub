@@ -1,6 +1,6 @@
 import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:example/screens/CreativeUI/creative_model/creative_model.dart';
 import '../creative_message/creative_message.dart';
 import '../creative_nofication/creative_nofication.dart';
@@ -55,54 +55,129 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 class HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  Creative? currentCreative; // Store the fetched creative here
-  int totalBookings = 0; // Total booking count
+  int totalBookings = 0; // Total Orders
+  int totalCustomers = 0; // Total Customers
+  double monthlyRevenue = 0.0; // Monthly Revenue
+  User? currentUser; // Firebase Authentication User
+  String businessName = "Creative"; // Placeholder for business name
+  Map<String, int> monthlySales = {}; // To store sales by month
+  Map<String, int> packageBreakdown = {}; // To store package sales
 
   @override
   void initState() {
     super.initState();
-    _fetchCurrentCreative(); // Fetch the currently signed-in creative
-  }
+    currentUser =
+        FirebaseAuth.instance.currentUser; // Get the current authenticated user
+    if (currentUser != null) {
+      _fetchCreativeDetails(
+          currentUser!.uid); // Fetch business name and other details
 
-  // Fetch the current creative
-  Future<void> _fetchCurrentCreative() async {
-    try {
-      Creative? fetchedCreative = await Creative.fetchCurrentCreative();
-      if (fetchedCreative != null) {
-        setState(() {
-          currentCreative = fetchedCreative; // Store the creative data
-        });
-      } else {
-        // ignore: avoid_print
-        print('No creative found for the current user.');
-      }
-    } catch (e) {
-      // ignore: avoid_print
-      print('Error fetching current creative: $e');
+      _fetchTransactionData(currentUser!.uid); // Fetch metrics
     }
   }
 
-  Future<void> _fetchTotalBookings({required String creativeId}) async {
+  Future<void> _fetchCreativeDetails(String uid) async {
     try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('bookings')
-          .doc(creativeId)
-          .collection('uploads')
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('creatives')
+          .doc(uid)
           .get();
 
-      setState(() {
-        totalBookings = snapshot.docs.length; // Count documents
-      });
-
-      print("Total Bookings: $totalBookings");
+      if (doc.exists) {
+        final data = doc.data() as Map<String, dynamic>;
+        setState(() {
+          businessName = data['businessName'] ??
+              "Creative"; // Default to "Creative" if not found
+        });
+      } else {
+        print("Creative not found for uid: $uid");
+      }
     } catch (e) {
-      print('Error fetching bookings: $e');
+      print("Error fetching creative details: $e");
+    }
+  }
+
+  Future<void> _fetchTransactionData(String creativeId) async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('transactions')
+          .where('creativeId', isEqualTo: creativeId)
+          .get();
+
+      Map<String, int> salesByMonth = {};
+      Map<String, int> packagesSold = {};
+      double revenue = 0.0;
+      int bookings = 0;
+      Set<String> uniqueCustomers = {};
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data() as Map<String, dynamic>?;
+
+        if (data == null) {
+          print('Transaction data is null for document ID: ${doc.id}');
+          continue;
+        }
+
+        bookings++;
+        revenue += data['totalAmount'] ?? 0.0;
+        uniqueCustomers.add(data['clientId'] ?? 'Unknown');
+
+        // Fetch booking details
+        String bookingId = data['bookingId'] ?? '';
+        DocumentSnapshot bookingSnapshot = await FirebaseFirestore.instance
+            .collection('bookings')
+            .doc(bookingId)
+            .get();
+
+        if (!bookingSnapshot.exists) {
+          print('Booking document does not exist: $bookingId');
+          continue;
+        }
+
+        final bookingDetails =
+            bookingSnapshot.data() as Map<String, dynamic>? ?? {};
+        String date = bookingDetails['date'] ?? 'Unknown';
+        String month = date.split('-')[1]; // Extract month
+
+        salesByMonth[month] = (salesByMonth[month] ?? 0) + 1;
+
+        // Fetch the specific package using packageId
+        String packageId = data['packageId'] ?? '';
+        DocumentSnapshot packageSnapshot = await FirebaseFirestore.instance
+            .collection('package')
+            .doc(creativeId)
+            .collection('uploads')
+            .doc(packageId)
+            .get();
+
+        if (!packageSnapshot.exists) {
+          print('Package document does not exist: $packageId');
+          continue;
+        }
+
+        final packageDetails =
+            packageSnapshot.data() as Map<String, dynamic>? ?? {};
+        String packageName = packageDetails['title'] ?? 'Unknown';
+
+        // Group by package name
+        packagesSold[packageName] = (packagesSold[packageName] ?? 0) + 1;
+      }
+
+      setState(() {
+        totalBookings = bookings;
+        totalCustomers = uniqueCustomers.length;
+        monthlyRevenue = revenue;
+        monthlySales = salesByMonth;
+        packageBreakdown = packagesSold;
+      });
+    } catch (e) {
+      print('Error fetching transaction data: $e');
     }
   }
 
   // List of pages for each bottom navigation item
   List<Widget> _getPages() {
-    if (currentCreative == null) {
+    if (currentUser == null) {
       return [
         const Center(
             child:
@@ -113,17 +188,14 @@ class HomePageState extends State<HomePage> {
     // Once the creative is fetched, return the list of pages
     return [
       CreativeAnalytics(
-        creativeName: currentCreative!.businessName,
-        rating: currentCreative!.rating,
-        monthlyRevenue: 0, // Placeholder for now; you will update this later
-        totalOrders: totalBookings, // Placeholder for now
-        totalCustomers: 0, // Placeholder for now
-        totalImpressions: 0, // Placeholder for now
+        creativeName: businessName,
+        monthlyRevenue: monthlyRevenue,
+        totalOrders: totalBookings,
+        totalCustomers: totalCustomers,
+        monthlySales: monthlySales, // Pass monthly sales
+        packageBreakdown: packageBreakdown, // Placeholder for now
       ),
-      CreativeChatScreen(
-        clientName: '',
-        messages: [], // Placeholder for messages
-      ),
+      CreativeChatScreen(clientName: '', messages: []),
       const CreativeUploadButton(), // Add button
       const CreativeNotificationPage(), // Navigate to your Notifications Page
       const CreativeProfilePage(), // Navigate to your Profile Page
