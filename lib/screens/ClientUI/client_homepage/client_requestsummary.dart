@@ -42,12 +42,17 @@ class _RequestSummaryState extends State<RequestSummary> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
 
-  Future<void> _saveToFirestore(BuildContext context) async {
+  @override
+  void initState() {
+    super.initState();
+    _fetchClientDetails();
+  }
+
+  Future<void> _fetchClientDetails() async {
     try {
-      // Fetch the current authenticated user
+      // Get the currently authenticated user
       User? currentUser = FirebaseAuth.instance.currentUser;
 
-      // Check if the user is logged in
       if (currentUser == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -58,7 +63,54 @@ class _RequestSummaryState extends State<RequestSummary> {
         return;
       }
 
-      // Prepare selected add-ons
+      // Fetch user data from Firestore
+      DocumentSnapshot<Map<String, dynamic>> userDoc =
+          await FirebaseFirestore.instance
+              .collection('users') // Adjust collection name as needed
+              .doc(currentUser.uid)
+              .get();
+
+      if (userDoc.exists) {
+        Map<String, dynamic>? userData = userDoc.data();
+        setState(() {
+          // Populate text fields with data from Firestore
+          _fullNameController.text = userData?['fullName'] ?? '';
+          _phoneNumberController.text = userData?['phoneNumber'] ?? '';
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Client details not found.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error fetching client details: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to fetch client details. Try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _saveToFirestore(BuildContext context) async {
+    try {
+      User? currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('User not authenticated. Please log in again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Prepare add-ons
       List<Map<String, dynamic>> addOnsList = widget.selectedAddOns.entries
           .where((entry) => entry.value)
           .map((entry) => {
@@ -67,9 +119,9 @@ class _RequestSummaryState extends State<RequestSummary> {
               })
           .toList();
 
-      // Prepare data to store
+      // Prepare data for Firestore
       Map<String, dynamic> appointmentData = {
-        'clientId': currentUser.uid, // Current user's ID
+        'clientId': currentUser.uid,
         'packageId': widget.uuid,
         'creativeId': widget.creativeuid,
         'packageName': widget.packageName,
@@ -83,23 +135,20 @@ class _RequestSummaryState extends State<RequestSummary> {
         'fullName': _fullNameController.text.trim(),
         'phoneNumber': _phoneNumberController.text.trim(),
         'notes': _notesController.text.trim(),
-        'approved': false, // Default status
+        'approved': false,
         'createdAt': Timestamp.now(),
       };
 
-      // Firestore reference for the updated structure
       CollectionReference appointmentsRef =
           FirebaseFirestore.instance.collection('appointments');
+      await appointmentsRef.add(appointmentData);
 
-      // Add the appointment data with an auto-generated document ID
-      DocumentReference newAppointmentRef =
-          await appointmentsRef.add(appointmentData);
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => const BookingConfirmation(),
         ),
-      ); // Navigate back after submission
+      );
     } catch (e) {
       print('Error saving to Firestore: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -113,23 +162,20 @@ class _RequestSummaryState extends State<RequestSummary> {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = Responsive(context);
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: Colors.white), // Back button icon
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous screen
+            Navigator.pop(context);
           },
         ),
         elevation: 1,
         title: const Text(
           'Review Request',
-          style: TextStyle(color: Color(0xFF662C2B)),
+          style: TextStyle(color: Colors.white),
         ),
       ),
       body: SingleChildScrollView(
@@ -245,7 +291,7 @@ class _RequestSummaryState extends State<RequestSummary> {
         const SizedBox(height: 10),
         _buildTextField('Full Name', _fullNameController),
         const SizedBox(height: 10),
-        _buildTextField('Phone Number (optional)', _phoneNumberController),
+        _buildTextField('Phone Number', _phoneNumberController),
         const SizedBox(height: 10),
         _buildTextField('Add Notes (optional)', _notesController),
       ],

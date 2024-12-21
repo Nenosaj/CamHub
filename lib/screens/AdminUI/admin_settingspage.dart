@@ -12,6 +12,10 @@ class AdminSettingsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: const Text('Settings'),
         backgroundColor: const Color(0xFF662C2B), // Custom theme color
       ),
@@ -33,7 +37,7 @@ class AdminSettingsPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
                       Text(
-                        'Loading...',
+                        'Admin',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -52,46 +56,6 @@ class AdminSettingsPage extends StatelessWidget {
               ),
             ),
             const Divider(),
-            // Account Settings Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Account Settings',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  ListTile(
-                    leading: const Icon(Icons.edit, color: Colors.black),
-                    title: const Text('Edit Profile'),
-                    onTap: () {
-                      // Handle Edit Profile
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.lock, color: Colors.black),
-                    title: const Text('Change Password'),
-                    onTap: () {
-                      // Handle Change Password
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.history, color: Colors.black),
-                    title: const Text('Transaction History'),
-                    onTap: () {
-                      // Handle Transaction History
-                    },
-                  ),
-                  const Divider(),
-                ],
-              ),
-            ),
             // System Management Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -119,61 +83,6 @@ class AdminSettingsPage extends StatelessWidget {
                     title: const Text('Content Moderation'),
                     onTap: () {
                       // Handle Content Moderation
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.analytics, color: Colors.black),
-                    title: const Text('Analytics & Insights'),
-                    onTap: () {
-                      // Handle Analytics & Insights
-                    },
-                  ),
-                  const Divider(),
-                ],
-              ),
-            ),
-            // More Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'More',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  ListTile(
-                    leading: const Icon(Icons.info, color: Colors.black),
-                    title: const Text('About us'),
-                    onTap: () {
-                      // Handle About Us
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.privacy_tip, color: Colors.black),
-                    title: const Text('Privacy Policy'),
-                    onTap: () {
-                      // Handle Privacy Policy
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.article, color: Colors.black),
-                    title: const Text('Terms and Conditions'),
-                    onTap: () {
-                      // Handle Terms and Conditions
-                    },
-                  ),
-                  ListTile(
-                    leading:
-                        const Icon(Icons.help_outline, color: Colors.black),
-                    title: const Text('Help'),
-                    onTap: () {
-                      // Handle Help
                     },
                   ),
                   const Divider(),

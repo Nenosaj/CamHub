@@ -15,6 +15,12 @@ class BookingPageState extends State<BookingPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         toolbarHeight: 80.0,
         backgroundColor: const Color(0xFF662C2B), // Maroon background color
         title: const Text(
@@ -84,17 +90,23 @@ class BookingPageState extends State<BookingPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFF1E6E6) : Colors.grey[200], // Light color when selected
+          color: isSelected
+              ? const Color(0xFFF1E6E6)
+              : Colors.grey[200], // Light color when selected
           borderRadius: BorderRadius.circular(30), // Rounded pill-like shape
           border: Border.all(
-            color: isSelected ? const Color(0xFF7B3A3F) : Colors.grey[400]!, // Outline for the selected tab
+            color: isSelected
+                ? const Color(0xFF7B3A3F)
+                : Colors.grey[400]!, // Outline for the selected tab
             width: 1.5,
           ),
         ),
         child: Text(
           category,
           style: TextStyle(
-            color: isSelected ? const Color(0xFF7B3A3F) : Colors.black54, // Darker text for the selected tab
+            color: isSelected
+                ? const Color(0xFF7B3A3F)
+                : Colors.black54, // Darker text for the selected tab
             fontWeight: FontWeight.bold,
           ),
         ),

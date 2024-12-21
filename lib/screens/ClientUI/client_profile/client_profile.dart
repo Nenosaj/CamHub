@@ -64,14 +64,6 @@ class ProfilePageState extends State<ClientProfilePage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF662C2B),
         elevation: 0,
-        leading: IconButton(
-          icon:
-              const Icon(Icons.arrow_back, color: Colors.white), // White arrow
-          onPressed: () {
-            Navigator.of(context).pop(); // Action to go back
-          },
-        ),
-        // Removed the leading property to get rid of the white arrow
       ),
       body: SingleChildScrollView(
         child: Column(

@@ -1,3 +1,4 @@
+import 'package:example/screens/CreativeUI/creative_profile/creative_profile_reviews.dart';
 import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'creative_profile_booking/creative_profile_booking.dart';
 import '../creative_model/creative_model.dart'; // Import the creative model
 import 'package:example/screens/Firebase/firestoreservice.dart';
-
 import 'package:example/screens/VideoPlayer/video_player_widget.dart'; // Adjust the path to where you saved it
 
 void main() => runApp(const MyApp());
@@ -116,11 +116,11 @@ class ProfilePages extends State<CreativeProfilePage>
         });
 
         // ignore: avoid_print
-        print("Fetched Images: $videoDetails");
+        print("Fetched Videos: $videoDetails");
       }
     } catch (e) {
       // ignore: avoid_print
-      print("Error fetching images: $e");
+      print("Error fetching videos: $e");
     }
   }
 
@@ -406,10 +406,21 @@ class ProfilePages extends State<CreativeProfilePage>
                   _buildGridView(packageDetails, 'Package'),
 
                   // Review Tab
-                  Center(
-                    child: Text(
-                      'No reviews yet',
-                      style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CreativeReviews(),
+                        ),
+                      );
+                    },
+                    child: Center(
+                      child: Text(
+                        'No reviews yet. Tap to view details.',
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
                     ),
                   ),
                 ],
