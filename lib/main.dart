@@ -9,6 +9,7 @@ import 'screens/ClientUI/client_ui.dart';
 import 'screens/CreativeUI/creative_ui.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+// ignore: unused_import
 import 'screens/SignUp/autocomplete_address/geoapify_address.dart'; // Import for API function
 
 //import 'package:example/screens/loadingstate.dart';

@@ -8,6 +8,7 @@ class PayMongoService {
   static const String _baseUrl = "https://api.paymongo.com/v1";
   static const String _paymentLinksUrl = "$_baseUrl/links";
   static const String _paymentIntentsUrl = "$_baseUrl/payment_intents";
+  static const String _paymentsUrl = "$_baseUrl/v1/payments";
 
   /// Creates a payment link with the given amount and description (package name).
   /// Returns the payment link URL if successful or `null` if there’s an error.
@@ -113,6 +114,46 @@ class PayMongoService {
       }
     } catch (e) {
       print('Error fetching payment link: $e');
+    }
+  }
+
+  /// Lists all payments made in the PayMongo account.
+  /// Returns a list of payments or `null` if there’s an error.
+  static Future<Map<String, dynamic>> fetchPayments() async {
+    try {
+      final response = await http.get(
+        Uri.parse(_paymentsUrl),
+        headers: {
+          'Authorization': 'Basic ${base64Encode(utf8.encode("$_apiKey:"))}',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final List<dynamic> paymentsList = data['data'];
+        double totalRevenue = 0;
+
+        final List<Map<String, dynamic>> payments = paymentsList.map((payment) {
+          final attributes = payment['attributes'] as Map<String, dynamic>;
+          final amount = attributes['amount'] ?? 0;
+          final fee = attributes['fee'] ?? 0;
+          final netAmount = (amount - fee) / 100; // Convert to currency unit
+          totalRevenue += netAmount; // Accumulate revenue
+          attributes['net_amount'] = netAmount; // Add net amount to attributes
+          return attributes;
+        }).toList();
+
+        return {
+          'payments': payments,
+          'totalRevenue': totalRevenue,
+        };
+      } else {
+        throw Exception(
+            'Failed to fetch payments. Status Code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching payments: $e');
     }
   }
 }

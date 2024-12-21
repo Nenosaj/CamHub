@@ -11,11 +11,13 @@ class CreativesDetailPage extends StatefulWidget {
   const CreativesDetailPage({super.key, required this.creative});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CreativesDetailPageState createState() => _CreativesDetailPageState();
 }
 
 class _CreativesDetailPageState extends State<CreativesDetailPage>
     with SingleTickerProviderStateMixin {
+  // ignore: unused_field
   late TabController _tabController;
   final FirestoreService _firestoreService = FirestoreService();
 
@@ -165,13 +167,14 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
         final package = packages[index];
         final name = package['title'] ?? 'Unknown Package';
         final price =
-            package['price'] != null ? '\PHP${package['price']}' : 'Free';
+            package['price'] != null ? 'PHP${package['price']}' : 'Free';
         final description =
             package['description'] ?? 'No description available';
         final imageUrl = package['package'] ?? '';
         final uuid = package['uuid'] ?? 'unknown';
         final creativeuid = widget.creative['uid'];
 
+        // ignore: avoid_print
         print(uuid);
 
         return GestureDetector(
@@ -291,6 +294,7 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final responsive = Responsive(context);
 
     return DefaultTabController(

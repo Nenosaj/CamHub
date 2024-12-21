@@ -74,6 +74,7 @@ class _PackageBookingdetailsState extends State<PackageBookingdetails> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final responsive = Responsive(context);
     return Scaffold(
       appBar: AppBar(
