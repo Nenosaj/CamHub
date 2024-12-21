@@ -1,124 +1,92 @@
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
-// Data model for Sales and Returns
-class SalesData {
+class MonthlySalesData {
   final String month;
   final int sales;
-  final int returns;
 
-  SalesData(this.month, this.sales, this.returns);
+  MonthlySalesData(this.month, this.sales);
 }
 
-// Bar chart widget for Sales vs Returns
-class SalesReturnsChart extends StatelessWidget {
-  final List<charts.Series<SalesData, String>> seriesList;
+class MonthlySalesChart extends StatelessWidget {
+  final List<charts.Series<MonthlySalesData, String>> seriesList;
   final bool animate;
 
-  const SalesReturnsChart(this.seriesList, {super.key, this.animate = true});
+  const MonthlySalesChart(this.seriesList, {super.key, this.animate = true});
 
   @override
   Widget build(BuildContext context) {
-    final responsive = Responsive(context);
-
-    return AnimatedSwitcher(
-      // Wrap the chart in AnimatedSwitcher
-      duration: const Duration(milliseconds: 500),
-      transitionBuilder: (Widget child, Animation<double> animation) {
-        return FadeTransition(opacity: animation, child: child);
-      },
-      child: charts.BarChart(
-        // Your existing BarChart widget
-        seriesList,
-        animate: animate,
-        barGroupingType: charts.BarGroupingType.grouped,
-        behaviors: [
-          charts.SeriesLegend(),
-        ],
-        selectionModels: [
-          charts.SelectionModelConfig(
-            type: charts.SelectionModelType.info,
-            changedListener: (charts.SelectionModel model) {
-              if (model.hasDatumSelection) {
-                //final selectedDatum = model.selectedDatum[0].datum as SalesData;
-                //print('Sales: ${selectedDatum.sales}, Returns: ${selectedDatum.returns}');
-              }
-            },
-          ),
-        ],
-        domainAxis: const charts.OrdinalAxisSpec(
-          renderSpec: charts.SmallTickRendererSpec(
-            labelRotation: 45,
-            labelStyle: charts.TextStyleSpec(
-              fontSize: 12,
-              color: charts.MaterialPalette.black,
-            ),
+    return charts.BarChart(
+      seriesList,
+      animate: animate,
+      barGroupingType: charts.BarGroupingType.grouped,
+      domainAxis: const charts.OrdinalAxisSpec(
+        renderSpec: charts.SmallTickRendererSpec(
+          labelRotation: 0, // Keep labels horizontal for readability
+          labelStyle: charts.TextStyleSpec(
+            fontSize: 14,
+            color: charts.MaterialPalette.black,
           ),
         ),
-        primaryMeasureAxis: charts.NumericAxisSpec(
-          tickProviderSpec: const charts.BasicNumericTickProviderSpec(
-            desiredMaxTickCount: 5,
+        showAxisLine: true,
+      ),
+      primaryMeasureAxis: charts.NumericAxisSpec(
+        tickProviderSpec: const charts.BasicNumericTickProviderSpec(
+          desiredTickCount: 6, // Adjust for better granularity
+        ),
+        renderSpec: charts.GridlineRendererSpec(
+          lineStyle: charts.LineStyleSpec(
+            thickness: 1,
+            color: charts.MaterialPalette.gray.shade300,
           ),
-          viewport: const charts.NumericExtents(0, 15),
-          renderSpec: charts.GridlineRendererSpec(
-            lineStyle: charts.LineStyleSpec(
-              thickness: 1,
-              color: charts.MaterialPalette.gray.shadeDefault,
-            ),
+          labelStyle: const charts.TextStyleSpec(
+            fontSize: 12,
+            color: charts.MaterialPalette.black,
           ),
         ),
+      ),
+      behaviors: [
+        charts.ChartTitle(
+          'Monthly Sales',
+          behaviorPosition: charts.BehaviorPosition.top,
+          titleStyleSpec: charts.TextStyleSpec(
+            fontSize: 16,
+            fontWeight: 'bold',
+          ),
+        ),
+        charts.ChartTitle(
+          'Months',
+          behaviorPosition: charts.BehaviorPosition.bottom,
+          titleStyleSpec: charts.TextStyleSpec(fontSize: 14),
+        ),
+        charts.ChartTitle(
+          'Sales',
+          behaviorPosition: charts.BehaviorPosition.start,
+          titleStyleSpec: charts.TextStyleSpec(fontSize: 14),
+        ),
+      ],
+      defaultRenderer: charts.BarRendererConfig(
+        cornerStrategy: const charts.ConstCornerStrategy(10), // Rounded corners
+        barRendererDecorator: charts.BarLabelDecorator<String>(), // Data labels
       ),
     );
   }
 
-  // Static method to create data for current month
-  static List<charts.Series<SalesData, String>> createCurrentMonthData() {
-    final data = [
-      SalesData('October', 12, 2), // Example for the current month
-    ];
+  static List<charts.Series<MonthlySalesData, String>> createMonthlySalesData(
+      Map<String, int> monthlySales) {
+    final data = monthlySales.entries
+        .map((entry) => MonthlySalesData(entry.key, entry.value))
+        .toList();
 
     return [
-      charts.Series<SalesData, String>(
-        id: 'Sales',
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-        domainFn: (SalesData sales, _) => sales.month,
-        measureFn: (SalesData sales, _) => sales.sales,
+      charts.Series<MonthlySalesData, String>(
+        id: 'Monthly Sales',
+        colorFn: (_, index) => charts.MaterialPalette.red.shadeDefault,
+        domainFn: (MonthlySalesData sales, _) => sales.month,
+        measureFn: (MonthlySalesData sales, _) => sales.sales,
         data: data,
-      ),
-      charts.Series<SalesData, String>(
-        id: 'Returns',
-        colorFn: (_, __) => charts.MaterialPalette.pink.shadeDefault,
-        domainFn: (SalesData sales, _) => sales.month,
-        measureFn: (SalesData sales, _) => sales.returns,
-        data: data,
-      ),
-    ];
-  }
-
-  // Static method to create data for recent months
-  static List<charts.Series<SalesData, String>> createRecentMonthsData() {
-    final data = [
-      SalesData('July', 8, 1),
-      SalesData('August', 10, 1),
-      SalesData('September', 9, 2),
-      SalesData('October', 12, 2), // Current month
-    ];
-
-    return [
-      charts.Series<SalesData, String>(
-        id: 'Sales',
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-        domainFn: (SalesData sales, _) => sales.month,
-        measureFn: (SalesData sales, _) => sales.sales,
-        data: data,
-      ),
-      charts.Series<SalesData, String>(
-        id: 'Returns',
-        colorFn: (_, __) => charts.MaterialPalette.pink.shadeDefault,
-        domainFn: (SalesData sales, _) => sales.month,
-        measureFn: (SalesData sales, _) => sales.returns,
-        data: data,
+        labelAccessorFn: (MonthlySalesData sales, _) =>
+            '${sales.sales}', // Show sales value on the bar
       ),
     ];
   }

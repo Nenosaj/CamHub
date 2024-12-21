@@ -1,127 +1,51 @@
 import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 
-class ServiceData {
-  final String item;
-  final double percentage;
+// Data model for Package Breakdown
+class PackageData {
+  final String packageName;
+  final int sold;
 
-  ServiceData(this.item, this.percentage);
+  PackageData(this.packageName, this.sold);
 }
 
-class MonthlyServiceData {
-  final String month;
-  final List<ServiceData> services;
+// Table widget for Package Breakdown
+class PackageBreakdownTable extends StatelessWidget {
+  final List<PackageData> packageData;
 
-  MonthlyServiceData(this.month, this.services);
-}
-
-class ServicePercentageTable extends StatefulWidget {
-  const ServicePercentageTable({super.key});
-
-  @override
-  ServicePercentageTableState createState() => ServicePercentageTableState();
-}
-
-class ServicePercentageTableState extends State<ServicePercentageTable> {
-  String selectedMonth = 'October';
-
-  // List of service data for each month
-  final List<MonthlyServiceData> monthlyData = [
-    MonthlyServiceData('October', [
-      ServiceData('Weddings', 40.0),
-      ServiceData('Portraits', 25.0),
-      ServiceData('Events', 20.0),
-      ServiceData('Commercial', 15.0),
-    ]),
-    MonthlyServiceData('September', [
-      ServiceData('Weddings', 35.0),
-      ServiceData('Portraits', 30.0),
-      ServiceData('Events', 20.0),
-      ServiceData('Commercial', 15.0),
-    ]),
-    MonthlyServiceData('August', [
-      ServiceData('Weddings', 45.0),
-      ServiceData('Portraits', 20.0),
-      ServiceData('Events', 25.0),
-      ServiceData('Commercial', 10.0),
-    ]),
-  ];
-
-  // Variables for easier management of UI styling
-  final EdgeInsets containerPadding = const EdgeInsets.all(16);
-  final double borderRadius = 12.0;
-  final Color containerColor = Colors.white;
-  final Color shadowColor = Colors.grey.withOpacity(0.3);
-  final double shadowSpreadRadius = 3.0;
-  final double shadowBlurRadius = 5.0;
-  final Offset shadowOffset = const Offset(0, 3);
-  final TextStyle columnTextStyle = const TextStyle(fontSize: 14);
-  final EdgeInsets dropdownPadding = const EdgeInsets.symmetric(vertical: 20);
-
-  // Function to get the selected month's data
-  List<ServiceData> getServiceDataForMonth(String month) {
-    return monthlyData.firstWhere((data) => data.month == month).services;
-  }
+  const PackageBreakdownTable({super.key, required this.packageData});
 
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
-    List<ServiceData> serviceData = getServiceDataForMonth(selectedMonth);
 
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: dropdownPadding,
-            child: DropdownButton<String>(
-              value: selectedMonth,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedMonth = newValue!;
-                });
-              },
-              items: monthlyData
-                  .map<DropdownMenuItem<String>>((MonthlyServiceData data) {
-                return DropdownMenuItem<String>(
-                  value: data.month,
-                  child: Text(data.month),
-                );
-              }).toList(),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 3.0,
+              blurRadius: 5.0,
+              offset: const Offset(0, 3),
             ),
-          ),
-          Container(
-            padding: containerPadding, // Using the variable
-            decoration: BoxDecoration(
-              color: containerColor, // Background color variable
-              borderRadius:
-                  BorderRadius.circular(borderRadius), // Rounded corners
-              boxShadow: [
-                BoxShadow(
-                  color: shadowColor, // Shadow color variable
-                  spreadRadius: shadowSpreadRadius, // Spread radius variable
-                  blurRadius: shadowBlurRadius, // Blur radius variable
-                  offset: shadowOffset, // Shadow offset variable
-                ),
-              ],
-            ),
-            child: DataTable(
-              columns: [
-                DataColumn(
-                    label: Text('Items',
-                        style: columnTextStyle)), // Text style variable
-                DataColumn(label: Text('Percentage', style: columnTextStyle)),
-              ],
-              rows: serviceData
-                  .map((service) => DataRow(cells: [
-                        DataCell(Text(service.item)),
-                        DataCell(Text('${service.percentage}%')),
-                      ]))
-                  .toList(),
-            ),
-          ),
-        ],
+          ],
+        ),
+        child: DataTable(
+          columns: const [
+            DataColumn(label: Text('Package Name')),
+            DataColumn(label: Text('Sold')),
+          ],
+          rows: packageData
+              .map((package) => DataRow(cells: [
+                    DataCell(Text(package.packageName)),
+                    DataCell(Text(package.sold.toString())),
+                  ]))
+              .toList(),
+        ),
       ),
     );
   }

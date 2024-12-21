@@ -159,7 +159,7 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
+        mainAxisSpacing: 15,
         childAspectRatio: 3 / 4,
       ),
       itemCount: packages.length,
@@ -206,7 +206,7 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
                   child: imageUrl.isNotEmpty
                       ? Image.network(
                           imageUrl,
-                          height: 150,
+                          height: 130,
                           width: double.infinity,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
@@ -241,12 +241,12 @@ class _CreativesDetailPageState extends State<CreativesDetailPage>
                           fontSize: 14,
                         ),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 1),
                       Text(
                         description,
                         style:
                             const TextStyle(fontSize: 12, color: Colors.grey),
-                        maxLines: 3,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],

@@ -1,4 +1,3 @@
-import 'package:example/screens/responsive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'creative_charts.dart';
@@ -6,20 +5,20 @@ import 'creative_servicestable.dart';
 
 class CreativeAnalytics extends StatefulWidget {
   final String creativeName;
-  final double rating;
   final double monthlyRevenue;
   final int totalOrders;
   final int totalCustomers;
-  final int totalImpressions;
+  final Map<String, int> monthlySales;
+  final Map<String, int> packageBreakdown;
 
   const CreativeAnalytics({
     super.key,
     required this.creativeName,
-    required this.rating,
     required this.monthlyRevenue,
     required this.totalOrders,
     required this.totalCustomers,
-    required this.totalImpressions,
+    required this.monthlySales,
+    required this.packageBreakdown,
   });
 
   @override
@@ -32,7 +31,6 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = Responsive(context);
     final numberFormat = NumberFormat("#,##0");
 
     return SingleChildScrollView(
@@ -41,6 +39,7 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Greeting Section
             Text(
               'Hello, ${widget.creativeName}!',
               style: const TextStyle(
@@ -48,21 +47,9 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Text(
-                  'Rating: ',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const Icon(Icons.star, color: Colors.red),
-                Text(
-                  widget.rating.toStringAsFixed(1),
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ],
-            ),
             const SizedBox(height: 20),
+
+            // Overview Section
             const Text(
               'Overview',
               style: TextStyle(
@@ -85,48 +72,35 @@ class CreativeAnalyticsState extends State<CreativeAnalytics> {
                     'Total Orders', numberFormat.format(widget.totalOrders)),
                 _buildOverviewTile('Total Customers',
                     numberFormat.format(widget.totalCustomers)),
-                _buildOverviewTile('Total Impressions',
-                    numberFormat.format(widget.totalImpressions)),
               ],
             ),
             const SizedBox(height: 20),
-            // Adding Sales vs Returns Chart
+
+            // Monthly Sales Chart Section
             const Text(
-              'Sales vs. Returns',
+              'Monthly Sales',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 300, // Set height for the chart
-              child: SalesReturnsChart(
-                showFullData
-                    ? SalesReturnsChart
-                        .createRecentMonthsData() // Show more data
-                    : SalesReturnsChart
-                        .createCurrentMonthData(), // Show only current month
-              ),
             ),
             const SizedBox(height: 10),
-            // Button to toggle between showing more months or the current month
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  showFullData = !showFullData; // Toggle the data view
-                });
-              },
-              child: Text(
-                showFullData ? 'Show Current Month' : 'See Recent Months',
-                style: const TextStyle(fontSize: 16, color: Colors.blue),
+            SizedBox(
+              height: 300,
+              child: MonthlySalesChart(
+                MonthlySalesChart.createMonthlySalesData(widget.monthlySales),
               ),
             ),
             const SizedBox(height: 20),
-            // Adding the Service Percentage Table
+
+            // Package Breakdown Table Section
             const Text(
-              'Services Breakdown for Selected Month',
+              'Package Breakdown',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            const ServicePercentageTable(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
+            PackageBreakdownTable(
+              packageData: widget.packageBreakdown.entries
+                  .map((entry) => PackageData(entry.key, entry.value))
+                  .toList(),
+            ),
           ],
         ),
       ),

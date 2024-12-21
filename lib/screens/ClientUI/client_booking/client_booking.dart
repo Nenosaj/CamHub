@@ -1,21 +1,5 @@
-import 'package:example/screens/responsive_helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: BookingPage(),
-    );
-  }
-}
 
 class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
@@ -27,18 +11,43 @@ class BookingPage extends StatefulWidget {
 class BookingPageState extends State<BookingPage> {
   String selectedCategory = "Ongoing";
 
+  Future<void> updateTransactionStatus(String bookingId, String status) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('transactions')
+          .where('bookingId', isEqualTo: bookingId)
+          .get()
+          .then((querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          doc.reference.update({'status': status});
+        }
+      });
+      setState(() {}); // Force UI refresh
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Transaction marked as $status.'),
+          backgroundColor: status == 'Completed' ? Colors.green : Colors.red,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update status: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
-    final responsive = Responsive(context);
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight: 80.0,
         backgroundColor: const Color(0xFF662C2B), // Maroon background color
         title: const Text(
-          'Booking Log',
+          'Booking',
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -65,11 +74,7 @@ class BookingPageState extends State<BookingPage> {
           Divider(thickness: 1, color: Colors.grey[300]),
           // Content Section
           Expanded(
-            child: selectedCategory == "Completed"
-                ? _buildCompletedBooking()
-                : selectedCategory == "Cancelled"
-                    ? _buildCancelledBooking()
-                    : _buildNoBookings(),
+            child: _buildTransactionList(),
           ),
         ],
       ),
@@ -105,6 +110,227 @@ class BookingPageState extends State<BookingPage> {
     );
   }
 
+  // Build the transaction list dynamically based on status
+  Widget _buildTransactionList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('transactions')
+          .where('status', isEqualTo: selectedCategory)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return _buildNoBookings();
+        }
+
+        final transactions = snapshot.data!.docs;
+
+        return ListView.builder(
+          itemCount: transactions.length,
+          itemBuilder: (context, index) {
+            final transaction =
+                transactions[index].data() as Map<String, dynamic>;
+            return _buildTransactionCard(transaction);
+          },
+        );
+      },
+    );
+  }
+
+  // Method to build a transaction card
+  Widget _buildTransactionCard(Map<String, dynamic> transaction) {
+    return GestureDetector(
+      onTap: () async {
+        // Fetch additional details for the transaction
+        final bookingId = transaction['bookingId'];
+        final creativeId = transaction['creativeId'];
+        final packageId = transaction['packageId'];
+
+        // Fetch creative details
+        final creativeSnapshot = await FirebaseFirestore.instance
+            .collection('creatives')
+            .doc(creativeId)
+            .get();
+        final creativeDetails =
+            creativeSnapshot.data() as Map<String, dynamic>?;
+
+        // Fetch package details
+        final packageSnapshot = await FirebaseFirestore.instance
+            .collection('package')
+            .doc(creativeId)
+            .collection('uploads')
+            .doc(packageId)
+            .get();
+        final packageDetails = packageSnapshot.data() as Map<String, dynamic>?;
+
+        // Fetch booking details (including event date and time)
+        final bookingSnapshot = await FirebaseFirestore.instance
+            .collection('bookings')
+            .doc(bookingId)
+            .get();
+        final bookingDetails = bookingSnapshot.data() as Map<String, dynamic>?;
+
+        // Extract event date and time from bookingDetails
+        final eventDate = bookingDetails?['date'] ?? 'No event date';
+        final eventTime = bookingDetails?['time'] ?? 'No event time';
+
+        // Show dialog with transaction details
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text(
+                'Transaction Details',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Booking ID: $bookingId'),
+                    const SizedBox(height: 8),
+                    Text('Package ID: $packageId'),
+                    const SizedBox(height: 8),
+                    Text(
+                        'Package Name: ${packageDetails?['title'] ?? 'Unknown'}'),
+                    const SizedBox(height: 8),
+                    Text(
+                        'Creative Name: ${creativeDetails?['businessName'] ?? 'Unknown'}'),
+                    const SizedBox(height: 8),
+                    Text(
+                        'Description: ${packageDetails?['description'] ?? 'No description'}'),
+                    const SizedBox(height: 8),
+                    if (packageDetails?['package'] != null)
+                      Image.network(
+                        packageDetails?['package'],
+                        height: 150,
+                        fit: BoxFit.cover,
+                      ),
+                    const SizedBox(height: 8),
+                    Text(
+                        'Total Amount: ₱${transaction['totalAmount']?.toStringAsFixed(2) ?? '0.00'}'),
+                    const SizedBox(height: 8),
+                    Text('Paid: ${transaction['paid'] == true ? 'Yes' : 'No'}'),
+                    const SizedBox(height: 8),
+                    Text('Event Date: $eventDate'),
+                    const SizedBox(height: 8),
+                    Text('Event Time: $eventTime'),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        transaction['bookingId'] ?? 'Unknown Booking ID',
+                        style: const TextStyle(
+                          color: Color(0xFF662C2B),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Package ID: ${transaction['packageId'] ?? 'Unknown'}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Total Amount: ₱${transaction['totalAmount']?.toStringAsFixed(2) ?? '0.00'}',
+                        style: const TextStyle(
+                          color: Colors.black54,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: selectedCategory == 'Completed'
+                          ? Colors.green
+                          : selectedCategory == 'Cancelled'
+                              ? Colors.red
+                              : const Color(0xFF662C2B),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      selectedCategory,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // Add Complete and Cancel buttons for "Ongoing" category
+              if (selectedCategory == 'Ongoing')
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        updateTransactionStatus(
+                            transaction['bookingId'], 'completed');
+                      },
+                      child: const Text(
+                        'Complete',
+                        style: TextStyle(color: Colors.green),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        updateTransactionStatus(
+                            transaction['bookingId'], 'Cancelled');
+                      },
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   // Method to build the "No Bookings" message
   Widget _buildNoBookings() {
     return const Center(
@@ -125,160 +351,6 @@ class BookingPageState extends State<BookingPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  // Method to build the "Completed" booking details
-  Widget _buildCompletedBooking() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '18-05-2024',
-                  style: TextStyle(
-                    color: Color(0xFF662C2B),
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Order #4566',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  '• Portrait Session',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const Text(
-                  '1:00 PM',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF662C2B),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    'Completed',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Method to build the "Cancelled" booking details
-  Widget _buildCancelledBooking() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '22-06-2024',
-                  style: TextStyle(
-                    color: Color(0xFF7B3A3F),
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Order #7890',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  '• Wedding Session',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const Text(
-                  '3:00 PM',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.red, // Red color to indicate cancellation
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    'Cancelled',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }
