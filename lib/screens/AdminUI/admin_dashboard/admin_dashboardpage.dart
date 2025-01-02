@@ -21,6 +21,7 @@ class _DashboardPageState extends State<DashboardPage> {
   final List<Widget> _pages = [
     const DashboardContent(), // Updated to reference ApprovalPage
     const AdminUsersPage(), // Updated to reference Users Page
+    const ApprovalPage(),
   ];
 
   @override
